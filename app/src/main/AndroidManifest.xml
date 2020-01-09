@@ -19,6 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="app.milanherke.mystudiez.provider"
+            android:name="app.milanherke.mystudiez.AppProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
