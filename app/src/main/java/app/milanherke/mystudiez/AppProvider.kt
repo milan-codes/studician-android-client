@@ -33,31 +33,32 @@ private const val EXAMS = 400
 private const val EXAMS_ID = 401
 
 val CONTENT_AUTHORITY_URI: Uri = Uri.parse("content://$CONTENT_AUTHORITY")
-class AppProvider: ContentProvider() {
 
-    private val uriMatcher by lazy {buildUriMatcher()}
+class AppProvider : ContentProvider() {
+
+    private val uriMatcher by lazy { buildUriMatcher() }
 
     private fun buildUriMatcher(): UriMatcher {
         Log.i(TAG, "buildUriMatcher: starts")
         val matcher = UriMatcher(UriMatcher.NO_MATCH)
 
         // e.g. content://app.milanherke.mystudiez.provider/Subjects
-        matcher.addURI(CONTENT_AUTHORITY,SubjectsContract.TABLE_NAME, SUBJECTS)
+        matcher.addURI(CONTENT_AUTHORITY, SubjectsContract.TABLE_NAME, SUBJECTS)
         // e.g. content://app.milanherke.mystudiez.provider/Subjects/5
         matcher.addURI(CONTENT_AUTHORITY, "${SubjectsContract.TABLE_NAME}/#", SUBJECTS_ID)
 
         // e.g. content://app.milanherke.mystudiez.provider/Lessons
-        matcher.addURI(CONTENT_AUTHORITY,LessonsContract.TABLE_NAME, LESSONS)
+        matcher.addURI(CONTENT_AUTHORITY, LessonsContract.TABLE_NAME, LESSONS)
         // e.g. content://app.milanherke.mystudiez.provider/Lessons/5
         matcher.addURI(CONTENT_AUTHORITY, "${LessonsContract.TABLE_NAME}/#", LESSONS_ID)
 
         // e.g. content://app.milanherke.mystudiez.provider/Tasks
-        matcher.addURI(CONTENT_AUTHORITY,TasksContract.TABLE_NAME, TASKS)
+        matcher.addURI(CONTENT_AUTHORITY, TasksContract.TABLE_NAME, TASKS)
         // e.g. content://app.milanherke.mystudiez.provider/Tasks/5
         matcher.addURI(CONTENT_AUTHORITY, "${TasksContract.TABLE_NAME}/#", TASKS_ID)
 
         // e.g. content://app.milanherke.mystudiez.provider/Exams
-        matcher.addURI(CONTENT_AUTHORITY,ExamsContract.TABLE_NAME, EXAMS)
+        matcher.addURI(CONTENT_AUTHORITY, ExamsContract.TABLE_NAME, EXAMS)
         // e.g. content://app.milanherke.mystudiez.provider/Exams/5
         matcher.addURI(CONTENT_AUTHORITY, "${ExamsContract.TABLE_NAME}/#", EXAMS_ID)
 
@@ -73,7 +74,7 @@ class AppProvider: ContentProvider() {
     override fun getType(uri: Uri): String? {
         // Get MIME Type
 
-        return when(uriMatcher.match(uri)) {
+        return when (uriMatcher.match(uri)) {
 
             SUBJECTS -> SubjectsContract.CONTENT_TYPE
             SUBJECTS_ID -> SubjectsContract.CONTENT_ITEM_TYPE
@@ -161,9 +162,9 @@ class AppProvider: ContentProvider() {
             SUBJECTS -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 recordId = db.insert(SubjectsContract.TABLE_NAME, null, values)
-                if (recordId != -1L){
+                if (recordId != -1L) {
                     returnUri = SubjectsContract.buildUriFromId(recordId)
-                }else {
+                } else {
                     throw SQLException("Failed to insert, Uri was $uri")
                 }
             }
@@ -171,9 +172,9 @@ class AppProvider: ContentProvider() {
             LESSONS -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 recordId = db.insert(LessonsContract.TABLE_NAME, null, values)
-                if (recordId != -1L){
+                if (recordId != -1L) {
                     returnUri = LessonsContract.buildUriFromId(recordId)
-                }else {
+                } else {
                     throw SQLException("Failed to insert, Uri was $uri")
                 }
             }
@@ -181,9 +182,9 @@ class AppProvider: ContentProvider() {
             TASKS -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 recordId = db.insert(TasksContract.TABLE_NAME, null, values)
-                if (recordId != -1L){
+                if (recordId != -1L) {
                     returnUri = TasksContract.buildUriFromId(recordId)
-                }else {
+                } else {
                     throw SQLException("Failed to insert, Uri was $uri")
                 }
             }
@@ -191,9 +192,9 @@ class AppProvider: ContentProvider() {
             EXAMS -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 recordId = db.insert(ExamsContract.TABLE_NAME, null, values)
-                if (recordId != -1L){
+                if (recordId != -1L) {
                     returnUri = ExamsContract.buildUriFromId(recordId)
-                }else {
+                } else {
                     throw SQLException("Failed to insert, Uri was $uri")
                 }
             }
@@ -316,7 +317,7 @@ class AppProvider: ContentProvider() {
                 val id = SubjectsContract.getId(uri)
                 selectionCriteria = "${SubjectsContract.Columns.SUBJECT_ID} = $id"
 
-                if(selection != null && selection.isNotEmpty()) {
+                if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
                 }
 
@@ -332,7 +333,7 @@ class AppProvider: ContentProvider() {
                 val id = LessonsContract.getId(uri)
                 selectionCriteria = "${LessonsContract.Columns.ID} = $id"
 
-                if(selection != null && selection.isNotEmpty()) {
+                if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
                 }
 
@@ -348,7 +349,7 @@ class AppProvider: ContentProvider() {
                 val id = TasksContract.getId(uri)
                 selectionCriteria = "${TasksContract.Columns.ID} = $id"
 
-                if(selection != null && selection.isNotEmpty()) {
+                if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
                 }
 
@@ -364,7 +365,7 @@ class AppProvider: ContentProvider() {
                 val id = ExamsContract.getId(uri)
                 selectionCriteria = "${ExamsContract.Columns.EXAM_ID} = $id"
 
-                if(selection != null && selection.isNotEmpty()) {
+                if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
                 }
 

@@ -24,6 +24,9 @@
             android:authorities="app.milanherke.mystudiez.provider"
             android:name="app.milanherke.mystudiez.AppProvider"
             android:exported="false" />
+
+        <uses-library android:name="android.test.runner"
+            android:required="false" />
     </application>
 
 </manifest>

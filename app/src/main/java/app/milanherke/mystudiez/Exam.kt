@@ -2,7 +2,7 @@ package app.milanherke.mystudiez
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.sql.Date
+import java.util.Date
 
 @Parcelize
 data class Exam(

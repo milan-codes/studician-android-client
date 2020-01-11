@@ -17,7 +17,8 @@ private const val TAG = "AppDatabase"
 private const val DATABASE_NAME = "MyStudiez.db"
 private const val DATABASE_VERSION = 1
 
-internal class AppDatabase private constructor(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+internal class AppDatabase private constructor(context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
         Log.i(TAG, "onCreate: starts")
@@ -31,7 +32,7 @@ internal class AppDatabase private constructor(context: Context) : SQLiteOpenHel
             db?.execSQL(taskSQL)
             db?.execSQL(examSQL)
             Log.i(TAG, "Tables created successfully")
-        }catch (e: SQLiteException) {
+        } catch (e: SQLiteException) {
             e.printStackTrace()
             throw SQLiteException("Unknown error occurred.")
         }
@@ -39,7 +40,7 @@ internal class AppDatabase private constructor(context: Context) : SQLiteOpenHel
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         Log.i(TAG, "onUpgrade: starts")
-        when(oldVersion) {
+        when (oldVersion) {
             1 -> {
                 // Haven't yet thought about upgrading database - upgrade logic yet to be decided
             }
@@ -57,7 +58,7 @@ internal class AppDatabase private constructor(context: Context) : SQLiteOpenHel
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             throw Exception("Unknown exception occurred.")
         }
@@ -76,7 +77,7 @@ internal class AppDatabase private constructor(context: Context) : SQLiteOpenHel
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             throw Exception("Unknown exception occurred.")
         }
@@ -95,7 +96,7 @@ internal class AppDatabase private constructor(context: Context) : SQLiteOpenHel
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             throw Exception("Unknown exception occurred.")
         }
@@ -113,7 +114,7 @@ internal class AppDatabase private constructor(context: Context) : SQLiteOpenHel
             """.trimMargin()
             Log.i(TAG, sSQL)
             return sSQL
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             throw Exception("Unknown exception occurred.")
         }
