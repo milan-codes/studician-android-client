@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">MyStudiez</string>
     <string name="action_settings">Settings</string>
+    <string name="subjects_title">Subjects</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_subjects">SubjectsActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lessons_title">Lessons</string>
+    <string name="tasks_title">Tasks</string>
+    <string name="exams_title">Exams</string>
+    <string name="overview_title">Overview</string>
 </resources>

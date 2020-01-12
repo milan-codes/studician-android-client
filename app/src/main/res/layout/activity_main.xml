@@ -10,13 +10,16 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        app:elevation="0dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/colorTextPrimary"
+            android:background="@color/colorBackgroundPrimary"
+
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -25,18 +28,21 @@
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bar"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorPrimary"
+        android:backgroundTint="@color/colorBtn"
         android:layout_gravity="bottom"
-        app:navigationIcon="@drawable/baseline_menu_24"/>
+        app:navigationIcon="@drawable/baseline_menu_24"
+        app:hideOnScroll="true"
+        app:layout_scrollFlags="scroll|enterAlways"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
+        android:backgroundTint="@color/colorPrimaryDark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_add"
-        android:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/baseline_add_24"
         app:layout_anchor="@id/bar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/bottomnav_subjects"
+            android:title="Subjects" />
+        <item
+            android:id="@+id/bottomnav_lessons"
+            android:title="Lessons" />
+        <item
+            android:id="@+id/bottomnav_tasks"
+            android:title="Tasks" />
+        <item
+            android:id="@+id/bottomnav_exams"
+            android:title="Exams" />
+
+    </group>
+</menu>

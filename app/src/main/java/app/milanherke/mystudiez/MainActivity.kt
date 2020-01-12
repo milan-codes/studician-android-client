@@ -1,25 +1,43 @@
 package app.milanherke.mystudiez
 
+import android.content.ContentValues
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomappbar.BottomAppBar
 
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.IllegalArgumentException
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity() {
+const val SUBJECTS_STATE = "SubjectsState"
+const val LESSONS_STATE = "LessonsState"
+const val TASKS_STATE = "TasksState"
+const val EXAMS_STATE = "ExamsState"
+var APP_STATE = SUBJECTS_STATE
+
+
+class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick, LessonsFragment.OnLessonClick {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
+
+        testInsert()
+
+        replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -27,9 +45,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         val bottomBar = findViewById<BottomAppBar>(R.id.bar)
-        bottomBar.replaceMenu(R.menu.bottomappbar_menu)
         bottomBar.setNavigationOnClickListener {
-            Toast.makeText(this, "Test", Toast.LENGTH_SHORT).show()
+            val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
+            bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
+        }
+    }
+
+    private fun loadCorrectFragment(frag: String): Fragment {
+        return when (frag) {
+            SUBJECTS_STATE -> SubjectsFragment.newInstance()
+            else -> throw IllegalArgumentException("Unknown fragment passed")
         }
     }
 
@@ -47,5 +72,25 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun testInsert() {
+        val values = ContentValues().apply {
+            put(SubjectsContract.Columns.SUBJECT_NAME, "Subject 1234444444444444444444444444")
+            put(SubjectsContract.Columns.SUBJECT_TEACHER, "Teacher 1")
+            put(SubjectsContract.Columns.SUBJECT_COLORCODE, "Color code 1")
+        }
+
+        contentResolver.insert(SubjectsContract.CONTENT_URI, values)
+    }
+
+
+    // Fragment interfaces
+    override fun OnTap(uri: Uri) {
+        Toast.makeText(this, "RecyclerView tapped", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onLessonTap(uri: Uri) {
+        Toast.makeText(this, "RecyclerView tapped", Toast.LENGTH_SHORT).show()
     }
 }
