@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sli_linearlayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
@@ -31,8 +32,10 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="16dp"
                 android:ellipsize="end"
+                android:fontFamily="@font/montserrat_medium"
                 android:singleLine="false"
-                android:textSize="18sp"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/days"
                 app:layout_constraintStart_toStartOf="parent"
@@ -53,84 +56,85 @@
                     android:id="@+id/sli_monday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="M"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="M" />
+                    android:text="@string/sli_day_monday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/sli_tuesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="T"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="T" />
+                    android:text="@string/sli_day_tuesday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/sli_wednesday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="W"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="W" />
+                    android:text="@string/sli_day_wednesday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/sli_thursday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="T"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="T" />
+                    android:text="@string/sli_day_thursday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/sli_friday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="F"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="F" />
+                    android:text="@string/sli_day_friday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/sli_saturday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="S"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="S" />
+                    android:text="@string/sli_day_saturday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/sli_sunday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:background="@drawable/has_no_lesson_on_day"
+                    android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
-                    android:text="S"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="12sp"
-                    tools:text="S" />
+                    android:text="@string/sli_day_sunday"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

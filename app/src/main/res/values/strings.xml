@@ -11,4 +11,17 @@
     <string name="tasks_title">Tasks</string>
     <string name="exams_title">Exams</string>
     <string name="overview_title">Overview</string>
+    <string name="details_title">Details</string>
+    <string name="details_subject_title">Subject:</string>
+    <string name="details_teacher_name">Teacher:</string>
+    <string name="details_colorcode">Color:</string>
+    <string name="details_edit_button">Edit details</string>
+    <string name="subject_indicator_description">The color of the subject the user selected.</string>
+    <string name="sli_day_monday">M</string>
+    <string name="sli_day_tuesday">T</string>
+    <string name="sli_day_wednesday">W</string>
+    <string name="sli_day_thursday">T</string>
+    <string name="sli_day_friday">F</string>
+    <string name="sli_day_saturday">S</string>
+    <string name="sli_day_sunday">S</string>
 </resources>
