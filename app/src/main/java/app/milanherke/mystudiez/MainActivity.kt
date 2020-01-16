@@ -25,7 +25,8 @@ const val EXAMS_STATE = "ExamsState"
 var APP_STATE = SUBJECTS_STATE
 
 
-class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick, LessonsFragment.OnLessonClick {
+class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick,
+    LessonsFragment.OnLessonClick {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +36,6 @@ class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick, Lesso
         toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
 
-        testInsert()
-
         replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
 
         fab.setOnClickListener { view ->
@@ -44,6 +43,7 @@ class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick, Lesso
                 .setAction("Action", null).show()
         }
 
+        // Showing the bottom navigation bar
         val bottomBar = findViewById<BottomAppBar>(R.id.bar)
         bottomBar.setNavigationOnClickListener {
             val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
@@ -73,17 +73,6 @@ class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick, Lesso
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    private fun testInsert() {
-        val values = ContentValues().apply {
-            put(SubjectsContract.Columns.SUBJECT_NAME, "Subject 1234444444444444444444444444")
-            put(SubjectsContract.Columns.SUBJECT_TEACHER, "Teacher 1")
-            put(SubjectsContract.Columns.SUBJECT_COLORCODE, "Color code 1")
-        }
-
-        contentResolver.insert(SubjectsContract.CONTENT_URI, values)
-    }
-
 
     // Fragment interfaces
     override fun OnTap(uri: Uri) {

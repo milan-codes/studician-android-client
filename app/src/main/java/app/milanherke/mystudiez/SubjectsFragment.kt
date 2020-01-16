@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,11 +27,12 @@ class SubjectsFragment : Fragment() {
 
     private var listener: OnSubjectClick? = null
     private val viewModel by lazy { ViewModelProviders.of(activity!!).get(MyStudiezViewModel::class.java) }
-    private val mAdapter = SubjectsRecyclerViewAdapter(null)
+    private val mAdapter = SubjectsRecyclerViewAdapter(null, null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cursor.observe(this, Observer { cursor ->  mAdapter.swapCursor(cursor)?.close() })
+        viewModel.cursorSubjects.observe(this, Observer { cursor ->  mAdapter.swapSubjectsCursor(cursor)?.close() })
+        viewModel.cursorLessons.observe(this, Observer { cursor -> mAdapter.swapLessonsCursor(cursor)?.close() })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
