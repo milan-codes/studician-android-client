@@ -26,6 +26,7 @@
     <style name="customtoolbar">
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="colorControlNormal">#000000</item>
     </style>
 
 </resources>

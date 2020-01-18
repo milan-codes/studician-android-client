@@ -11,4 +11,6 @@
     <color name="colorTextSecondary">#8E8F90</color>
 
     <color name="colorBtn">#176BAA</color>
+
+    <!-- Resource colors to mark subjects -->
 </resources>

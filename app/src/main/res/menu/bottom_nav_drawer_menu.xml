@@ -3,16 +3,13 @@
     <group android:checkableBehavior="none">
         <item
             android:id="@+id/bottomnav_subjects"
-            android:title="Subjects" />
-        <item
-            android:id="@+id/bottomnav_lessons"
-            android:title="Lessons" />
+            android:title="@string/bottom_nav_subjects_title" />
         <item
             android:id="@+id/bottomnav_tasks"
-            android:title="Tasks" />
+            android:title="@string/bottom_nav_tasks_title" />
         <item
             android:id="@+id/bottomnav_exams"
-            android:title="Exams" />
+            android:title="@string/bottom_nav_exams_title" />
 
     </group>
 </menu>

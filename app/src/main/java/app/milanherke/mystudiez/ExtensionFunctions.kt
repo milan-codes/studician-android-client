@@ -1,5 +1,10 @@
 package app.milanherke.mystudiez
 
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.ShapeDrawable
+import androidx.annotation.ColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -26,4 +31,11 @@ fun FragmentActivity.replaceFragment(fragment: Fragment, frameId: Int) {
 }
 fun FragmentActivity.removeFragment(fragment: Fragment) {
     supportFragmentManager.inTransaction { remove(fragment) }
+}
+fun Drawable.overrideColor(@ColorInt colorInt: Int) {
+    when (this) {
+        is GradientDrawable -> setColor(colorInt)
+        is ShapeDrawable -> paint.color = colorInt
+        is ColorDrawable -> color = colorInt
+    }
 }

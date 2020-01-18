@@ -1,38 +1,45 @@
 package app.milanherke.mystudiez
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subjects.*
 
-private const val TAG = "SubjectsFragment"
-
 /**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [SubjectsFragment.OnSubjectClick] interface
- * to handle interaction events.
  * Use the [SubjectsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SubjectsFragment : Fragment() {
+class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickListener {
 
-    private var listener: OnSubjectClick? = null
-    private val viewModel by lazy { ViewModelProviders.of(activity!!).get(MyStudiezViewModel::class.java) }
-    private val mAdapter = SubjectsRecyclerViewAdapter(null, null)
+    private val viewModel by lazy {
+        ViewModelProviders.of(activity!!).get(MyStudiezViewModel::class.java)
+    }
+    private val mAdapter = SubjectsRecyclerViewAdapter(null, null, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cursorSubjects.observe(this, Observer { cursor ->  mAdapter.swapSubjectsCursor(cursor)?.close() })
-        viewModel.cursorLessons.observe(this, Observer { cursor -> mAdapter.swapLessonsCursor(cursor)?.close() })
+        viewModel.subjectFilter.observe(this, Observer { name -> viewModel.loadAllDetails(name) })
+        viewModel.cursorSubjects.observe(
+            this,
+            Observer { cursor -> mAdapter.swapSubjectsCursor(cursor)?.close() })
+        viewModel.cursorLessons.observe(
+            this,
+            Observer { cursor -> mAdapter.swapLessonsCursor(cursor)?.close() })
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if (activity is AppCompatActivity) {
+            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,35 +58,6 @@ class SubjectsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_subjects, container, false)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnSubjectClick) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement OnSubjectClick")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnSubjectClick {
-        fun OnTap(uri: Uri)
-    }
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -92,5 +70,10 @@ class SubjectsFragment : Fragment() {
             SubjectsFragment().apply {
                 arguments = Bundle().apply {}
             }
+    }
+
+    override fun onSubjectClick(subject: Subject) {
+        viewModel.subjectFilter.postValue(subject.name)
+        activity!!.replaceFragment(LessonsFragment.newInstance(subject), R.id.fragment_container)
     }
 }

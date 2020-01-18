@@ -91,8 +91,8 @@ internal class AppDatabase private constructor(context: Context) :
                 ${TasksContract.Columns.TASK_DESCRIPTION} TEXT,
                 ${TasksContract.Columns.TASK_TYPE} TEXT NOT NULL,
                 ${TasksContract.Columns.TASK_SUBJECT} TEXT NOT NULL,
-                ${TasksContract.Columns.TASK_DUEDATE} DATE NOT NULL,
-                ${TasksContract.Columns.TASK_REMINDER} DATE);
+                ${TasksContract.Columns.TASK_DUEDATE} TEXT NOT NULL,
+                ${TasksContract.Columns.TASK_REMINDER} TEXT);
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
@@ -109,8 +109,8 @@ internal class AppDatabase private constructor(context: Context) :
                 ${ExamsContract.Columns.EXAM_NAME} TEXT NOT NULL,
                 ${ExamsContract.Columns.EXAM_DESCRIPTION} TEXT,
                 ${ExamsContract.Columns.EXAM_SUBJECT} TEXT NOT NULL,
-                ${ExamsContract.Columns.EXAM_DATE} DATE NOT NULL,
-                ${ExamsContract.Columns.EXAM_REMINDER} DATE);
+                ${ExamsContract.Columns.EXAM_DATE} TEXT NOT NULL,
+                ${ExamsContract.Columns.EXAM_REMINDER} TEXT);
             """.trimMargin()
             Log.i(TAG, sSQL)
             return sSQL

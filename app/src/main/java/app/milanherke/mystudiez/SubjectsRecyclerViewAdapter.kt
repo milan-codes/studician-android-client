@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez
 
 import android.database.Cursor
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,128 +11,81 @@ import kotlinx.android.synthetic.main.subject_list_items.view.*
 import java.lang.Exception
 import java.lang.IllegalStateException
 
-class SubjectViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer {
-
-    fun bind(subject: Subject, days: ArrayList<String>) {
-        containerView.sli_name.text = subject.name
-        for (day in days) {
-            when (day) {
-                "Monday" -> {
-                    containerView.sli_monday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_monday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-                "Tuesday" -> {
-                    containerView.sli_tuesday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_tuesday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-                "Wednesday" -> {
-                    containerView.sli_wednesday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_wednesday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-                "Thursday" -> {
-                    containerView.sli_thursday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_thursday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-                "Friday" -> {
-                    containerView.sli_friday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_friday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-                "Saturday" -> {
-                    containerView.sli_saturday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_saturday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-                "Sunday" -> {
-                    containerView.sli_sunday.setBackgroundResource(R.drawable.has_lesson_on_day)
-                    containerView.sli_sunday.setTextColor(
-                        ContextCompat.getColor(
-                            containerView.context,
-                            R.color.colorBackgroundPrimary
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-}
+private const val VIEW_TYPE_NOT_EMPTY = 0
+private const val VIEW_TYPE_EMPTY = 1
 
 // The list which is being used to store the data required to make use of the day indicators
 private val lessonsFromCursor: MutableList<Lesson> = mutableListOf()
 
 class SubjectsRecyclerViewAdapter(
     private var cursorSubjects: Cursor?,
-    private var cursorLessons: Cursor?
-) : RecyclerView.Adapter<SubjectViewHolder>() {
+    private var cursorLessons: Cursor?,
+    private val listener: OnSubjectClickListener
+) : RecyclerView.Adapter<SubjectsRecyclerViewAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.subject_list_items, parent, false)
-        return SubjectViewHolder(view)
+    interface OnSubjectClickListener {
+        fun onSubjectClick(subject: Subject)
     }
 
-    override fun onBindViewHolder(holder: SubjectViewHolder, position: Int) {
-        val cursor = cursorSubjects
-        if (cursor == null || cursor.count == 0) {
-            // TODO - Provide instructions
-        } else {
-            if (!cursor.moveToPosition(position)) {
-                throw IllegalStateException("Couldn't move cursor to position $position")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_EMPTY -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.no_subject_list_item, parent, false)
+                EmptySubjectViewHolder(view)
             }
+            VIEW_TYPE_NOT_EMPTY -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.subject_list_items, parent, false)
+                SubjectViewHolder(view)
+            }
+            else -> throw IllegalStateException("Couldn't recognise the view type")
+        }
+    }
 
-            // Create Subject from the data in the cursor
-            val subject = Subject(
-                cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_NAME)),
-                cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_TEACHER)),
-                cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
-            )
-            // Id is not set in the instructor
-            subject.id = cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_ID))
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val cursor = cursorSubjects
+        when (getItemViewType(position)) {
+            VIEW_TYPE_EMPTY -> {
+                // We are not putting any data into the empty view, therefore we do not need to do anything here
+            }
+            VIEW_TYPE_NOT_EMPTY -> {
+                if (cursor != null) {
+                    if (!cursor.moveToPosition(position)) {
+                        throw IllegalStateException("Couldn't move cursor to position $position")
+                    }
 
-            val days = arrayListOf<String>()
-            for (lesson in lessonsFromCursor) {
-                if (lesson.name == subject.name) {
-                    days.add(lesson.day)
+                    // Create Subject from the data in the cursor
+                    val subject = Subject(
+                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_NAME)),
+                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_TEACHER)),
+                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
+                    )
+                    // Id is not set in the instructor
+                    subject.id =
+                        cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_ID))
+
+                    val days = arrayListOf<String>()
+                    for (lesson in lessonsFromCursor) {
+                        if (lesson.name == subject.name) {
+                            days.add(lesson.day)
+                        }
+                    }
+
+                    holder.bind(subject, days, listener)
                 }
             }
-
-            holder.bind(subject, days)
         }
     }
 
     override fun getItemCount(): Int {
         val cursor = cursorSubjects
-        return if (cursor == null || cursor.count == 0) 0 else cursor.count
+        return if (cursor == null || cursor.count == 0) 1 else cursor.count
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val cursor = cursorSubjects
+        return if (cursor == null || cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
     }
 
     /**
@@ -214,4 +166,100 @@ class SubjectsRecyclerViewAdapter(
         }
     }
 
+    open class ViewHolder(override val containerView: View) :
+        RecyclerView.ViewHolder(containerView), LayoutContainer {
+        open fun bind(
+            subject: Subject,
+            days: ArrayList<String>,
+            listener: OnSubjectClickListener
+        ) {
+        }
+    }
+
+    private class SubjectViewHolder(override val containerView: View) : ViewHolder(containerView) {
+
+        override fun bind(
+            subject: Subject,
+            days: ArrayList<String>,
+            listener: OnSubjectClickListener
+        ) {
+            containerView.sli_name.text = subject.name
+            for (day in days) {
+                when (day) {
+                    "Monday" -> {
+                        containerView.sli_monday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_monday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                    "Tuesday" -> {
+                        containerView.sli_tuesday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_tuesday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                    "Wednesday" -> {
+                        containerView.sli_wednesday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_wednesday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                    "Thursday" -> {
+                        containerView.sli_thursday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_thursday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                    "Friday" -> {
+                        containerView.sli_friday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_friday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                    "Saturday" -> {
+                        containerView.sli_saturday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_saturday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                    "Sunday" -> {
+                        containerView.sli_sunday.setBackgroundResource(R.drawable.has_lesson_on_day)
+                        containerView.sli_sunday.setTextColor(
+                            ContextCompat.getColor(
+                                containerView.context,
+                                R.color.colorBackgroundPrimary
+                            )
+                        )
+                    }
+                }
+            }
+
+            containerView.sli_linearlayout.setOnClickListener {
+                listener.onSubjectClick(subject)
+            }
+        }
+
+    }
+
+    // We do not need to override the bind method since we're not putting any data into the empty view
+    private class EmptySubjectViewHolder(override val containerView: View) :
+        ViewHolder(containerView)
 }

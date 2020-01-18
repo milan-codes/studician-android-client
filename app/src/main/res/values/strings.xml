@@ -4,10 +4,7 @@
     <string name="subjects_title">Subjects</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_subjects">SubjectsActivity</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="lessons_title">Lessons</string>
+    <string name="lessons_title">Subject details</string>
     <string name="tasks_title">Tasks</string>
     <string name="exams_title">Exams</string>
     <string name="overview_title">Overview</string>
@@ -24,4 +21,17 @@
     <string name="sli_day_friday">F</string>
     <string name="sli_day_saturday">S</string>
     <string name="sli_day_sunday">S</string>
+    <string name="subject_details_lessons_title">Lessons</string>
+    <string name="bottom_nav_subjects_title">Subjects</string>
+    <string name="bottom_nav_tasks_title">Tasks</string>
+    <string name="bottom_nav_exams_title">Exams</string>
+    <string name="details_subject_item_time">%s - %s</string>
+    <string name="tasks_recycler_empty">You didn\'t add any task to this subject</string>
+    <string name="no_task_img_description">An illustration that describes that there are no Tasks</string>
+    <string name="exams_recycler_empty">You didn\'t add any exam to this subject</string>
+    <string name="no_exam_img_description">An illustration that describes that there are no Exams</string>
+    <string name="lessons_recycler_empty">You didn\'t add any lesson to this subject</string>
+    <string name="no_lesson_img_description">An illustration that describes that there are no Lessons</string>
+    <string name="subjects_recycler_empty">You didn\'t add any subject. Tap on the + button!</string>
+    <string name="no_subject_img_description">An illustration that describes that there are no Subjects</string>
 </resources>

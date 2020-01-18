@@ -2,14 +2,13 @@ package app.milanherke.mystudiez
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
 
 @Parcelize
 data class Exam(
     var name: String,
     var description: String,
-    var subject: Subject,
-    var date: Date,
-    var reminder: Date,
+    var subject: String,
+    var date: String,
+    var reminder: String,
     var id: Long = 0
 ) : Parcelable

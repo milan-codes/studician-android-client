@@ -1,6 +1,5 @@
 package app.milanherke.mystudiez
 
-import android.content.ContentValues
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +7,6 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -19,13 +17,10 @@ import java.lang.IllegalArgumentException
 private const val TAG = "MainActivity"
 
 const val SUBJECTS_STATE = "SubjectsState"
-const val LESSONS_STATE = "LessonsState"
-const val TASKS_STATE = "TasksState"
-const val EXAMS_STATE = "ExamsState"
 var APP_STATE = SUBJECTS_STATE
 
 
-class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick,
+class MainActivity : AppCompatActivity(),
     LessonsFragment.OnLessonClick {
 
 
@@ -68,18 +63,23 @@ class MainActivity : AppCompatActivity(), SubjectsFragment.OnSubjectClick,
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
+        when (item.itemId) {
+            android.R.id.home -> {
+                when (findFragmentById(R.id.fragment_container)) {
+                    is LessonsFragment -> {
+                        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                    }
+                }
+            }
             else -> super.onOptionsItemSelected(item)
         }
+
+        return super.onOptionsItemSelected(item)
     }
 
     // Fragment interfaces
-    override fun OnTap(uri: Uri) {
-        Toast.makeText(this, "RecyclerView tapped", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onLessonTap(uri: Uri) {
         Toast.makeText(this, "RecyclerView tapped", Toast.LENGTH_SHORT).show()
     }
+
 }

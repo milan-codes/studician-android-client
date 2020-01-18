@@ -9,28 +9,33 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.lang.IllegalArgumentException
 import kotlinx.android.synthetic.main.fragment_bottomsheet.*
 
-class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
+class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
 
-    private lateinit var appContext:Context
+    private lateinit var appContext: Context
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navigation_view.setNavigationItemSelectedListener {menuItem ->
+        navigation_view.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.bottomnav_subjects -> {
-                    activity!!.replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
-                    activity!!.removeFragment(this)
-                }
-                R.id.bottomnav_lessons -> {
-                    activity!!.replaceFragment(LessonsFragment.newInstance(), R.id.fragment_container)
+                    activity!!.replaceFragment(
+                        SubjectsFragment.newInstance(),
+                        R.id.fragment_container
+                    )
                     activity!!.removeFragment(this)
                 }
                 R.id.bottomnav_tasks -> {
-                    activity!!.replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                    activity!!.replaceFragment(
+                        SubjectsFragment.newInstance(),
+                        R.id.fragment_container
+                    )
                     activity!!.removeFragment(this)
                 }
                 R.id.bottomnav_exams -> {
-                    activity!!.replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                    activity!!.replaceFragment(
+                        SubjectsFragment.newInstance(),
+                        R.id.fragment_container
+                    )
                     activity!!.removeFragment(this)
                 }
                 else -> throw IllegalArgumentException("Unknown menuItem passed")
@@ -44,7 +49,11 @@ class BottomNavigationDrawerFragment: BottomSheetDialogFragment() {
         appContext = context.applicationContext
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_bottomsheet, container, false)
     }
 }
