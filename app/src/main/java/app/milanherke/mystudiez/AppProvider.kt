@@ -111,7 +111,7 @@ class AppProvider : ContentProvider() {
             SUBJECTS_ID -> {
                 queryBuilder.tables = SubjectsContract.TABLE_NAME
                 val subjectId = SubjectsContract.getId(uri)
-                queryBuilder.appendWhere("${SubjectsContract.Columns.SUBJECT_ID} = ")
+                queryBuilder.appendWhere("${SubjectsContract.Columns.ID} = ")
                 queryBuilder.appendWhereEscapeString("$subjectId")
             }
 
@@ -135,7 +135,7 @@ class AppProvider : ContentProvider() {
             EXAMS_ID -> {
                 queryBuilder.tables = ExamsContract.TABLE_NAME
                 val examId = ExamsContract.getId(uri)
-                queryBuilder.appendWhere("${ExamsContract.Columns.EXAM_ID} = ")
+                queryBuilder.appendWhere("${ExamsContract.Columns.ID} = ")
                 queryBuilder.appendWhereEscapeString("$examId")
             }
 
@@ -229,7 +229,7 @@ class AppProvider : ContentProvider() {
             SUBJECTS_ID -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 val id = SubjectsContract.getId(uri)
-                selectionCriteria = "${SubjectsContract.Columns.SUBJECT_ID} = $id"
+                selectionCriteria = "${SubjectsContract.Columns.ID} = $id"
 
                 if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
@@ -280,7 +280,7 @@ class AppProvider : ContentProvider() {
             EXAMS_ID -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 val id = ExamsContract.getId(uri)
-                selectionCriteria = "${ExamsContract.Columns.EXAM_ID} = $id"
+                selectionCriteria = "${ExamsContract.Columns.ID} = $id"
 
                 if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
@@ -315,7 +315,7 @@ class AppProvider : ContentProvider() {
             SUBJECTS_ID -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 val id = SubjectsContract.getId(uri)
-                selectionCriteria = "${SubjectsContract.Columns.SUBJECT_ID} = $id"
+                selectionCriteria = "${SubjectsContract.Columns.ID} = $id"
 
                 if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"
@@ -363,7 +363,7 @@ class AppProvider : ContentProvider() {
             EXAMS_ID -> {
                 val db = AppDatabase.getInstance(context!!).writableDatabase
                 val id = ExamsContract.getId(uri)
-                selectionCriteria = "${ExamsContract.Columns.EXAM_ID} = $id"
+                selectionCriteria = "${ExamsContract.Columns.ID} = $id"
 
                 if (selection != null && selection.isNotEmpty()) {
                     selectionCriteria += " AND ($selection)"

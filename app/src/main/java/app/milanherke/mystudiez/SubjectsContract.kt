@@ -20,7 +20,7 @@ object SubjectsContract {
      * Fields
      */
     object Columns {
-        const val SUBJECT_ID = BaseColumns._ID
+        const val ID = BaseColumns._ID
         const val SUBJECT_NAME = "Name"
         const val SUBJECT_TEACHER = "Teacher"
         const val SUBJECT_COLORCODE = "ColorCode"
@@ -33,5 +33,6 @@ object SubjectsContract {
     fun buildUriFromId(id: Long): Uri {
         return ContentUris.withAppendedId(CONTENT_URI, id)
     }
+
 
 }

@@ -8,8 +8,8 @@ data class Task(
     var name: String,
     var description: String,
     var type: String,
-    var subject: String,
+    var subjectId: Long,
     var dueDate: String,
     var reminder: String,
-    var id: Long = 0
+    var taskId: Long = 0
 ) : Parcelable

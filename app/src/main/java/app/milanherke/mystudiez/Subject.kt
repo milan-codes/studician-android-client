@@ -7,6 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class Subject(
     var name: String,
     var teacher: String,
-    var colorCode: String,
-    var id: Long = 0
+    var colorCode: Int,
+    var subjectId: Long = 0
 ) : Parcelable

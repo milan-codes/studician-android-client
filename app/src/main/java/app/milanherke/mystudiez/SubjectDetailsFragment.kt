@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -32,9 +33,9 @@ class SubjectDetailsFragment : Fragment() {
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(SubjectDetailsViewModel::class.java)
     }
-    private val lessonsAdapter = LessonsRecyclerViewAdapter(null)
-    private val tasksAdapter = TasksRecyclerViewAdapter(null)
-    private val examsAdapter = ExamsRecyclerViewAdapter(null)
+    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null)
+    private val tasksAdapter = TasksRecyclerViewAdapter(null, null)
+    private val examsAdapter = ExamsRecyclerViewAdapter(null, null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +49,7 @@ class SubjectDetailsFragment : Fragment() {
         viewModel.cursorSelectedExams.observe(
             this,
             Observer { cursor -> examsAdapter.swapExamsCursor(cursor)?.close() })
-        viewModel.loadAllDetails(subject!!.name)
+        viewModel.loadAllDetails(subject!!.subjectId)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -65,8 +66,20 @@ class SubjectDetailsFragment : Fragment() {
         if (savedInstanceState == null) {
             val subject = subject
             if (subject != null) {
+                // Loading the data into the subject details section
                 subject_details_name_value.text = subject.name
                 subject_details_teacher_value.text = subject.teacher
+
+                //Creating a clone drawable because we do not want to affect other instances of the original drawable
+                val clone = subject_details_color_value.drawable.mutatedClone()
+                clone.displayColor(subject.colorCode, context!!)
+                subject_details_color_value.setImageDrawable(clone)
+
+
+                // Passing the drawable to the adapters
+                lessonsAdapter.swapDrawable(clone)
+                tasksAdapter.swapDrawable(clone)
+                examsAdapter.swapDrawable(clone)
             }
         }
 

@@ -1,9 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.database.Cursor
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +14,7 @@ private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 private const val VIEW_TYPE_PLACEHOLDER = 2
 
-class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
+class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var subjectIndicator: Drawable?) :
     RecyclerView.Adapter<LessonsRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,7 +52,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
 
                     // Create Lesson from the data in the cursor
                     val lesson = Lesson(
-                        cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_NAME)),
+                        cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.LESSON_SUBJECT)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_WEEK)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_STARTS)),
@@ -62,7 +60,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_LOCATION))
                     )
                     // Id is not set in the instructor
-                    lesson.id = cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
+                    lesson.lessonId = cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
 
                     holder.bind(lesson)
                 }
@@ -81,6 +79,15 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorLessons
         return if (cursor == null) VIEW_TYPE_PLACEHOLDER else if (cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+    }
+
+    /**
+     * Swap in the drawable of the fragment details
+     *
+     * @param drawable The new drawable object to be used
+     */
+    fun swapDrawable(drawable: Drawable) {
+        subjectIndicator = drawable
     }
 
     /**
@@ -113,7 +120,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
         open fun bind(lesson: Lesson) {}
     }
 
-    private class LessonViewHolder(override val containerView: View) : ViewHolder(containerView) {
+    private inner class LessonViewHolder(override val containerView: View) : ViewHolder(containerView) {
 
         override fun bind(lesson: Lesson) {
             containerView.details_list_title.text = lesson.day
@@ -123,6 +130,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
                 lesson.ends
             )
             containerView.details_list_header2.text = lesson.location
+            containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
         }
 
     }
@@ -130,5 +138,4 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
     // We do not need to override the bind method since we're not putting any data into the empty view
     private class EmptyLessonViewHolder(override val containerView: View) :
         ViewHolder(containerView)
-
 }

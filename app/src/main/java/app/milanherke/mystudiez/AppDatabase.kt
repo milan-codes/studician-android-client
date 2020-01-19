@@ -27,6 +27,7 @@ internal class AppDatabase private constructor(context: Context) :
         val taskSQL = createTaskSQL()
         val examSQL = createExamSQL()
         try {
+            db?.execSQL("PRAGMA foreign_keys = ON;")
             db?.execSQL(subjectSQL)
             db?.execSQL(lessonSQL)
             db?.execSQL(taskSQL)
@@ -51,10 +52,10 @@ internal class AppDatabase private constructor(context: Context) :
     private fun createSubjectSQL(): String {
         try {
             val sSQL = """CREATE TABLE ${SubjectsContract.TABLE_NAME} (
-                ${SubjectsContract.Columns.SUBJECT_ID} INTEGER PRIMARY KEY NOT NULL,
+                ${SubjectsContract.Columns.ID} INTEGER PRIMARY KEY NOT NULL,
                 ${SubjectsContract.Columns.SUBJECT_NAME} TEXT NOT NULL,
                 ${SubjectsContract.Columns.SUBJECT_TEACHER} TEXT NOT NULL,
-                ${SubjectsContract.Columns.SUBJECT_COLORCODE} TEXT NOT NULL);
+                ${SubjectsContract.Columns.SUBJECT_COLORCODE} INT NOT NULL);
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
@@ -68,12 +69,13 @@ internal class AppDatabase private constructor(context: Context) :
         try {
             val sSQL = """CREATE TABLE ${LessonsContract.TABLE_NAME} (
                 ${LessonsContract.Columns.ID} INTEGER PRIMARY KEY NOT NULL,
-                ${LessonsContract.Columns.LESSON_NAME} TEXT NOT NULL,
+                ${LessonsContract.Columns.LESSON_SUBJECT} INTEGER,
                 ${LessonsContract.Columns.LESSON_WEEK} TEXT,
                 ${LessonsContract.Columns.LESSON_DAY} TEXT NOT NULL,
                 ${LessonsContract.Columns.LESSON_STARTS} TEXT NOT NULL,
                 ${LessonsContract.Columns.LESSON_ENDS} TEXT NOT NULL,
-                ${LessonsContract.Columns.LESSON_LOCATION} TEXT NOT NULL);
+                ${LessonsContract.Columns.LESSON_LOCATION} TEXT NOT NULL,
+                FOREIGN KEY(${LessonsContract.Columns.LESSON_SUBJECT}) REFERENCES ${SubjectsContract.TABLE_NAME}(${SubjectsContract.Columns.ID}));
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
@@ -90,9 +92,10 @@ internal class AppDatabase private constructor(context: Context) :
                 ${TasksContract.Columns.TASK_NAME} TEXT NOT NULL,
                 ${TasksContract.Columns.TASK_DESCRIPTION} TEXT,
                 ${TasksContract.Columns.TASK_TYPE} TEXT NOT NULL,
-                ${TasksContract.Columns.TASK_SUBJECT} TEXT NOT NULL,
+                ${TasksContract.Columns.TASK_SUBJECT} INTEGER,
                 ${TasksContract.Columns.TASK_DUEDATE} TEXT NOT NULL,
-                ${TasksContract.Columns.TASK_REMINDER} TEXT);
+                ${TasksContract.Columns.TASK_REMINDER} TEXT,
+                FOREIGN KEY(${TasksContract.Columns.TASK_SUBJECT}) REFERENCES ${SubjectsContract.TABLE_NAME}(${SubjectsContract.Columns.ID}));
             """.replaceIndent(" ")
             Log.i(TAG, sSQL)
             return sSQL
@@ -105,12 +108,13 @@ internal class AppDatabase private constructor(context: Context) :
     private fun createExamSQL(): String {
         try {
             val sSQL = """CREATE TABLE ${ExamsContract.TABLE_NAME} (
-                ${ExamsContract.Columns.EXAM_ID} INTEGER PRIMARY KEY NOT NULL,
+                ${ExamsContract.Columns.ID} INTEGER PRIMARY KEY NOT NULL,
                 ${ExamsContract.Columns.EXAM_NAME} TEXT NOT NULL,
                 ${ExamsContract.Columns.EXAM_DESCRIPTION} TEXT,
-                ${ExamsContract.Columns.EXAM_SUBJECT} TEXT NOT NULL,
+                ${ExamsContract.Columns.EXAM_SUBJECT} INTEGER,
                 ${ExamsContract.Columns.EXAM_DATE} TEXT NOT NULL,
-                ${ExamsContract.Columns.EXAM_REMINDER} TEXT);
+                ${ExamsContract.Columns.EXAM_REMINDER} TEXT,
+                FOREIGN KEY(${ExamsContract.Columns.EXAM_SUBJECT}) REFERENCES ${SubjectsContract.TABLE_NAME}(${SubjectsContract.Columns.ID}));
             """.trimMargin()
             Log.i(TAG, sSQL)
             return sSQL

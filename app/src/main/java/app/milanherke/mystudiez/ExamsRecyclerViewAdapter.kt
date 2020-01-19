@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.database.Cursor
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import java.lang.IllegalStateException
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 
-class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?) :
+class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?, private var dayIndicator: Drawable?) :
     RecyclerView.Adapter<ExamsRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,13 +48,13 @@ class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?) :
                     val exam = Exam(
                         cursor.getString(cursor.getColumnIndex(ExamsContract.Columns.EXAM_NAME)),
                         cursor.getString(cursor.getColumnIndex(ExamsContract.Columns.EXAM_DESCRIPTION)),
-                        cursor.getString(cursor.getColumnIndex(ExamsContract.Columns.EXAM_SUBJECT)),
+                        cursor.getLong(cursor.getColumnIndex(ExamsContract.Columns.EXAM_SUBJECT)),
                         cursor.getString(cursor.getColumnIndex(ExamsContract.Columns.EXAM_DATE)),
                         cursor.getString(cursor.getColumnIndex(ExamsContract.Columns.EXAM_REMINDER))
                     )
 
                     // Id is not set in the constructor
-                    exam.id = cursor.getLong(cursor.getColumnIndex(ExamsContract.Columns.EXAM_ID))
+                    exam.examId = cursor.getLong(cursor.getColumnIndex(ExamsContract.Columns.ID))
 
                     holder.bind(exam)
                 }
@@ -69,6 +70,15 @@ class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?) :
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorExams
         return if (cursor == null || cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+    }
+
+    /**
+     * Swap in the drawable of the fragment details
+     *
+     * @param drawable The new drawable object to be used
+     */
+    fun swapDrawable(drawable: Drawable) {
+        dayIndicator = drawable
     }
 
     /**
@@ -101,12 +111,15 @@ class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?) :
         open fun bind(exam: Exam) {}
     }
 
-    private class ExamViewHolder(override val containerView: View) : ViewHolder(containerView) {
+    private inner class ExamViewHolder(override val containerView: View) : ViewHolder(containerView) {
 
         override fun bind(exam: Exam) {
             containerView.details_list_title.text = exam.name
-            containerView.details_list_header1.text = exam.subject
-            containerView.details_list_header2.text = exam.date
+            containerView.details_list_header1.text = exam.date
+            containerView.details_list_header2.visibility = View.GONE
+
+            // We're creating a clone because we do not want to affect the other instances
+            containerView.details_list_subject_indicator.setImageDrawable(dayIndicator)
         }
 
     }

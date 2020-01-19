@@ -59,15 +59,15 @@ class SubjectsRecyclerViewAdapter(
                     val subject = Subject(
                         cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_NAME)),
                         cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_TEACHER)),
-                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
+                        cursor.getInt(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
                     )
                     // Id is not set in the instructor
-                    subject.id =
-                        cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_ID))
+                    subject.subjectId =
+                        cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.ID))
 
                     val days = arrayListOf<String>()
                     for (lesson in lessonsFromCursor) {
-                        if (lesson.name == subject.name) {
+                        if (lesson.subjectId == subject.subjectId) {
                             days.add(lesson.day)
                         }
                     }
@@ -151,14 +151,14 @@ class SubjectsRecyclerViewAdapter(
         try {
             while (cursor.moveToNext()) {
                 val lesson = Lesson(
-                    cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_NAME)),
+                    cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.LESSON_SUBJECT)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_WEEK)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_STARTS)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_ENDS)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_LOCATION))
                 )
-                lesson.id = cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
+                lesson.lessonId = cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
                 lessonsFromCursor.add(lesson)
             }
         } catch (e: Exception) {

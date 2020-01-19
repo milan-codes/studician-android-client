@@ -1,10 +1,10 @@
 package app.milanherke.mystudiez
 
-import android.graphics.drawable.ColorDrawable
+import android.content.Context
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.ShapeDrawable
-import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -14,6 +14,7 @@ fun FragmentActivity.findFragmentById(id: Int): Fragment? {
     return supportFragmentManager.findFragmentById(id)
 }
 
+//////////////////////////////////////////////////
 /**
  * Extension function from Dinesh Babuhunky
  */
@@ -32,10 +33,15 @@ fun FragmentActivity.replaceFragment(fragment: Fragment, frameId: Int) {
 fun FragmentActivity.removeFragment(fragment: Fragment) {
     supportFragmentManager.inTransaction { remove(fragment) }
 }
-fun Drawable.overrideColor(@ColorInt colorInt: Int) {
-    when (this) {
-        is GradientDrawable -> setColor(colorInt)
-        is ShapeDrawable -> paint.color = colorInt
-        is ColorDrawable -> color = colorInt
-    }
+//////////////////////////////////////////////////
+
+fun Drawable.displayColor(@ColorRes colorRes: Int, context: Context) {
+    DrawableCompat.setTint(
+        DrawableCompat.wrap(this),
+        ContextCompat.getColor(context, colorRes)
+    )
+}
+
+fun Drawable.mutatedClone(): Drawable {
+    return this.constantState!!.newDrawable().mutate()
 }

@@ -20,10 +20,10 @@ object ExamsContract {
      * Fields
      */
     object Columns {
-        const val EXAM_ID = BaseColumns._ID
+        const val ID = BaseColumns._ID
         const val EXAM_NAME = "Name"
         const val EXAM_DESCRIPTION = "Description"
-        const val EXAM_SUBJECT = "Subject"
+        const val EXAM_SUBJECT = "SubjectId"
         const val EXAM_DATE = "ExamDate"
         const val EXAM_REMINDER = "ExamReminder"
     }

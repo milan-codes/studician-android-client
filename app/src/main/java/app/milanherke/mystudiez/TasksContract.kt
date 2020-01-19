@@ -24,7 +24,7 @@ object TasksContract {
         const val TASK_NAME = "Name"
         const val TASK_DESCRIPTION = "Description"
         const val TASK_TYPE = "Type"
-        const val TASK_SUBJECT = "Subject"
+        const val TASK_SUBJECT = "SubjectId"
         const val TASK_DUEDATE = "DueDate"
         const val TASK_REMINDER = "Reminder"
     }

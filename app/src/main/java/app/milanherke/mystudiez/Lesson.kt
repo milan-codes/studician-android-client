@@ -5,11 +5,11 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Lesson(
-    var name: String,
+    var subjectId: Long,
     var week: String,
     var day: String,
     var starts: String,
     var ends: String,
     var location: String,
-    var id: Long = 0
+    var lessonId: Long = 0
 ) : Parcelable

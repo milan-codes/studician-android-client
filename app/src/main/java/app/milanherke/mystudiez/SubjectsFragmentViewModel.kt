@@ -65,7 +65,7 @@ class SubjectsFragmentViewModel(application: Application) : AndroidViewModel(app
 
     fun loadSubjects() {
         val projection = arrayOf(
-            SubjectsContract.Columns.SUBJECT_ID,
+            SubjectsContract.Columns.ID,
             SubjectsContract.Columns.SUBJECT_NAME,
             SubjectsContract.Columns.SUBJECT_TEACHER,
             SubjectsContract.Columns.SUBJECT_COLORCODE
@@ -85,7 +85,7 @@ class SubjectsFragmentViewModel(application: Application) : AndroidViewModel(app
     fun loadLessonsForSubjects() {
         val projection = arrayOf(
             LessonsContract.Columns.ID,
-            LessonsContract.Columns.LESSON_NAME,
+            LessonsContract.Columns.LESSON_SUBJECT,
             LessonsContract.Columns.LESSON_WEEK,
             LessonsContract.Columns.LESSON_DAY,
             LessonsContract.Columns.LESSON_STARTS,

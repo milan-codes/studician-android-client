@@ -37,7 +37,7 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
         get() = _loading
 
     // Live Data
-    val subjectFilter = MutableLiveData<String>()
+    val subjectFilter = MutableLiveData<Long>()
 
     private val databaseCursorSelectedLessons = MutableLiveData<Cursor>()
     val cursorSelectedLessons: LiveData<Cursor>
@@ -84,7 +84,7 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
         )
     }
 
-    fun loadAllDetails(selected: String) {
+    fun loadAllDetails(selected: Long) {
         _loading.postValue(true)
         loadSelectedLessons(selected)
         loadSelectedTasks(selected)
@@ -92,10 +92,10 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
         _loading.postValue(false)
     }
 
-    private fun loadSelectedLessons(selected: String) {
+    private fun loadSelectedLessons(selected: Long) {
         val projection = arrayOf(
             LessonsContract.Columns.ID,
-            LessonsContract.Columns.LESSON_NAME,
+            LessonsContract.Columns.LESSON_SUBJECT,
             LessonsContract.Columns.LESSON_WEEK,
             LessonsContract.Columns.LESSON_DAY,
             LessonsContract.Columns.LESSON_STARTS,
@@ -106,15 +106,15 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
             val cursor = getApplication<Application>().contentResolver.query(
                 LessonsContract.CONTENT_URI,
                 projection,
-                "Name = ?",
-                arrayOf(selected),
+                "${LessonsContract.Columns.LESSON_SUBJECT} = ?",
+                arrayOf(selected.toString()),
                 null
             )
             databaseCursorSelectedLessons.postValue(cursor)
         }
     }
 
-    private fun loadSelectedTasks(selected: String) {
+    private fun loadSelectedTasks(selected: Long) {
         val projection = arrayOf(
             TasksContract.Columns.ID,
             TasksContract.Columns.TASK_NAME,
@@ -129,16 +129,16 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                 TasksContract.CONTENT_URI,
                 projection,
                 "${TasksContract.Columns.TASK_SUBJECT} = ?",
-                arrayOf(selected),
+                arrayOf(selected.toString()),
                 null
             )
             databaseCursorSelectedTasks.postValue(cursor)
         }
     }
 
-    private fun loadSelectedExams(selected: String) {
+    private fun loadSelectedExams(selected: Long) {
         val projection = arrayOf(
-            ExamsContract.Columns.EXAM_ID,
+            ExamsContract.Columns.ID,
             ExamsContract.Columns.EXAM_NAME,
             ExamsContract.Columns.EXAM_DESCRIPTION,
             ExamsContract.Columns.EXAM_SUBJECT,
@@ -150,7 +150,7 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                 ExamsContract.CONTENT_URI,
                 projection,
                 "${ExamsContract.Columns.EXAM_SUBJECT} = ?",
-                arrayOf(selected),
+                arrayOf(selected.toString()),
                 null
             )
             databaseCursorSelectedExams.postValue(cursor)

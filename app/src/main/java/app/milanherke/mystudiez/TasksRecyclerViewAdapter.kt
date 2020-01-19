@@ -1,19 +1,19 @@
 package app.milanherke.mystudiez
 
 import android.database.Cursor
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.details_list_item.view.*
-import kotlinx.android.synthetic.main.no_task_list_item.view.*
 import java.lang.IllegalStateException
 
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 
-class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?) :
+class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?, private var subjectIndicator: Drawable?) :
     RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,13 +49,13 @@ class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?) :
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_NAME)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_DESCRIPTION)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_TYPE)),
-                        cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_SUBJECT)),
+                        cursor.getLong(cursor.getColumnIndex(TasksContract.Columns.TASK_SUBJECT)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_DUEDATE)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_REMINDER))
                     )
 
                     // Id is not set in the constructor
-                    task.id = cursor.getLong(cursor.getColumnIndex(TasksContract.Columns.ID))
+                    task.taskId = cursor.getLong(cursor.getColumnIndex(TasksContract.Columns.ID))
 
                     holder.bind(task)
                 }
@@ -71,6 +71,15 @@ class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?) :
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorTasks
         return if (cursor == null || cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+    }
+
+    /**
+     * Swap in the drawable of the fragment details
+     *
+     * @param drawable The new drawable object to be used
+     */
+    fun swapDrawable(drawable: Drawable) {
+        subjectIndicator = drawable
     }
 
     /**
@@ -103,12 +112,15 @@ class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?) :
         open fun bind(task: Task) {}
     }
 
-    private class TaskViewHolder(override val containerView: View) : ViewHolder(containerView) {
+    private inner class TaskViewHolder(override val containerView: View) : ViewHolder(containerView) {
 
         override fun bind(task: Task) {
             containerView.details_list_title.text = task.name
-            containerView.details_list_header1.text = task.subject
-            containerView.details_list_header2.text = task.dueDate
+            containerView.details_list_header1.text = task.dueDate
+            containerView.details_list_header2.visibility = View.GONE
+
+            // We're creating a clone because we do not want to affect the other instances
+            containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
         }
 
     }

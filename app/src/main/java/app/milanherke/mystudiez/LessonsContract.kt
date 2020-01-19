@@ -21,8 +21,8 @@ object LessonsContract {
      */
     object Columns {
         const val ID = BaseColumns._ID
-        const val LESSON_NAME = "Name"
-        const val LESSON_WEEK = "AORBWeek"
+        const val LESSON_SUBJECT = "SubjectId"
+        const val LESSON_WEEK = "Week"
         const val LESSON_DAY = "Day"
         const val LESSON_STARTS = "Starts"
         const val LESSON_ENDS = "Ends"

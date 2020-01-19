@@ -13,4 +13,21 @@
     <color name="colorBtn">#176BAA</color>
 
     <!-- Resource colors to mark subjects -->
+    <color name="subjectColorRed">#F44236</color>
+    <color name="subjectColorPink">#EA1E63</color>
+    <color name="subjectColorPurple">#9C28AF</color>
+    <color name="subjectColorDeepPurple">#673BB7</color>
+    <color name="subjectColorIndigo">#3F51B5</color>
+    <color name="subjectColorBlue">#2196F3</color>
+    <color name="subjectColorLightBlue">#03A9F3</color>
+    <color name="subjectColorCyan">#00BDD4</color>
+    <color name="subjectColorTeal">#009788</color>
+    <color name="subjectColorGreen">#4CAF52</color>
+    <color name="subjectColorLightGreen">#8BC24A</color>
+    <color name="subjectColorLime">#CDDC39</color>
+    <color name="subjectColorYellow">#FFEA3C</color>
+    <color name="subjectColorAmber">#FEC107</color>
+    <color name="subjectColorOrange">#FF9700</color>
+    <color name="subjectColorDeepOrange">#FE5722</color>
+    <color name="subjectColorBlueGray">#607D8B</color>
 </resources>
