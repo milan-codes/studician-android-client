@@ -19,19 +19,18 @@ import kotlinx.android.synthetic.main.fragment_subjects.*
 class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickListener {
 
     private val viewModel by lazy {
-        ViewModelProviders.of(activity!!).get(MyStudiezViewModel::class.java)
+        ViewModelProviders.of(activity!!).get(SubjectsFragmentViewModel::class.java)
     }
-    private val mAdapter = SubjectsRecyclerViewAdapter(null, null, this)
+    private val subjectsAdapter = SubjectsRecyclerViewAdapter(null, null, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.subjectFilter.observe(this, Observer { name -> viewModel.loadAllDetails(name) })
         viewModel.cursorSubjects.observe(
             this,
-            Observer { cursor -> mAdapter.swapSubjectsCursor(cursor)?.close() })
+            Observer { cursor -> subjectsAdapter.swapSubjectsCursor(cursor)?.close() })
         viewModel.cursorLessons.observe(
             this,
-            Observer { cursor -> mAdapter.swapLessonsCursor(cursor)?.close() })
+            Observer { cursor -> subjectsAdapter.swapLessonsCursor(cursor)?.close() })
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -47,7 +46,7 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         activity!!.toolbar.setTitle(R.string.subjects_title)
 
         subject_list.layoutManager = LinearLayoutManager(context)
-        subject_list.adapter = mAdapter
+        subject_list.adapter = subjectsAdapter
     }
 
     override fun onCreateView(
@@ -73,7 +72,7 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     }
 
     override fun onSubjectClick(subject: Subject) {
-        viewModel.subjectFilter.postValue(subject.name)
+
         activity!!.replaceFragment(LessonsFragment.newInstance(subject), R.id.fragment_container)
     }
 }

@@ -14,6 +14,7 @@ import java.lang.IllegalStateException
 
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
+private const val VIEW_TYPE_PLACEHOLDER = 2
 
 class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
     RecyclerView.Adapter<LessonsRecyclerViewAdapter.ViewHolder>() {
@@ -28,6 +29,11 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
             VIEW_TYPE_NOT_EMPTY -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.details_list_item, parent, false)
+                LessonViewHolder(view)
+            }
+            VIEW_TYPE_PLACEHOLDER -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.list_item_placeholder, parent, false)
                 LessonViewHolder(view)
             }
             else -> throw IllegalStateException("Couldn't recognise the view type")
@@ -61,6 +67,9 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
                     holder.bind(lesson)
                 }
             }
+            VIEW_TYPE_PLACEHOLDER -> {
+                // We are not putting any data into the empty view, therefore we do not need to do anything here
+            }
         }
     }
 
@@ -71,7 +80,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?) :
 
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorLessons
-        return if (cursor == null || cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+        return if (cursor == null) VIEW_TYPE_PLACEHOLDER else if (cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
     }
 
     /**
