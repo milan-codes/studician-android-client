@@ -1,5 +1,6 @@
 package app.milanherke.mystudiez
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 
 private const val TAG = "MainActivity"
 
@@ -21,8 +23,7 @@ var APP_STATE = SUBJECTS_STATE
 
 
 class MainActivity : AppCompatActivity(),
-    LessonsFragment.OnLessonClick {
-
+    SubjectDetailsFragment.OnLessonClick {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate: starts")
@@ -34,8 +35,16 @@ class MainActivity : AppCompatActivity(),
         replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            when(val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
+                is SubjectsFragment -> {
+                    val intent = Intent(this, NewSubjectActivity::class.java)
+                    this.startActivity(intent)
+                } else -> {
+                    Snackbar.make(view, "You are in the SubjectDetailsFragment", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show()
+                    throw IllegalStateException("Unrecognised fragment $fragment")
+                }
+            }
         }
 
         // Showing the bottom navigation bar
@@ -66,7 +75,7 @@ class MainActivity : AppCompatActivity(),
         when (item.itemId) {
             android.R.id.home -> {
                 when (findFragmentById(R.id.fragment_container)) {
-                    is LessonsFragment -> {
+                    is SubjectDetailsFragment -> {
                         replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
                     }
                 }

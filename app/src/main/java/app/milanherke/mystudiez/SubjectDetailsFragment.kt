@@ -20,12 +20,12 @@ private const val ARG_SUBJECT = "subject"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [LessonsFragment.OnLessonClick] interface
+ * [SubjectDetailsFragment.OnLessonClick] interface
  * to handle interaction events.
- * Use the [LessonsFragment.newInstance] factory method to
+ * Use the [SubjectDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class LessonsFragment : Fragment() {
+class SubjectDetailsFragment : Fragment() {
 
     private var listener: OnLessonClick? = null
     private var subject: Subject? = null
@@ -125,11 +125,11 @@ class LessonsFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param subject The subject to be edited.
-         * @return A new instance of fragment LessonsFragment.
+         * @return A new instance of fragment SubjectDetailsFragment.
          */
         @JvmStatic
         fun newInstance(subject: Subject) =
-            LessonsFragment().apply {
+            SubjectDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_SUBJECT, subject)
                 }
