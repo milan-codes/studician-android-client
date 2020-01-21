@@ -85,7 +85,6 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     }
 
     override fun onSubjectClick(subject: Subject) {
-
         activity!!.replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
     }
 }

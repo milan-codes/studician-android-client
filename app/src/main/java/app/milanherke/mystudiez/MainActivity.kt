@@ -1,8 +1,6 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -18,7 +16,6 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
-import java.util.*
 
 private const val TAG = "MainActivity"
 
@@ -27,7 +24,7 @@ var APP_STATE = SUBJECTS_STATE
 
 
 class MainActivity : AppCompatActivity(),
-    SubjectDetailsFragment.OnLessonClick, AddEditSubjectFragment.OnSaveSubjectClick {
+    SubjectDetailsFragment.SubjectDetailsInteraction, AddEditSubjectFragment.OnSaveSubjectClick {
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +49,6 @@ class MainActivity : AppCompatActivity(),
                     replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
                     bar.visibility = View.INVISIBLE
                     fab.visibility = View.INVISIBLE
-
                 } else -> {
                     Snackbar.make(view, "You are in the SubjectDetailsFragment", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show()
@@ -99,10 +95,9 @@ class MainActivity : AppCompatActivity(),
     }
 
 
-
     // Fragment interfaces
-    override fun onLessonTap(uri: Uri) {
-        Toast.makeText(this, "RecyclerView tapped", Toast.LENGTH_SHORT).show()
+    override fun onSubjectEditButtonClick() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onSaveSubjectClick() {
