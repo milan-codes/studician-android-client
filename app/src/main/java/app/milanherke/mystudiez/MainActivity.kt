@@ -1,5 +1,6 @@
 package app.milanherke.mystudiez
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -25,8 +27,9 @@ var APP_STATE = SUBJECTS_STATE
 
 
 class MainActivity : AppCompatActivity(),
-    SubjectDetailsFragment.OnLessonClick {
+    SubjectDetailsFragment.OnLessonClick, AddEditSubjectFragment.OnSaveSubjectClick {
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate: starts")
         super.onCreate(savedInstanceState)
@@ -36,11 +39,20 @@ class MainActivity : AppCompatActivity(),
 
         replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
 
+        // Showing the bottom navigation bar
+        val bottomBar = findViewById<BottomAppBar>(R.id.bar)
+        bottomBar.setNavigationOnClickListener {
+            val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
+            bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
+        }
+
         fab.setOnClickListener { view ->
             when(val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
                 is SubjectsFragment -> {
-                    val intent = Intent(this, NewSubjectActivity::class.java)
-                    this.startActivity(intent)
+                    replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
+                    bar.visibility = View.INVISIBLE
+                    fab.visibility = View.INVISIBLE
+
                 } else -> {
                     Snackbar.make(view, "You are in the SubjectDetailsFragment", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show()
@@ -49,12 +61,6 @@ class MainActivity : AppCompatActivity(),
             }
         }
 
-        // Showing the bottom navigation bar
-        val bottomBar = findViewById<BottomAppBar>(R.id.bar)
-        bottomBar.setNavigationOnClickListener {
-            val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
-            bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
-        }
     }
 
     private fun loadCorrectFragment(frag: String): Fragment {
@@ -74,12 +80,16 @@ class MainActivity : AppCompatActivity(),
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        val fragment = findFragmentById(R.id.fragment_container)
         when (item.itemId) {
             android.R.id.home -> {
-                when (findFragmentById(R.id.fragment_container)) {
+                when (fragment) {
                     is SubjectDetailsFragment -> {
                         replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
                     }
+                    is AddEditSubjectFragment -> {
+                        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                    } else -> throw IllegalArgumentException("Home button used by unrecognised fragment $fragment")
                 }
             }
             else -> super.onOptionsItemSelected(item)
@@ -88,85 +98,14 @@ class MainActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    private fun testInsertMatek() {
-        var values = ContentValues().apply {
-            put(SubjectsContract.Columns.SUBJECT_NAME, "Matematika")
-            put(SubjectsContract.Columns.SUBJECT_TEACHER, "Sheldon Cooper")
-            put(SubjectsContract.Columns.SUBJECT_COLORCODE, R.color.subjectColorAmber)
-        }
 
-        val uri = contentResolver.insert(SubjectsContract.CONTENT_URI, values)
-        val id = SubjectsContract.getId(uri!!)
-
-        values = ContentValues().apply {
-            put(LessonsContract.Columns.LESSON_SUBJECT, id)
-            put(LessonsContract.Columns.LESSON_WEEK, "A")
-            put(LessonsContract.Columns.LESSON_DAY, "Monday")
-            put(LessonsContract.Columns.LESSON_STARTS, "8:15")
-            put(LessonsContract.Columns.LESSON_ENDS, "9:30")
-            put(LessonsContract.Columns.LESSON_LOCATION, "32-es terem")
-        }
-
-        contentResolver.insert(LessonsContract.CONTENT_URI, values)
-
-        values = ContentValues().apply {
-            put(LessonsContract.Columns.LESSON_SUBJECT, id)
-            put(LessonsContract.Columns.LESSON_WEEK, "A")
-            put(LessonsContract.Columns.LESSON_DAY, "Thursday")
-            put(LessonsContract.Columns.LESSON_STARTS, "10:15")
-            put(LessonsContract.Columns.LESSON_ENDS, "11:30")
-            put(LessonsContract.Columns.LESSON_LOCATION, "38-as terem")
-        }
-
-        contentResolver.insert(LessonsContract.CONTENT_URI, values)
-
-        values = ContentValues().apply {
-            put(LessonsContract.Columns.LESSON_SUBJECT, id)
-            put(LessonsContract.Columns.LESSON_WEEK, "A")
-            put(LessonsContract.Columns.LESSON_DAY, "Friday")
-            put(LessonsContract.Columns.LESSON_STARTS, "8:30")
-            put(LessonsContract.Columns.LESSON_ENDS, "10:00")
-            put(LessonsContract.Columns.LESSON_LOCATION, "16-os terem")
-        }
-
-        contentResolver.insert(LessonsContract.CONTENT_URI, values)
-
-        values = ContentValues().apply {
-            put(TasksContract.Columns.TASK_NAME, "16. oldal, 3. feladat")
-            put(TasksContract.Columns.TASK_DESCRIPTION, "Összes feladat")
-            put(TasksContract.Columns.TASK_TYPE, "Assignment")
-            put(TasksContract.Columns.TASK_SUBJECT, id)
-            put(TasksContract.Columns.TASK_DUEDATE, Date().toString())
-            put(TasksContract.Columns.TASK_REMINDER, Date().toString())
-        }
-
-        contentResolver.insert(TasksContract.CONTENT_URI, values)
-
-        values = ContentValues().apply {
-            put(TasksContract.Columns.TASK_NAME, "19. oldal, 1. feladat")
-            put(TasksContract.Columns.TASK_DESCRIPTION, "Összes feladat")
-            put(TasksContract.Columns.TASK_TYPE, "Assignment")
-            put(TasksContract.Columns.TASK_SUBJECT, id)
-            put(TasksContract.Columns.TASK_DUEDATE, Date().toString())
-            put(TasksContract.Columns.TASK_REMINDER, Date().toString())
-        }
-
-        contentResolver.insert(TasksContract.CONTENT_URI, values)
-
-        values = ContentValues().apply {
-            put(ExamsContract.Columns.EXAM_NAME, "Térgeometria")
-            put(ExamsContract.Columns.EXAM_DESCRIPTION, "Minden térgeometriával kapcsolatos feladat")
-            put(ExamsContract.Columns.EXAM_SUBJECT, id)
-            put(ExamsContract.Columns.EXAM_DATE, Date().toString())
-            put(ExamsContract.Columns.EXAM_REMINDER, Date().toString())
-        }
-
-        contentResolver.insert(ExamsContract.CONTENT_URI, values)
-    }
 
     // Fragment interfaces
     override fun onLessonTap(uri: Uri) {
         Toast.makeText(this, "RecyclerView tapped", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onSaveSubjectClick() {
+        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+    }
 }

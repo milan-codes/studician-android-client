@@ -5,19 +5,18 @@ import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class SubjectsFragmentViewModel(application: Application) : AndroidViewModel(application) {
+class SubjectsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val contentObserverSubject = object : ContentObserver(Handler()) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
-            if (uri!! == LessonsContract.CONTENT_URI) {
                 loadSubjects()
-            }
         }
     }
 
@@ -42,7 +41,6 @@ class SubjectsFragmentViewModel(application: Application) : AndroidViewModel(app
             true,
             contentObserverSubject
         )
-        loadSubjects()
 
         // Register the content observer for lessons
         getApplication<Application>().contentResolver.registerContentObserver(
@@ -50,7 +48,6 @@ class SubjectsFragmentViewModel(application: Application) : AndroidViewModel(app
             true,
             contentObserverSubjectLessons
         )
-        loadLessonsForSubjects()
     }
 
     override fun onCleared() {

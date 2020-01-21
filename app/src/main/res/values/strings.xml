@@ -34,4 +34,36 @@
     <string name="no_lesson_img_description">An illustration that describes that there are no Lessons</string>
     <string name="subjects_recycler_empty">You didn\'t add any subject. Tap on the + button!</string>
     <string name="no_subject_img_description">An illustration that describes that there are no Subjects</string>
+    <string name="new_subject_activity_title">New subject</string>
+    <string name="title_activity_new_subject">NewSubjectActivity</string>
+    <string name="new_subject_details">Details</string>
+    <string name="new_subject_name_title">Name:</string>
+    <string name="new_subject_teacher_title">Teacher:</string>
+    <string name="new_subject_colorcode_title">Color:</string>
+    <string name="new_subject_name_hint">Subject\'s name</string>
+    <string name="new_subject_teacher_hint">Subject\'s teacher</string>
+    <string name="new_subject_color_button">Select color</string>
+    <string name="new_subject_save_btn">Save changes</string>
+    <string name="selected_color_circle_description">The color selected by the user for the subject</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_new_subject_title">Add new subject</string>
+    <string name="edit_subject_title">Edit %s</string>
+    <string name="colorRedTitle">Red</string>
+    <string name="colorPinkTitle">Pink</string>
+    <string name="colorPurpleTitle">Purple</string>
+    <string name="colorDeepPurpleTitle">Deep purple</string>
+    <string name="colorIndigoTitle">Indigo</string>
+    <string name="colorBlueTitle">Blue</string>
+    <string name="colorLightBlueTitle">Light blue</string>
+    <string name="colorCyanTitle">Cyan</string>
+    <string name="colorTealTitle">Teal</string>
+    <string name="colorGreenTitle">Green</string>
+    <string name="colorLightGreenTitle">Light green</string>
+    <string name="colorLimeTitle">Lime</string>
+    <string name="colorYellowTitle">Yellow</string>
+    <string name="colorAmberTitle">Amber</string>
+    <string name="colorOrangeTitle">Orange</string>
+    <string name="colorDeepOrangeTitle">Deep orange</string>
+    <string name="colorBlueGrayTitle">Blue gray</string>
 </resources>

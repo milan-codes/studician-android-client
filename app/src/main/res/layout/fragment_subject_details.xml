@@ -1,188 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/subject_details_container"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorBackgroundPrimary"
-    android:backgroundTint="@color/colorBackgroundPrimary"
-    android:orientation="vertical"
-    android:scrollIndicators="none"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/subject_details_title"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/subject_details_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="@string/details_title"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/colorBackgroundPrimary"
+        android:backgroundTint="@color/colorBackgroundPrimary"
+        android:orientation="vertical"
+        android:scrollIndicators="none"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/subject_details_cardview"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_details_title">
+        <TextView
+            android:id="@+id/subject_details_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/details_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/subject_info_container"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/subject_details_cardview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_title">
+
+            <LinearLayout
+                android:id="@+id/subject_info_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="18dp">
+
+                <TextView
+                    android:id="@+id/subject_details_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/details_subject_title"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <TextView
+                    android:id="@+id/subject_details_name_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="14sp"
+                    tools:text="Calculus I" />
+
+                <TextView
+                    android:id="@+id/subject_details_teacher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/details_teacher_name"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <TextView
+                    android:id="@+id/subject_details_teacher_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/colorTextSecondary"
+                    android:textSize="14sp"
+                    tools:text="Mr. Cooper" />
+
+                <TextView
+                    android:id="@+id/subject_details_color"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:text="@string/details_colorcode"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <ImageView
+                    android:id="@+id/subject_details_color_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="1dp"
+                    android:contentDescription="@string/subject_indicator_description"
+                    android:src="@drawable/subject_indicator_circle" />
+
+                <Button
+                    android:id="@+id/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/circular_button"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:includeFontPadding="false"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/details_edit_button"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/subject_details_lessons_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/subject_details_lessons_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_cardview" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subject_details_lessons_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingTop="18dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="18dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:isScrollContainer="false"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_lessons_title" />
 
-            <TextView
-                android:id="@+id/subject_details_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_medium"
-                android:text="@string/details_subject_title"
-                android:textColor="@color/colorTextPrimary" />
+        <TextView
+            android:id="@+id/subject_details_tasks_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/tasks_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_lessons_recycler" />
 
-            <TextView
-                android:id="@+id/subject_details_name_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="14sp"
-                tools:text="Calculus I" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subject_details_tasks_recycler"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:isScrollContainer="false"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_tasks_title" />
 
-            <TextView
-                android:id="@+id/subject_details_teacher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:fontFamily="@font/montserrat_medium"
-                android:text="@string/details_teacher_name"
-                android:textColor="@color/colorTextPrimary" />
+        <TextView
+            android:id="@+id/subject_details_exams_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/exams_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_tasks_recycler" />
 
-            <TextView
-                android:id="@+id/subject_details_teacher_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/colorTextSecondary"
-                android:textSize="14sp"
-                tools:text="Mr. Cooper" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subject_details_exams_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:isScrollContainer="false"
+            android:nestedScrollingEnabled="false"
+            android:paddingBottom="96dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/subject_details_exams_title" />
 
-            <TextView
-                android:id="@+id/subject_details_color"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:fontFamily="@font/montserrat_medium"
-                android:text="@string/details_colorcode"
-                android:textColor="@color/colorTextPrimary" />
-
-            <ImageView
-                android:id="@+id/subject_details_color_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:contentDescription="@string/subject_indicator_description"
-                android:src="@drawable/subject_indicator_circle" />
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/circular_button"
-                android:fontFamily="@font/montserrat_medium"
-                android:includeFontPadding="false"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="@string/details_edit_button"
-                android:textColor="#ffffff" />
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/subject_details_lessons_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="@string/subject_details_lessons_title"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_details_cardview" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/subject_details_lessons_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:isScrollContainer="false"
-        android:nestedScrollingEnabled="false"
-        android:scrollbars="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_details_lessons_title" />
-
-    <TextView
-        android:id="@+id/subject_details_tasks_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="@string/tasks_title"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_details_lessons_recycler" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/subject_details_tasks_recycler"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:isScrollContainer="false"
-        android:nestedScrollingEnabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_details_tasks_title" />
-
-    <TextView
-        android:id="@+id/subject_details_exams_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="@string/exams_title"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subject_details_tasks_recycler" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/subject_details_exams_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:clipToPadding="false"
-        android:isScrollContainer="false"
-        android:nestedScrollingEnabled="false"
-        android:paddingBottom="96dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/subject_details_exams_title" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

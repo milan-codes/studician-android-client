@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/color_option_red"
+        android:icon="@drawable/circle_has_lesson"
+        android:title="@string/colorRedTitle" />
+    <item
+        android:id="@+id/color_option_pink"
+        android:title="@string/colorPinkTitle" />
+    <item
+        android:id="@+id/color_option_purple"
+        android:title="@string/colorPurpleTitle" />
+    <item
+        android:id="@+id/color_option_deep_purple"
+        android:title="@string/colorDeepPurpleTitle" />
+    <item
+        android:id="@+id/color_option_indigo"
+        android:title="@string/colorIndigoTitle" />
+    <item
+        android:id="@+id/color_option_blue"
+        android:title="@string/colorBlueTitle" />
+    <item
+        android:id="@+id/color_option_light_blue"
+        android:title="@string/colorLightBlueTitle" />
+    <item
+        android:id="@+id/color_option_cyan"
+        android:title="@string/colorCyanTitle" />
+    <item
+        android:id="@+id/color_option_teal"
+        android:title="@string/colorTealTitle" />
+    <item
+        android:id="@+id/color_option_green"
+        android:title="@string/colorGreenTitle" />
+    <item
+        android:id="@+id/color_option_light_green"
+        android:title="@string/colorLightGreenTitle" />
+    <item
+        android:id="@+id/color_option_lime"
+        android:title="@string/colorLimeTitle" />
+    <item
+        android:id="@+id/color_option_yellow"
+        android:title="@string/colorYellowTitle" />
+    <item
+        android:id="@+id/color_option_amber"
+        android:title="@string/colorAmberTitle" />
+    <item
+        android:id="@+id/color_option_orange"
+        android:title="@string/colorOrangeTitle" />
+    <item
+        android:id="@+id/color_option_deep_orange"
+        android:title="@string/colorDeepOrangeTitle" />
+    <item
+        android:id="@+id/color_option_blue_gray"
+        android:title="@string/colorBlueGrayTitle" />
+
+</menu>
