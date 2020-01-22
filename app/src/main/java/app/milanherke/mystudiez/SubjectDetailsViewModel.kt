@@ -157,5 +157,21 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+    fun deleteSubject(subjectId: Long) {
+        // Deleting a task on another thread
+        // There is no need for the ViewModel to wait for the delete operation to complete so we can use this approach
+
+        // Deleting associated classes, tasks, exams
+        GlobalScope.launch {
+            getApplication<Application>().contentResolver?.delete(LessonsContract.CONTENT_URI, "SubjectId = ?", arrayOf(subjectId.toString()))
+            getApplication<Application>().contentResolver?.delete(TasksContract.CONTENT_URI, "SubjectId = ?", arrayOf(subjectId.toString()))
+            getApplication<Application>().contentResolver?.delete(ExamsContract.CONTENT_URI, "SubjectId = ?", arrayOf(subjectId.toString()))
+        }
+
+        // Deleting subject
+        GlobalScope.launch {
+            getApplication<Application>().contentResolver?.delete(SubjectsContract.buildUriFromId(subjectId), null, null)
+        }
+    }
 
 }

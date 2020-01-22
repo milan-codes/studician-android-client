@@ -66,4 +66,5 @@
     <string name="colorOrangeTitle">Orange</string>
     <string name="colorDeepOrangeTitle">Deep orange</string>
     <string name="colorBlueGrayTitle">Blue gray</string>
+    <string name="details_del_button">Delete subject</string>
 </resources>

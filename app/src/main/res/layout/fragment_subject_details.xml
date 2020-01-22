@@ -100,17 +100,31 @@
                     android:src="@drawable/subject_indicator_circle" />
 
                 <Button
-                    android:id="@+id/button"
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/circular_button"
+                android:fontFamily="@font/montserrat_medium"
+                android:includeFontPadding="false"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@string/details_edit_button"
+                android:textColor="#ffffff" />
+
+                <Button
+                    android:id="@+id/del_subject_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/circular_button"
+                    android:background="@drawable/circular_delete_button"
                     android:fontFamily="@font/montserrat_medium"
                     android:includeFontPadding="false"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
-                    android:text="@string/details_edit_button"
+                    android:text="@string/details_del_button"
                     android:textColor="#ffffff" />
             </LinearLayout>
 

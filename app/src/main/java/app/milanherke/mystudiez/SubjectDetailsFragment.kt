@@ -120,6 +120,11 @@ class SubjectDetailsFragment : Fragment() {
         button.setOnClickListener {
             activity!!.replaceFragment(AddEditSubjectFragment.newInstance(subject!!), R.id.fragment_container)
         }
+
+        del_subject_button.setOnClickListener {
+            viewModel.deleteSubject(subject!!.subjectId)
+            activity!!.replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
