@@ -152,7 +152,7 @@ class SubjectsRecyclerViewAdapter(
             while (cursor.moveToNext()) {
                 val lesson = Lesson(
                     cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.LESSON_SUBJECT)),
-                    cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_WEEK)),
+                    "A",
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_STARTS)),
                     cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_ENDS)),

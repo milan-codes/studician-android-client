@@ -1,5 +1,6 @@
 package app.milanherke.mystudiez
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -20,20 +21,16 @@ private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [SubjectDetailsFragment.SubjectDetailsInteraction] interface
- * to handle interaction events.
  * Use the [SubjectDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SubjectDetailsFragment : Fragment() {
+class SubjectDetailsFragment : Fragment(), LessonsRecyclerViewAdapter.OnLessonClickListener {
 
-    private var listener: SubjectDetailsInteraction? = null
     private var subject: Subject? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(SubjectDetailsViewModel::class.java)
     }
-    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null)
+    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null, this)
     private val tasksAdapter = TasksRecyclerViewAdapter(null, null)
     private val examsAdapter = ExamsRecyclerViewAdapter(null, null)
 
@@ -48,18 +45,6 @@ class SubjectDetailsFragment : Fragment() {
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface SubjectDetailsInteraction {
-        fun onSubjectEditButtonClick()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SubjectDetailsInteraction) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement SubjectDetailsInteraction")
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,19 +110,26 @@ class SubjectDetailsFragment : Fragment() {
             viewModel.deleteSubject(subject!!.subjectId)
             activity!!.replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
         }
+
+        subject_details_add_new_lesson_btn.setOnClickListener {
+            activity!!.replaceFragment(AddEditLessonFragment.newInstance(null, subject!!), R.id.fragment_container)
+        }
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         if (activity is AppCompatActivity) {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
+
+        activity!!.bar.visibility = View.GONE
+        activity!!.fab.visibility = View.GONE
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
         viewModel.subjectFilter.postValue(null)
     }
 
@@ -156,5 +148,9 @@ class SubjectDetailsFragment : Fragment() {
                     putParcelable(ARG_SUBJECT, subject)
                 }
             }
+    }
+
+    override fun onLessonClick(lesson: Lesson) {
+        activity!!.replaceFragment(AddEditLessonFragment.newInstance(lesson, subject!!), R.id.fragment_container)
     }
 }

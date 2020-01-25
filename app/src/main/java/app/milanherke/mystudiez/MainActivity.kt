@@ -24,7 +24,7 @@ var APP_STATE = SUBJECTS_STATE
 
 
 class MainActivity : AppCompatActivity(),
-    SubjectDetailsFragment.SubjectDetailsInteraction, AddEditSubjectFragment.OnSaveSubjectClick {
+    AddEditSubjectFragment.OnSaveSubjectClick, AddEditLessonFragment.OnSaveLessonClick {
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,15 +43,14 @@ class MainActivity : AppCompatActivity(),
             bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
         }
 
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             when(val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
                 is SubjectsFragment -> {
                     replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
-                    bar.visibility = View.INVISIBLE
-                    fab.visibility = View.INVISIBLE
-                } else -> {
-                    Snackbar.make(view, "You are in the SubjectDetailsFragment", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show()
+                    bar.visibility = View.GONE
+                    fab.visibility = View.GONE
+                }
+                else -> {
                     throw IllegalStateException("Unrecognised fragment $fragment")
                 }
             }
@@ -85,7 +84,11 @@ class MainActivity : AppCompatActivity(),
                     }
                     is AddEditSubjectFragment -> {
                         replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
-                    } else -> throw IllegalArgumentException("Home button used by unrecognised fragment $fragment")
+                    }
+                    is AddEditLessonFragment -> {
+                        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                    }
+                    else -> throw IllegalArgumentException("Home button used by unrecognised fragment $fragment")
                 }
             }
             else -> super.onOptionsItemSelected(item)
@@ -96,11 +99,11 @@ class MainActivity : AppCompatActivity(),
 
 
     // Fragment interfaces
-    override fun onSubjectEditButtonClick() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun onSaveSubjectClick() {
         replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+    }
+
+    override fun onSaveLessonClick(subject: Subject) {
+        replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
     }
 }

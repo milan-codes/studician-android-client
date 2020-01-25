@@ -154,6 +154,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subject_details_lessons_title" />
 
+        <Button
+            android:id="@+id/subject_details_add_new_lesson_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/circular_button"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/no_lesson_add_lesson_btn_title"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/subject_details_lessons_recycler"/>
+
         <TextView
             android:id="@+id/subject_details_tasks_title"
             android:layout_width="wrap_content"
@@ -164,7 +180,7 @@
             android:textColor="@color/colorTextPrimary"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/subject_details_lessons_recycler" />
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_add_new_lesson_btn" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/subject_details_tasks_recycler"

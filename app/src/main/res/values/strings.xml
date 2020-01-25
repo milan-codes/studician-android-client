@@ -30,7 +30,7 @@
     <string name="no_task_img_description">An illustration that describes that there are no Tasks</string>
     <string name="exams_recycler_empty">You didn\'t add any exam to this subject</string>
     <string name="no_exam_img_description">An illustration that describes that there are no Exams</string>
-    <string name="lessons_recycler_empty">You didn\'t add any lesson to this subject</string>
+    <string name="lessons_recycler_empty">You didn\'t add any lesson to this subject.\nTap on the button below to add new.</string>
     <string name="no_lesson_img_description">An illustration that describes that there are no Lessons</string>
     <string name="subjects_recycler_empty">You didn\'t add any subject. Tap on the + button!</string>
     <string name="no_subject_img_description">An illustration that describes that there are no Subjects</string>
@@ -67,4 +67,20 @@
     <string name="colorDeepOrangeTitle">Deep orange</string>
     <string name="colorBlueGrayTitle">Blue gray</string>
     <string name="details_del_button">Delete subject</string>
+    <string name="add_edit_lesson_day_title">Select day:</string>
+    <string name="add_edit_lesson_starts_at">Starts at:</string>
+    <string name="add_edit_lesson_ends_at">Ends at:</string>
+    <string name="add_edit_lesson_location">Location:</string>
+    <string name="add_edit_lesson_location_value">Enter location</string>
+    <string name="add_edit_lesson_btns">Tap to select</string>
+    <string name="add_new_lesson_title">Add new lesson</string>
+    <string name="edit_lesson_title">Edit %s lesson</string>
+    <string name="no_lesson_add_lesson_btn_title">Add new lesson</string>
+    <string name="dayOptionMonday">Monday</string>
+    <string name="dayOptionTuesday">Tuesday</string>
+    <string name="dayOptionWednesday">Wednesday</string>
+    <string name="dayOptionThursday">Thursday</string>
+    <string name="dayOptionFriday">Friday</string>
+    <string name="dayOptionSaturday">Saturday</string>
+    <string name="dayOptionSunday">Sunday</string>
 </resources>

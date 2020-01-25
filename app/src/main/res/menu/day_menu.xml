@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/day_option_monday"
+        android:title="@string/dayOptionMonday" />
+    <item
+        android:id="@+id/day_option_tuesday"
+        android:title="@string/dayOptionTuesday" />
+    <item
+        android:id="@+id/day_option_wednesday"
+        android:title="@string/dayOptionWednesday" />
+    <item
+        android:id="@+id/day_option_thursday"
+        android:title="@string/dayOptionThursday" />
+    <item
+        android:id="@+id/day_option_friday"
+        android:title="@string/dayOptionFriday" />
+    <item
+        android:id="@+id/day_option_saturday"
+        android:title="@string/dayOptionSaturday" />
+    <item
+        android:id="@+id/day_option_sunday"
+        android:title="@string/dayOptionSunday" />
+</menu>

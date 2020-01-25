@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackgroundPrimary"
+    android:backgroundTint="@color/colorBackgroundPrimary"
+    android:paddingTop="8dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <Button
+        android:id="@+id/new_lesson_day_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:background="@drawable/circular_button"
+        android:fontFamily="@font/montserrat_semibold"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/add_edit_lesson_btns"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        app:layout_constraintBaseline_toBaselineOf="@+id/new_lesson_day_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/new_lesson_day_title" />
+
+    <Button
+        android:id="@+id/new_lesson_starts_at_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circular_button"
+        android:fontFamily="@font/montserrat_semibold"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/add_edit_lesson_btns"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        app:layout_constraintBaseline_toBaselineOf="@+id/new_lesson_starts_at_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/new_lesson_day_btn" />
+
+    <Button
+        android:id="@+id/new_lesson_ends_at_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circular_button"
+        android:fontFamily="@font/montserrat_semibold"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/add_edit_lesson_btns"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        app:layout_constraintBaseline_toBaselineOf="@+id/new_lesson_ends_at_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/new_lesson_starts_at_btn" />
+
+    <Button
+        android:id="@+id/new_lesson_save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/circular_button"
+        android:fontFamily="@font/montserrat_semibold"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:text="@string/new_subject_save_btn"
+        android:textColor="#ffffff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_lesson_location" />
+
+    <TextView
+        android:id="@+id/new_lesson_day_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/add_edit_lesson_day_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/new_lesson_starts_at_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/add_edit_lesson_starts_at"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_lesson_day_title" />
+
+    <TextView
+        android:id="@+id/new_lesson_ends_at_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/add_edit_lesson_ends_at"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_lesson_starts_at_title" />
+
+    <TextView
+        android:id="@+id/new_lesson_location_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="@string/add_edit_lesson_location"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_lesson_ends_at_title" />
+
+    <EditText
+        android:id="@+id/new_lesson_location"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:fontFamily="@font/montserrat_regular"
+        android:hint="@string/add_edit_lesson_location_value"
+        android:inputType="textPersonName"
+        android:textSize="14sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/new_lesson_location_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/new_lesson_ends_at_btn"
+        android:importantForAutofill="no"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

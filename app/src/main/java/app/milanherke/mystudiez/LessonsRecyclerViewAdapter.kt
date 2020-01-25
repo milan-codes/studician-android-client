@@ -8,14 +8,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.details_list_item.view.*
+import kotlinx.android.synthetic.main.no_lesson_list_item.view.*
 import java.lang.IllegalStateException
 
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 private const val VIEW_TYPE_PLACEHOLDER = 2
 
-class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var subjectIndicator: Drawable?) :
+class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var subjectIndicator: Drawable?, private var listener: OnLessonClickListener) :
     RecyclerView.Adapter<LessonsRecyclerViewAdapter.ViewHolder>() {
+
+    interface OnLessonClickListener {
+        fun onLessonClick(lesson: Lesson)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
@@ -53,7 +58,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var
                     // Create Lesson from the data in the cursor
                     val lesson = Lesson(
                         cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.LESSON_SUBJECT)),
-                        cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_WEEK)),
+                        "A",
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_STARTS)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_ENDS)),
@@ -131,6 +136,9 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var
             )
             containerView.details_list_header2.text = lesson.location
             containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
+            containerView.details_list_container.setOnClickListener{
+                listener.onLessonClick(lesson)
+            }
         }
 
     }
