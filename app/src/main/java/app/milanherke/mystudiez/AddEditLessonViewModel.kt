@@ -10,7 +10,7 @@ class AddEditLessonViewModel(application: Application) : AndroidViewModel(applic
 
     fun saveLesson(lesson: Lesson): Lesson {
         val values = ContentValues()
-        if(lesson.subjectId != 0L && lesson.day.isNotEmpty() && lesson.starts.isNotEmpty() && lesson.ends.isNotEmpty() && lesson.location.isNotEmpty()) {
+        if (lesson.subjectId != 0L && lesson.day.isNotEmpty() && lesson.starts.isNotEmpty() && lesson.ends.isNotEmpty() && lesson.location.isNotEmpty()) {
             values.put(LessonsContract.Columns.LESSON_SUBJECT, lesson.subjectId)
             values.put(LessonsContract.Columns.LESSON_DAY, lesson.day)
             values.put(LessonsContract.Columns.LESSON_STARTS, lesson.starts)
@@ -19,7 +19,10 @@ class AddEditLessonViewModel(application: Application) : AndroidViewModel(applic
 
             if (lesson.lessonId == 0L) {
                 GlobalScope.launch {
-                    val uri = getApplication<Application>().contentResolver.insert(LessonsContract.CONTENT_URI, values)
+                    val uri = getApplication<Application>().contentResolver.insert(
+                        LessonsContract.CONTENT_URI,
+                        values
+                    )
                     if (uri != null) {
                         lesson.lessonId = LessonsContract.getId(uri)
                     }
@@ -27,7 +30,11 @@ class AddEditLessonViewModel(application: Application) : AndroidViewModel(applic
             } else {
                 // Lesson already has an id, which means it has been created before so we are just updating it
                 GlobalScope.launch {
-                    getApplication<Application>().contentResolver.update(LessonsContract.buildUriFromId(lesson.lessonId), values, null, null)
+                    getApplication<Application>().contentResolver.update(
+                        LessonsContract.buildUriFromId(
+                            lesson.lessonId
+                        ), values, null, null
+                    )
                 }
             }
         }

@@ -13,7 +13,10 @@ import java.lang.IllegalStateException
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 
-class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?, private var dayIndicator: Drawable?) :
+class ExamsRecyclerViewAdapter(
+    private var cursorExams: Cursor?,
+    private var dayIndicator: Drawable?
+) :
     RecyclerView.Adapter<ExamsRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -111,7 +114,8 @@ class ExamsRecyclerViewAdapter(private var cursorExams: Cursor?, private var day
         open fun bind(exam: Exam) {}
     }
 
-    private inner class ExamViewHolder(override val containerView: View) : ViewHolder(containerView) {
+    private inner class ExamViewHolder(override val containerView: View) :
+        ViewHolder(containerView) {
 
         override fun bind(exam: Exam) {
             containerView.details_list_title.text = exam.name

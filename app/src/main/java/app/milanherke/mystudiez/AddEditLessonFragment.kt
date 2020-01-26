@@ -36,7 +36,9 @@ class AddEditLessonFragment : Fragment() {
     private var lesson: Lesson? = null
     private var subject: Subject? = null
     private var listener: OnSaveLessonClick? = null
-    private val viewModel by lazy { ViewModelProviders.of(activity!!).get(AddEditLessonViewModel::class.java) }
+    private val viewModel by lazy {
+        ViewModelProviders.of(activity!!).get(AddEditLessonViewModel::class.java)
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -83,9 +85,10 @@ class AddEditLessonFragment : Fragment() {
         val lesson = lesson
 
         if (lesson == null) {
-           activity!!.toolbar.setTitle(R.string.add_new_lesson_title)
+            activity!!.toolbar.setTitle(R.string.add_new_lesson_title)
         } else {
-           activity!!.toolbar.title = resources.getString(R.string.edit_lesson_title, subject!!.name)
+            activity!!.toolbar.title =
+                resources.getString(R.string.edit_lesson_title, subject!!.name)
             new_lesson_day_btn.text = lesson.day
             new_lesson_starts_at_btn.text = lesson.starts
             new_lesson_ends_at_btn.text = lesson.ends
@@ -110,12 +113,24 @@ class AddEditLessonFragment : Fragment() {
 
         new_lesson_starts_at_btn.setOnClickListener {
             val cal = Calendar.getInstance()
-            TimePickerDialog(context, getTime(R.id.new_lesson_starts_at_btn, cal), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            TimePickerDialog(
+                context,
+                getTime(R.id.new_lesson_starts_at_btn, cal),
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE),
+                true
+            ).show()
         }
 
         new_lesson_ends_at_btn.setOnClickListener {
             val cal = Calendar.getInstance()
-            TimePickerDialog(context, getTime(R.id.new_lesson_ends_at_btn, cal), cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+            TimePickerDialog(
+                context,
+                getTime(R.id.new_lesson_ends_at_btn, cal),
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE),
+                true
+            ).show()
         }
 
         new_lesson_save_btn.setOnClickListener {
@@ -156,13 +171,20 @@ class AddEditLessonFragment : Fragment() {
      */
     private fun saveLesson() {
         val newLesson = subjectFromUi()
-        if(newLesson != lesson) {
+        if (newLesson != lesson) {
             lesson = viewModel.saveLesson(newLesson)
         }
     }
 
     private fun subjectFromUi(): Lesson {
-        val lesson = Lesson(subject!!.subjectId, "A", new_lesson_day_btn.text.toString(), new_lesson_starts_at_btn.text.toString(), new_lesson_ends_at_btn.text.toString(), new_lesson_location.text.toString())
+        val lesson = Lesson(
+            subject!!.subjectId,
+            "A",
+            new_lesson_day_btn.text.toString(),
+            new_lesson_starts_at_btn.text.toString(),
+            new_lesson_ends_at_btn.text.toString(),
+            new_lesson_location.text.toString()
+        )
         lesson.lessonId = this.lesson?.lessonId ?: 0
         return lesson
     }
@@ -174,7 +196,7 @@ class AddEditLessonFragment : Fragment() {
         popupMenu.show()
 
         popupMenu.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.day_option_monday -> new_lesson_day_btn.setText(R.string.dayOptionMonday)
                 R.id.day_option_tuesday -> new_lesson_day_btn.setText(R.string.dayOptionTuesday)
                 R.id.day_option_wednesday -> new_lesson_day_btn.setText(R.string.dayOptionWednesday)
@@ -187,7 +209,7 @@ class AddEditLessonFragment : Fragment() {
         }
     }
 
-    private fun getTime(@IdRes buttonId: Int, cal: Calendar) : TimePickerDialog.OnTimeSetListener {
+    private fun getTime(@IdRes buttonId: Int, cal: Calendar): TimePickerDialog.OnTimeSetListener {
         val button = activity!!.findViewById<Button>(buttonId)
 
         return TimePickerDialog.OnTimeSetListener { _, hour, minute ->

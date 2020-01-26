@@ -122,7 +122,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/new_lesson_location_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/new_lesson_ends_at_btn"
-        android:importantForAutofill="no"/>
+        android:importantForAutofill="no" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

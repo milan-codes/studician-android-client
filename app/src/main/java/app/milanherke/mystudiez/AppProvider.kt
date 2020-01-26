@@ -144,7 +144,7 @@ class AppProvider : ContentProvider() {
 
         val db = AppDatabase.getInstance(context!!).readableDatabase
         val cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, null)
-        Log.i(TAG, "query: rows in returned cursor = ${cursor.count}") // TODO remove this line
+        Log.i(TAG, "query: rows in returned cursor = ${cursor.count}")
 
         return cursor
     }
@@ -202,7 +202,6 @@ class AppProvider : ContentProvider() {
             else -> throw IllegalArgumentException("Unknown uri: $uri")
 
         }
-        // TODO: notify content resolver if something has changed
         Log.i(TAG, "Exiting insert, returning $returnUri")
         return returnUri
     }
@@ -292,8 +291,7 @@ class AppProvider : ContentProvider() {
 
             else -> throw IllegalArgumentException("Unknown uri: $uri")
         }
-
-        // TODO: notify content resolver if something has changed
+        
         Log.i(TAG, "Exiting update, returning $count")
         return count
     }
@@ -375,7 +373,6 @@ class AppProvider : ContentProvider() {
             else -> throw IllegalArgumentException("Unknown uri: $uri")
         }
 
-        // TODO: notify content resolver if something has changed
         Log.i(TAG, "Exiting delete, returning count")
         return count
     }

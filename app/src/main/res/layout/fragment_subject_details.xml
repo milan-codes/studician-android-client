@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/subject_details_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/subject_details_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBackgroundPrimary"
         android:backgroundTint="@color/colorBackgroundPrimary"
         android:orientation="vertical"
-        android:scrollIndicators="none"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        android:scrollIndicators="none">
 
         <TextView
             android:id="@+id/subject_details_title"
@@ -35,11 +36,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subject_details_title">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/subject_info_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
+                android:layout_height="wrap_content"
                 android:paddingStart="20dp"
                 android:paddingTop="18dp"
                 android:paddingEnd="20dp"
@@ -51,82 +51,101 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_medium"
                     android:text="@string/details_subject_title"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/subject_details_name_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
+                    android:layout_marginStart="32dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:textColor="@color/colorTextSecondary"
                     android:textSize="14sp"
-                    tools:text="Calculus I" />
+                    app:layout_constraintBaseline_toBaselineOf="@+id/subject_details_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/subject_details_name"
+                    tools:text="name" />
 
                 <TextView
                     android:id="@+id/subject_details_teacher"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/montserrat_medium"
                     android:text="@string/details_teacher_name"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subject_details_name" />
 
                 <TextView
                     android:id="@+id/subject_details_teacher_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:textColor="@color/colorTextSecondary"
                     android:textSize="14sp"
-                    tools:text="Mr. Cooper" />
+                    app:layout_constraintBaseline_toBaselineOf="@+id/subject_details_teacher"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/subject_details_name_value"
+                    tools:text="teacher" />
 
                 <TextView
                     android:id="@+id/subject_details_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/montserrat_medium"
                     android:text="@string/details_colorcode"
-                    android:textColor="@color/colorTextPrimary" />
+                    android:textColor="@color/colorTextPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subject_details_teacher" />
 
                 <ImageView
                     android:id="@+id/subject_details_color_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
                     android:contentDescription="@string/subject_indicator_description"
-                    android:src="@drawable/subject_indicator_circle" />
+                    android:src="@drawable/subject_indicator_circle"
+                    app:layout_constraintBottom_toBottomOf="@+id/subject_details_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/subject_details_teacher_value" />
 
                 <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/circular_button"
-                android:fontFamily="@font/montserrat_medium"
-                android:includeFontPadding="false"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="@string/details_edit_button"
-                android:textColor="#ffffff" />
+                    android:id="@+id/button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/circular_button"
+                    android:fontFamily="@font/montserrat_medium"
+                    android:includeFontPadding="false"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:text="@string/details_edit_button"
+                    android:textColor="#ffffff"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/del_subject_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/del_subject_button" />
 
                 <Button
                     android:id="@+id/del_subject_button"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="32dp"
                     android:background="@drawable/circular_delete_button"
                     android:fontFamily="@font/montserrat_medium"
                     android:includeFontPadding="false"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/details_del_button"
-                    android:textColor="#ffffff" />
-            </LinearLayout>
+                    android:textColor="#ffffff"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subject_details_color" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
 
@@ -161,6 +180,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_medium"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:text="@string/no_lesson_add_lesson_btn_title"
@@ -168,7 +188,7 @@
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subject_details_lessons_recycler"/>
+            app:layout_constraintTop_toBottomOf="@id/subject_details_lessons_recycler" />
 
         <TextView
             android:id="@+id/subject_details_tasks_title"

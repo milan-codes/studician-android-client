@@ -15,7 +15,11 @@ private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 private const val VIEW_TYPE_PLACEHOLDER = 2
 
-class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var subjectIndicator: Drawable?, private var listener: OnLessonClickListener) :
+class LessonsRecyclerViewAdapter(
+    private var cursorLessons: Cursor?,
+    private var subjectIndicator: Drawable?,
+    private var listener: OnLessonClickListener
+) :
     RecyclerView.Adapter<LessonsRecyclerViewAdapter.ViewHolder>() {
 
     interface OnLessonClickListener {
@@ -65,7 +69,8 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_LOCATION))
                     )
                     // Id is not set in the instructor
-                    lesson.lessonId = cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
+                    lesson.lessonId =
+                        cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
 
                     holder.bind(lesson)
                 }
@@ -125,7 +130,8 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var
         open fun bind(lesson: Lesson) {}
     }
 
-    private inner class LessonViewHolder(override val containerView: View) : ViewHolder(containerView) {
+    private inner class LessonViewHolder(override val containerView: View) :
+        ViewHolder(containerView) {
 
         override fun bind(lesson: Lesson) {
             containerView.details_list_title.text = lesson.day
@@ -136,7 +142,7 @@ class LessonsRecyclerViewAdapter(private var cursorLessons: Cursor?, private var
             )
             containerView.details_list_header2.text = lesson.location
             containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
-            containerView.details_list_container.setOnClickListener{
+            containerView.details_list_container.setOnClickListener {
                 listener.onLessonClick(lesson)
             }
         }

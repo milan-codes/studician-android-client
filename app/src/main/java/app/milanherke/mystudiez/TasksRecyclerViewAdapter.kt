@@ -13,7 +13,10 @@ import java.lang.IllegalStateException
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 
-class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?, private var subjectIndicator: Drawable?) :
+class TasksRecyclerViewAdapter(
+    private var cursorTasks: Cursor?,
+    private var subjectIndicator: Drawable?
+) :
     RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -112,7 +115,8 @@ class TasksRecyclerViewAdapter(private var cursorTasks: Cursor?, private var sub
         open fun bind(task: Task) {}
     }
 
-    private inner class TaskViewHolder(override val containerView: View) : ViewHolder(containerView) {
+    private inner class TaskViewHolder(override val containerView: View) :
+        ViewHolder(containerView) {
 
         override fun bind(task: Task) {
             containerView.details_list_title.text = task.name

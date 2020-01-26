@@ -19,7 +19,7 @@ private const val ARG_SUBJECT = "subject"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [AddEditSubjectFragment.OnSaveSubjectClick] interface
+ * [AddEditSubjectFragment.AddEditSubjectInteractions] interface
  * to handle interaction events.
  * Use the [AddEditSubjectFragment.newInstance] factory method to
  * create an instance of this fragment.
@@ -27,9 +27,11 @@ private const val ARG_SUBJECT = "subject"
 class AddEditSubjectFragment : Fragment() {
 
     private var subject: Subject? = null
-    private var listener: OnSaveSubjectClick? = null
+    private var listener: AddEditSubjectInteractions? = null
     private var selectedSubjectColor: Int = -1
-    private val viewModel by lazy { ViewModelProviders.of(activity!!).get(AddEditSubjectViewModel::class.java) }
+    private val viewModel by lazy {
+        ViewModelProviders.of(activity!!).get(AddEditSubjectViewModel::class.java)
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -42,16 +44,17 @@ class AddEditSubjectFragment : Fragment() {
      * (http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnSaveSubjectClick {
-        fun onSaveSubjectClick()
+    interface AddEditSubjectInteractions {
+        fun addEditSubjectCreated(fragment: Fragments)
+        fun onSaveSubjectClick(subject: Subject)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnSaveSubjectClick) {
+        if (context is AddEditSubjectInteractions) {
             listener = context
         } else {
-            throw RuntimeException("$context must implement OnSaveSubjectClick")
+            throw RuntimeException("$context must implement AddEditSubjectInteractions")
         }
     }
 
@@ -81,12 +84,17 @@ class AddEditSubjectFragment : Fragment() {
 
         if (subject == null) {
             activity!!.toolbar.setTitle(R.string.add_new_subject_title)
-        }else {
-            activity!!.toolbar.title = resources.getString(R.string.edit_subject_title, subject.name)
+            listener?.addEditSubjectCreated(Fragments.SUBJECT)
+        } else {
+            activity!!.toolbar.title =
+                resources.getString(R.string.edit_subject_title, subject.name)
+            listener?.addEditSubjectCreated(Fragments.SUBJECT_DETAILS)
+
             new_subject_name_value.setText(subject.name)
             new_subject_teacher_value.setText(subject.teacher)
             selectedColor.drawable.displayColor(subject.colorCode, activity!!)
             selectedSubjectColor = subject.colorCode
+
         }
     }
 
@@ -102,7 +110,7 @@ class AddEditSubjectFragment : Fragment() {
         }
         new_subject_save_btn.setOnClickListener {
             saveSubject()
-            listener?.onSaveSubjectClick()
+            listener?.onSaveSubjectClick(subject!!)
         }
 
     }
@@ -137,13 +145,17 @@ class AddEditSubjectFragment : Fragment() {
      */
     private fun saveSubject() {
         val newSubject = subjectFromUi()
-        if(newSubject != subject) {
+        if (newSubject != subject) {
             subject = viewModel.saveSubject(newSubject)
         }
     }
 
     private fun subjectFromUi(): Subject {
-        val subject = Subject(new_subject_name_value.text.toString(), new_subject_teacher_value.text.toString(), selectedSubjectColor)
+        val subject = Subject(
+            new_subject_name_value.text.toString(),
+            new_subject_teacher_value.text.toString(),
+            selectedSubjectColor
+        )
         subject.subjectId = this.subject?.subjectId ?: 0
         return subject
     }
@@ -156,7 +168,7 @@ class AddEditSubjectFragment : Fragment() {
         popupMenu.show()
 
         popupMenu.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.color_option_red -> {
                     setColor(R.color.subjectColorRed, activity!!)
                 }
@@ -208,12 +220,12 @@ class AddEditSubjectFragment : Fragment() {
                 R.id.color_option_blue_gray -> {
                     setColor(R.color.subjectColorBlueGray, activity!!)
                 }
-        }
+            }
             true
         }
     }
 
-    private fun createAndSetCloneColorIndicator(){
+    private fun createAndSetCloneColorIndicator() {
         val clone = selectedColor.drawable.mutatedClone()
         selectedColor.setImageDrawable(clone)
     }

@@ -1,15 +1,12 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomappbar.BottomAppBar
 
@@ -24,7 +21,12 @@ var APP_STATE = SUBJECTS_STATE
 
 
 class MainActivity : AppCompatActivity(),
-    AddEditSubjectFragment.OnSaveSubjectClick, AddEditLessonFragment.OnSaveLessonClick {
+    AddEditSubjectFragment.AddEditSubjectInteractions, AddEditLessonFragment.OnSaveLessonClick,
+    SubjectDetailsFragment.SubjectDetailsInteractions,
+    LessonDetailsFragment.LessonDetailsInteraction {
+
+    private var subject: Subject? = null
+    private var fragmentCalledFrom: Fragments? = null
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +46,7 @@ class MainActivity : AppCompatActivity(),
         }
 
         fab.setOnClickListener {
-            when(val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
+            when (val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
                 is SubjectsFragment -> {
                     replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
                     bar.visibility = View.GONE
@@ -82,11 +84,37 @@ class MainActivity : AppCompatActivity(),
                     is SubjectDetailsFragment -> {
                         replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
                     }
+                    is LessonDetailsFragment -> {
+                        replaceFragment(
+                            SubjectDetailsFragment.newInstance(subject!!),
+                            R.id.fragment_container
+                        )
+                    }
                     is AddEditSubjectFragment -> {
-                        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                        when (fragmentCalledFrom) {
+                            Fragments.SUBJECT -> {
+                                replaceFragment(
+                                    SubjectsFragment.newInstance(),
+                                    R.id.fragment_container
+                                )
+                            }
+                            Fragments.SUBJECT_DETAILS -> {
+                                // We can use the subject variable because the fragment was called from SubjectDetails, therefore an object has already been assigned to it.
+                                replaceFragment(
+                                    SubjectDetailsFragment.newInstance(subject!!),
+                                    R.id.fragment_container
+                                )
+                            }
+                            else -> {
+                                throw IllegalStateException("AddEditSubjectFragment called from unrecognised fragment $fragmentCalledFrom")
+                            }
+                        }
                     }
                     is AddEditLessonFragment -> {
-                        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                        replaceFragment(
+                            SubjectDetailsFragment.newInstance(subject!!),
+                            R.id.fragment_container
+                        )
                     }
                     else -> throw IllegalArgumentException("Home button used by unrecognised fragment $fragment")
                 }
@@ -98,12 +126,46 @@ class MainActivity : AppCompatActivity(),
     }
 
 
-    // Fragment interfaces
-    override fun onSaveSubjectClick() {
-        replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+    /**
+     * Fragment interfaces from [AddEditSubjectFragment]
+     */
+    override fun addEditSubjectCreated(fragment: Fragments) {
+        fragmentCalledFrom = fragment
     }
 
+    override fun onSaveSubjectClick(subject: Subject) {
+        if (fragmentCalledFrom == Fragments.SUBJECT_DETAILS) {
+            replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
+        } else {
+            replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+        }
+    }
+
+    /**
+     * Fragment interfaces from [AddEditLessonFragment]
+     */
     override fun onSaveLessonClick(subject: Subject) {
         replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
+    }
+
+    /**
+     * Fragment interfaces from [SubjectDetailsFragment]
+     */
+    override fun subjectIsLoaded(subject: Subject) {
+        this.subject = subject
+    }
+
+    /**
+     * Fragment interfaces from [LessonDetailsFragment]
+     */
+    override fun onDeleteLessonClick(subject: Subject) {
+        replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
+    }
+
+    override fun onEditLessonClick(lesson: Lesson) {
+        replaceFragment(
+            AddEditLessonFragment.newInstance(lesson, subject!!),
+            R.id.fragment_container
+        )
     }
 }

@@ -32,10 +32,6 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    private val _loading = MutableLiveData<Boolean>(false)
-    val loading: LiveData<Boolean>
-        get() = _loading
-
     // Live Data
     val subjectFilter = MutableLiveData<Long>()
 
@@ -85,11 +81,9 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun loadAllDetails(selected: Long) {
-        _loading.postValue(true)
         loadSelectedLessons(selected)
         loadSelectedTasks(selected)
         loadSelectedExams(selected)
-        _loading.postValue(false)
     }
 
     private fun loadSelectedLessons(selected: Long) {
@@ -163,14 +157,30 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
 
         // Deleting associated classes, tasks, exams
         GlobalScope.launch {
-            getApplication<Application>().contentResolver?.delete(LessonsContract.CONTENT_URI, "SubjectId = ?", arrayOf(subjectId.toString()))
-            getApplication<Application>().contentResolver?.delete(TasksContract.CONTENT_URI, "SubjectId = ?", arrayOf(subjectId.toString()))
-            getApplication<Application>().contentResolver?.delete(ExamsContract.CONTENT_URI, "SubjectId = ?", arrayOf(subjectId.toString()))
+            getApplication<Application>().contentResolver?.delete(
+                LessonsContract.CONTENT_URI,
+                "${LessonsContract.Columns.LESSON_SUBJECT} = ?",
+                arrayOf(subjectId.toString())
+            )
+            getApplication<Application>().contentResolver?.delete(
+                TasksContract.CONTENT_URI,
+                "${TasksContract.Columns.TASK_SUBJECT} = ?",
+                arrayOf(subjectId.toString())
+            )
+            getApplication<Application>().contentResolver?.delete(
+                ExamsContract.CONTENT_URI,
+                "${ExamsContract.Columns.EXAM_SUBJECT} = ?",
+                arrayOf(subjectId.toString())
+            )
         }
 
         // Deleting subject
         GlobalScope.launch {
-            getApplication<Application>().contentResolver?.delete(SubjectsContract.buildUriFromId(subjectId), null, null)
+            getApplication<Application>().contentResolver?.delete(
+                SubjectsContract.buildUriFromId(
+                    subjectId
+                ), null, null
+            )
         }
     }
 

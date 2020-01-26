@@ -33,6 +33,7 @@ fun FragmentActivity.addFragment(fragment: Fragment, frameId: Int) {
 fun FragmentActivity.replaceFragment(fragment: Fragment, frameId: Int) {
     supportFragmentManager.inTransaction { replace(frameId, fragment) }
 }
+
 fun FragmentActivity.removeFragment(fragment: Fragment) {
     supportFragmentManager.inTransaction { remove(fragment) }
 }

@@ -10,14 +10,17 @@ class AddEditSubjectViewModel(application: Application) : AndroidViewModel(appli
 
     fun saveSubject(subject: Subject): Subject {
         val values = ContentValues()
-        if(subject.name.isNotEmpty() && subject.teacher.isNotEmpty()) {
+        if (subject.name.isNotEmpty() && subject.teacher.isNotEmpty()) {
             values.put(SubjectsContract.Columns.SUBJECT_NAME, subject.name)
             values.put(SubjectsContract.Columns.SUBJECT_TEACHER, subject.teacher)
             values.put(SubjectsContract.Columns.SUBJECT_COLORCODE, subject.colorCode)
 
             if (subject.subjectId == 0L) {
                 GlobalScope.launch {
-                    val uri = getApplication<Application>().contentResolver.insert(SubjectsContract.CONTENT_URI, values)
+                    val uri = getApplication<Application>().contentResolver.insert(
+                        SubjectsContract.CONTENT_URI,
+                        values
+                    )
                     if (uri != null) {
                         subject.subjectId = SubjectsContract.getId(uri)
                     }
@@ -25,7 +28,11 @@ class AddEditSubjectViewModel(application: Application) : AndroidViewModel(appli
             } else {
                 // Subject already has an id, which means it has been created before so we are just updating it
                 GlobalScope.launch {
-                    getApplication<Application>().contentResolver.update(SubjectsContract.buildUriFromId(subject.subjectId), values, null, null)
+                    getApplication<Application>().contentResolver.update(
+                        SubjectsContract.buildUriFromId(
+                            subject.subjectId
+                        ), values, null, null
+                    )
                 }
             }
         }

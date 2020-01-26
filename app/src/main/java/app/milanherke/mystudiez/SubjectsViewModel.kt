@@ -16,7 +16,7 @@ class SubjectsViewModel(application: Application) : AndroidViewModel(application
 
     private val contentObserverSubject = object : ContentObserver(Handler()) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {
-                loadSubjects()
+            loadSubjects()
         }
     }
 

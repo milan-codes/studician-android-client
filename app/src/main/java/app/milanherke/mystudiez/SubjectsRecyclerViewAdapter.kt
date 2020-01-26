@@ -134,9 +134,7 @@ class SubjectsRecyclerViewAdapter(
         val oldCursor = cursorLessons
         cursorLessons = newCursor
         if (newCursor != null) {
-            if (oldCursor != null) {
-                if (oldCursor.count != newCursor.count) lessonsFromCursor.clear()
-            }
+            lessonsFromCursor.clear()
             loadLessonsIntoList(newCursor)
             notifyDataSetChanged()
         } else {

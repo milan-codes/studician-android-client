@@ -83,4 +83,10 @@
     <string name="dayOptionFriday">Friday</string>
     <string name="dayOptionSaturday">Saturday</string>
     <string name="dayOptionSunday">Sunday</string>
+    <string name="details_lesson_name">Name: </string>
+    <string name="details_lesson_starts_at">Starts at:</string>
+    <string name="details_lesson_ends_at">Ends at:</string>
+    <string name="lesson_details_edit_button">Edit lesson</string>
+    <string name="lesson_details_del_button">Delete lesson</string>
+    <string name="details_lesson_location">Location:</string>
 </resources>

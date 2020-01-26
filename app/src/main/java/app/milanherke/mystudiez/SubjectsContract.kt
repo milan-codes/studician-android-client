@@ -34,5 +34,4 @@ object SubjectsContract {
         return ContentUris.withAppendedId(CONTENT_URI, id)
     }
 
-
 }
