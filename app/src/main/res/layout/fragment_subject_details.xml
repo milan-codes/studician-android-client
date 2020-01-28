@@ -14,27 +14,15 @@
         android:orientation="vertical"
         android:scrollIndicators="none">
 
-        <TextView
-            android:id="@+id/subject_details_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_semibold"
-            android:text="@string/details_title"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.cardview.widget.CardView
             android:id="@+id/subject_details_cardview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/subject_details_title">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/subject_info_container"
@@ -126,6 +114,7 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/details_edit_button"
+                    android:textAllCaps="false"
                     android:textColor="#ffffff"
                     app:layout_constraintBaseline_toBaselineOf="@+id/del_subject_button"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -142,6 +131,7 @@
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/details_del_button"
+                    android:textAllCaps="false"
                     android:textColor="#ffffff"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/subject_details_color" />
@@ -185,6 +175,7 @@
             android:paddingEnd="15dp"
             android:text="@string/no_lesson_add_lesson_btn_title"
             android:textAlignment="center"
+            android:textAllCaps="false"
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -213,6 +204,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subject_details_tasks_title" />
 
+        <Button
+            android:id="@+id/subject_details_add_new_task_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_medium"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/no_task_add_lesson_btn_title"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/subject_details_tasks_recycler" />
+
         <TextView
             android:id="@+id/subject_details_exams_title"
             android:layout_width="wrap_content"
@@ -223,7 +232,7 @@
             android:textColor="@color/colorTextPrimary"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/subject_details_tasks_recycler" />
+            app:layout_constraintTop_toBottomOf="@+id/subject_details_add_new_task_btn" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/subject_details_exams_recycler"

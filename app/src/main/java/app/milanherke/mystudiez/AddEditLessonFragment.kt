@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -52,7 +53,7 @@ class AddEditLessonFragment : Fragment() {
      * for more information.
      */
     interface OnSaveLessonClick {
-        fun onSaveLessonClick(subject: Subject)
+        fun onSaveLessonClick(lesson: Lesson)
     }
 
     override fun onAttach(context: Context) {
@@ -135,13 +136,13 @@ class AddEditLessonFragment : Fragment() {
 
         new_lesson_save_btn.setOnClickListener {
             saveLesson()
-            listener?.onSaveLessonClick(subject!!)
         }
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
+        FragmentsStack.getInstance(context!!).pop()
     }
 
     companion object {
@@ -170,13 +171,16 @@ class AddEditLessonFragment : Fragment() {
      * and only save if they are different
      */
     private fun saveLesson() {
-        val newLesson = subjectFromUi()
+        val newLesson = lessonFromUi()
         if (newLesson != lesson) {
             lesson = viewModel.saveLesson(newLesson)
+            listener?.onSaveLessonClick(lesson!!)
+        } else {
+            Toast.makeText(context!!, "Enter details or go back", Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun subjectFromUi(): Lesson {
+    private fun lessonFromUi(): Lesson {
         val lesson = Lesson(
             subject!!.subjectId,
             "A",

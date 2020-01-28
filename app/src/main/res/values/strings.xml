@@ -30,7 +30,7 @@
     <string name="no_task_img_description">An illustration that describes that there are no Tasks</string>
     <string name="exams_recycler_empty">You didn\'t add any exam to this subject</string>
     <string name="no_exam_img_description">An illustration that describes that there are no Exams</string>
-    <string name="lessons_recycler_empty">You didn\'t add any lesson to this subject.\nTap on the button below to add new.</string>
+    <string name="lessons_recycler_empty">You didn\'t add any lesson to this subject.</string>
     <string name="no_lesson_img_description">An illustration that describes that there are no Lessons</string>
     <string name="subjects_recycler_empty">You didn\'t add any subject. Tap on the + button!</string>
     <string name="no_subject_img_description">An illustration that describes that there are no Subjects</string>
@@ -72,7 +72,7 @@
     <string name="add_edit_lesson_ends_at">Ends at:</string>
     <string name="add_edit_lesson_location">Location:</string>
     <string name="add_edit_lesson_location_value">Enter location</string>
-    <string name="add_edit_lesson_btns">Tap to select</string>
+    <string name="add_edit_lesson_btn">Tap to select</string>
     <string name="add_new_lesson_title">Add new lesson</string>
     <string name="edit_lesson_title">Edit %s lesson</string>
     <string name="no_lesson_add_lesson_btn_title">Add new lesson</string>
@@ -89,4 +89,20 @@
     <string name="lesson_details_edit_button">Edit lesson</string>
     <string name="lesson_details_del_button">Delete lesson</string>
     <string name="details_lesson_location">Location:</string>
+    <string name="no_task_add_lesson_btn_title">Add new task</string>
+    <string name="add_edit_task_type_title">Type:</string>
+    <string name="add_edit_task_subject_title">Subject:</string>
+    <string name="add_edit_task_due_date_title">Due date:</string>
+    <string name="add_edit_task_name_value">Enter name</string>
+    <string name="add_edit_task_name">Name:</string>
+    <string name="add_edit_task_desc">Description:</string>
+    <string name="add_edit_task_desc_value">Enter description</string>
+    <string name="add_edit_task_reminder_title">Reminder:</string>
+    <string name="add_new_task_title">Add new task</string>
+    <string name="taskTypeAssignment">Assignment</string>
+    <string name="taskTypeRevision">Revision</string>
+    <string name="task_details_del_button">Delete task</string>
+    <string name="task_details_edit_button">Edit task</string>
+    <string name="lesson_details_title">Lesson details</string>
+    <string name="task_details_title">Task details</string>
 </resources>

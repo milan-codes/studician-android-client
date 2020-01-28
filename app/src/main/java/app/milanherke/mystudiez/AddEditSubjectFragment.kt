@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
@@ -45,7 +46,6 @@ class AddEditSubjectFragment : Fragment() {
      * for more information.
      */
     interface AddEditSubjectInteractions {
-        fun addEditSubjectCreated(fragment: Fragments)
         fun onSaveSubjectClick(subject: Subject)
     }
 
@@ -84,11 +84,10 @@ class AddEditSubjectFragment : Fragment() {
 
         if (subject == null) {
             activity!!.toolbar.setTitle(R.string.add_new_subject_title)
-            listener?.addEditSubjectCreated(Fragments.SUBJECT)
+
         } else {
             activity!!.toolbar.title =
                 resources.getString(R.string.edit_subject_title, subject.name)
-            listener?.addEditSubjectCreated(Fragments.SUBJECT_DETAILS)
 
             new_subject_name_value.setText(subject.name)
             new_subject_teacher_value.setText(subject.teacher)
@@ -110,7 +109,6 @@ class AddEditSubjectFragment : Fragment() {
         }
         new_subject_save_btn.setOnClickListener {
             saveSubject()
-            listener?.onSaveSubjectClick(subject!!)
         }
 
     }
@@ -118,6 +116,7 @@ class AddEditSubjectFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+        FragmentsStack.getInstance(context!!).pop()
     }
 
     companion object {
@@ -145,8 +144,11 @@ class AddEditSubjectFragment : Fragment() {
      */
     private fun saveSubject() {
         val newSubject = subjectFromUi()
-        if (newSubject != subject) {
+        if (newSubject != subject && new_subject_name_value.text.isNotEmpty()) {
             subject = viewModel.saveSubject(newSubject)
+            listener?.onSaveSubjectClick(subject!!)
+        } else {
+            Toast.makeText(context!!, "Enter details or go back", Toast.LENGTH_LONG).show()
         }
     }
 

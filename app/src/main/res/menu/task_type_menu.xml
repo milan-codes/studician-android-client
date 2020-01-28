@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/task_type_assignment"
+        android:title="@string/taskTypeAssignment" />
+    <item
+        android:id="@+id/task_type_revision"
+        android:title="@string/taskTypeRevision" />
+</menu>

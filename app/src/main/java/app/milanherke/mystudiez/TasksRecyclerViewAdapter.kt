@@ -15,9 +15,14 @@ private const val VIEW_TYPE_EMPTY = 1
 
 class TasksRecyclerViewAdapter(
     private var cursorTasks: Cursor?,
-    private var subjectIndicator: Drawable?
+    private var subjectIndicator: Drawable?,
+    private val listener: OnTaskClickListener
 ) :
     RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>() {
+
+    interface OnTaskClickListener {
+        fun onTaskClickListener(task: Task)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
@@ -121,10 +126,14 @@ class TasksRecyclerViewAdapter(
         override fun bind(task: Task) {
             containerView.details_list_title.text = task.name
             containerView.details_list_header1.text = task.dueDate
-            containerView.details_list_header2.visibility = View.GONE
+            containerView.details_list_header2.text = task.type
 
             // We're creating a clone because we do not want to affect the other instances
             containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
+
+            containerView.details_list_container.setOnClickListener {
+                listener.onTaskClickListener(task)
+            }
         }
 
     }

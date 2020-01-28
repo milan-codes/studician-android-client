@@ -2,7 +2,6 @@ package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subjects.*
 
@@ -69,6 +65,11 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_subjects, container, false)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        FragmentsStack.getInstance(context!!).push(Fragments.SUBJECTS)
     }
 
     companion object {
