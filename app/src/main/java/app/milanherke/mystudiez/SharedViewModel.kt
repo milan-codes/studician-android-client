@@ -2,8 +2,6 @@ package app.milanherke.mystudiez
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import java.lang.Exception
-import java.lang.IllegalStateException
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 

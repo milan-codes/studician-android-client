@@ -8,8 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.subject_list_items.view.*
-import java.lang.Exception
-import java.lang.IllegalStateException
 
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1

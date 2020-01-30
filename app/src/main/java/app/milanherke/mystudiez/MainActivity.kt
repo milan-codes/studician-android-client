@@ -3,16 +3,13 @@ package app.milanherke.mystudiez
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomappbar.BottomAppBar
-
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.IllegalArgumentException
-import java.lang.IllegalStateException
 
 private const val TAG = "MainActivity"
 
@@ -28,7 +25,7 @@ class MainActivity : AppCompatActivity(),
     SubjectDetailsFragment.SubjectDetailsInteractions,
     LessonDetailsFragment.LessonDetailsInteraction,
     TaskDetailsFragment.TaskDetailsInteraction,
-    ExamDetailsFragment.ExamDetailsInteraction{
+    ExamDetailsFragment.ExamDetailsInteraction {
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
     private var subject: Subject? = null
@@ -46,6 +43,7 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
+        this.deleteDatabase("MyStudiez.db")
 
         replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
 

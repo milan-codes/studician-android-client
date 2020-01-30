@@ -3,11 +3,11 @@ package app.milanherke.mystudiez
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exam_details.*
@@ -17,6 +17,11 @@ private const val ARG_EXAM = "exam"
 
 /**
  * A simple [Fragment] subclass.
+ * This fragment was created to list the details of an exam.
+ * The user can delete an exam from this fragment
+ * or launch a new fragment ([AddEditExamFragment]) to edit it.
+ * This fragment can return only to [SubjectDetailsFragment].
+ * This fragment can be called only by the following fragments: [SubjectDetailsFragment].
  * Activities that contain this fragment must implement the
  * [ExamDetailsFragment.ExamDetailsInteraction] interface
  * to handle interaction events.
@@ -24,6 +29,7 @@ private const val ARG_EXAM = "exam"
  * create an instance of this fragment.
  */
 class ExamDetailsFragment : Fragment() {
+
     private var exam: Exam? = null
     private var subject: Subject? = null
     private var listener: ExamDetailsInteraction? = null

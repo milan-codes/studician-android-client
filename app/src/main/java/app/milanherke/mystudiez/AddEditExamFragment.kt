@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_exam.*
@@ -24,6 +24,7 @@ private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
+ * This fragment was created to add or edit exams.
  * Activities that contain this fragment must implement the
  * [AddEditExamFragment.AddEditExamInteractions] interface
  * to handle interaction events.
@@ -90,7 +91,8 @@ class AddEditExamFragment : Fragment() {
 
         } else if (exam != null && subject != null) {
             // Exam is edited. Fragment was called from ExamDetailsFragment
-            activity!!.toolbar.title = resources.getString(R.string.edit_subject_title, subject.name)
+            activity!!.toolbar.title =
+                resources.getString(R.string.edit_subject_title, subject.name)
             new_exam_name.setText(exam.name)
             new_exam_desc.setText(exam.description)
             new_exam_subject_btn.text = subject.name
@@ -101,7 +103,7 @@ class AddEditExamFragment : Fragment() {
             new_exam_date_btn.text = exam.date
             new_exam_reminder_btn.text = exam.reminder
 
-        }else if (exam == null && subject != null) {
+        } else if (exam == null && subject != null) {
             // New exam is created. Fragment was called from SubjectDetailsFragment
             activity!!.toolbar.setTitle(R.string.add_new_exam_title)
             new_exam_subject_btn.text = subject.name
@@ -177,9 +179,9 @@ class AddEditExamFragment : Fragment() {
     }
 
     /**
-     * Creates a newTask object with the details to be saved, then
-     * call the viewModel's saveTask function to save it
-     * Task is not a data class, so we can compare the new details with the original task
+     * Creates a newExam object with the details to be saved, then
+     * call the viewModel's saveExam function to save it
+     * Exam is not a data class, so we can compare the new details with the original exam
      * and only save if they are different
      */
     private fun saveExam() {

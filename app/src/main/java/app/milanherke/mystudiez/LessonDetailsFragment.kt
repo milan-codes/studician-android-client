@@ -3,21 +3,25 @@ package app.milanherke.mystudiez
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_lesson_details.*
-import java.lang.RuntimeException
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_LESSON = "lesson"
 
 /**
  * A simple [Fragment] subclass.
+ * This fragment was created to list the details of a lesson.
+ * The user can delete a lesson from this fragment
+ * or launch a new fragment ([AddEditLessonFragment]) to edit it.
+ * This fragment can return only to [SubjectDetailsFragment].
+ * This fragment can be called only by the following fragments: [SubjectDetailsFragment].
  * Activities that contain this fragment must implement the
  * [LessonDetailsFragment.LessonDetailsInteraction] interface
  * to handle interaction events.

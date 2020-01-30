@@ -8,7 +8,6 @@ import android.database.SQLException
 import android.database.sqlite.SQLiteQueryBuilder
 import android.net.Uri
 import android.util.Log
-import java.lang.IllegalArgumentException
 
 /**
  * ContentProvider for the app.
@@ -291,7 +290,7 @@ class AppProvider : ContentProvider() {
 
             else -> throw IllegalArgumentException("Unknown uri: $uri")
         }
-        
+
         Log.i(TAG, "Exiting update, returning $count")
         return count
     }

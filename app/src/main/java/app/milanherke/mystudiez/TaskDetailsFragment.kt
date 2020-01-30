@@ -3,11 +3,11 @@ package app.milanherke.mystudiez
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_task_details.*
@@ -17,6 +17,11 @@ private const val ARG_TASK = "task"
 
 /**
  * A simple [Fragment] subclass.
+ * This fragment was created to list the details of a task.
+ * The user can delete a task from this fragment
+ * or launch a new fragment ([AddEditTaskFragment]) to edit it.
+ * This fragment can return only to [SubjectDetailsFragment].
+ * This fragment can be called only by the following fragments: [SubjectDetailsFragment].
  * Activities that contain this fragment must implement the
  * [TaskDetailsFragment.TaskDetailsInteraction] interface
  * to handle interaction events.

@@ -5,8 +5,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import java.lang.Exception
-import java.lang.IllegalArgumentException
 
 /**
  * Basic database class for the application

@@ -2,7 +2,6 @@ package app.milanherke.mystudiez
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_subject.*
@@ -19,6 +19,7 @@ private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
+ * This fragment was created to add or edit subjects.
  * Activities that contain this fragment must implement the
  * [AddEditSubjectFragment.AddEditSubjectInteractions] interface
  * to handle interaction events.

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import java.lang.IllegalArgumentException
 import kotlinx.android.synthetic.main.fragment_bottomsheet.*
 
 class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
