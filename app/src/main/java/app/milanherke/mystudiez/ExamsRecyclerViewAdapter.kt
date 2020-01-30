@@ -15,9 +15,14 @@ private const val VIEW_TYPE_EMPTY = 1
 
 class ExamsRecyclerViewAdapter(
     private var cursorExams: Cursor?,
-    private var dayIndicator: Drawable?
+    private var dayIndicator: Drawable?,
+    private val listener: OnExamClickListener
 ) :
     RecyclerView.Adapter<ExamsRecyclerViewAdapter.ViewHolder>() {
+
+    interface OnExamClickListener {
+        fun onExamClickListener(exam: Exam)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
@@ -124,6 +129,10 @@ class ExamsRecyclerViewAdapter(
 
             // We're creating a clone because we do not want to affect the other instances
             containerView.details_list_subject_indicator.setImageDrawable(dayIndicator)
+
+            containerView.details_list_container.setOnClickListener {
+                listener.onExamClickListener(exam)
+            }
         }
 
     }

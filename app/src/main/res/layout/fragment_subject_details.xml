@@ -239,13 +239,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:clipToPadding="false"
             android:isScrollContainer="false"
             android:nestedScrollingEnabled="false"
-            android:paddingBottom="96dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/subject_details_exams_title" />
+
+        <Button
+            android:id="@+id/subject_details_add_new_exam_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_medium"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/no_exam_add_exam_btn_title"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/subject_details_exams_recycler" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

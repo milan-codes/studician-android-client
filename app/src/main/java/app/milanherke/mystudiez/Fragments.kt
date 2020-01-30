@@ -8,7 +8,9 @@ package app.milanherke.mystudiez
 enum class Fragments {
     SUBJECTS,
     TASKS,
+    EXAMS,
     SUBJECT_DETAILS,
     LESSON_DETAILS,
-    TASK_DETAILS
+    TASK_DETAILS,
+    EXAM_DETAILS
 }

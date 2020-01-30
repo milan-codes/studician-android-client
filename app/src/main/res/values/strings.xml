@@ -105,4 +105,11 @@
     <string name="task_details_edit_button">Edit task</string>
     <string name="lesson_details_title">Lesson details</string>
     <string name="task_details_title">Task details</string>
+    <string name="add_edit_exam_name">Name:</string>
+    <string name="add_new_exam_title">Add new exam</string>
+    <string name="no_exam_add_exam_btn_title">Add new exam</string>
+    <string name="exam_details_edit_button">Edit exam</string>
+    <string name="exam_details_del_button">Delete exam</string>
+    <string name="exam_details_title">Exam details</string>
+    <string name="add_edit_exam_date_title">Date:</string>
 </resources>

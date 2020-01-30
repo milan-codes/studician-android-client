@@ -25,8 +25,10 @@ private const val ARG_SUBJECT = "subject"
  * Use the [SubjectDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SubjectDetailsFragment : Fragment(), LessonsRecyclerViewAdapter.OnLessonClickListener,
-    TasksRecyclerViewAdapter.OnTaskClickListener {
+class SubjectDetailsFragment : Fragment(),
+    LessonsRecyclerViewAdapter.OnLessonClickListener,
+    TasksRecyclerViewAdapter.OnTaskClickListener,
+    ExamsRecyclerViewAdapter.OnExamClickListener{
 
     private var subject: Subject? = null
     private var listener: SubjectDetailsInteractions? = null
@@ -35,7 +37,7 @@ class SubjectDetailsFragment : Fragment(), LessonsRecyclerViewAdapter.OnLessonCl
     }
     private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null, this)
     private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this)
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, null)
+    private val examsAdapter = ExamsRecyclerViewAdapter(null, null, this)
 
     /**
      * This interface must be implemented by activities that contain this
@@ -146,6 +148,13 @@ class SubjectDetailsFragment : Fragment(), LessonsRecyclerViewAdapter.OnLessonCl
                 R.id.fragment_container
             )
         }
+
+        subject_details_add_new_exam_btn.setOnClickListener {
+            activity!!.replaceFragment(
+                AddEditExamFragment.newInstance(null, subject!!),
+                R.id.fragment_container
+            )
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -194,6 +203,12 @@ class SubjectDetailsFragment : Fragment(), LessonsRecyclerViewAdapter.OnLessonCl
     override fun onTaskClickListener(task: Task) {
         activity!!.replaceFragment(
             TaskDetailsFragment.newInstance(task), R.id.fragment_container
+        )
+    }
+
+    override fun onExamClickListener(exam: Exam) {
+        activity!!.replaceFragment(
+            ExamDetailsFragment.newInstance(exam), R.id.fragment_container
         )
     }
 }

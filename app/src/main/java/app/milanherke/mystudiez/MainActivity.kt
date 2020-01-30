@@ -23,10 +23,12 @@ var APP_STATE = SUBJECTS_STATE
 class MainActivity : AppCompatActivity(),
     AddEditSubjectFragment.AddEditSubjectInteractions,
     AddEditLessonFragment.OnSaveLessonClick,
+    AddEditTaskFragment.AddEditTaskInteractions,
+    AddEditExamFragment.AddEditExamInteractions,
     SubjectDetailsFragment.SubjectDetailsInteractions,
     LessonDetailsFragment.LessonDetailsInteraction,
-    AddEditTaskFragment.AddEditTaskInteractions,
-    TaskDetailsFragment.TaskDetailsInteraction {
+    TaskDetailsFragment.TaskDetailsInteraction,
+    ExamDetailsFragment.ExamDetailsInteraction{
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
     private var subject: Subject? = null
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity(),
     private var lesson: Lesson? = null
     // The task, whose details are displayed when TaskDetailsFragment is called
     private var task: Task? = null
+    // The exam, whose details are displayed when ExamDetailsFragment is called
+    private var exam: Exam? = null
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,9 +95,11 @@ class MainActivity : AppCompatActivity(),
                     is SubjectDetailsFragment -> upBtnInSubjectDetailsFragment()
                     is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
                     is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
+                    is ExamDetailsFragment -> upBtnInExamDetailsFragment()
                     is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
                     is AddEditLessonFragment -> upInAddEditLessonFragment()
                     is AddEditTaskFragment -> upInAddEditTaskFragment()
+                    is AddEditExamFragment -> upInAddEditExamFragment()
                     else -> throw IllegalArgumentException("Up button used by unrecognised fragment $fragment")
                 }
             }
@@ -108,11 +114,11 @@ class MainActivity : AppCompatActivity(),
 
     /**
      * [SubjectDetailsFragment] can return only to [SubjectsFragment]
-     * It can be called only by the following fragments: [SubjectsFragment], [LessonDetailsFragment] and [TaskDetailsFragment].
+     * It can be called only by the following fragments: [SubjectsFragment], [LessonDetailsFragment], [TaskDetailsFragment] and [ExamDetailsFragment].
      */
     private fun upBtnInSubjectDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECTS, Fragments.LESSON_DETAILS, Fragments.TASK_DETAILS -> {
+            Fragments.SUBJECTS, Fragments.LESSON_DETAILS, Fragments.TASK_DETAILS, Fragments.EXAM_DETAILS -> {
                 replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
             }
             else -> throw IllegalStateException("SubjectDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
@@ -148,6 +154,22 @@ class MainActivity : AppCompatActivity(),
                 )
             }
             else -> throw IllegalStateException("TaskDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
+        }
+    }
+
+    /**
+     * [ExamDetailsFragment] can return only to [SubjectDetailsFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment].
+     */
+    private fun upBtnInExamDetailsFragment() {
+        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> {
+                replaceFragment(
+                    SubjectDetailsFragment.newInstance(subject!!),
+                    R.id.fragment_container
+                )
+            }
+            else -> throw IllegalStateException("ExamDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
         }
     }
 
@@ -223,12 +245,36 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * [AddEditExamFragment] can return only to [SubjectDetailsFragment] and [ExamDetailsFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [ExamDetailsFragment] (when editing an existing one).
+     */
+    private fun upInAddEditExamFragment() {
+        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> {
+                replaceFragment(
+                    SubjectDetailsFragment.newInstance(subject!!),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.EXAM_DETAILS -> replaceFragment(
+                ExamDetailsFragment.newInstance(
+                    exam!!
+                ), R.id.fragment_container
+            )
+            else -> {
+                throw IllegalStateException("AddEditExamFragment was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
     // INTERACTION INTERFACES
     // Implementing the interfaces which are required to communicate with a fragment.
 
     /**
      * Interaction interface(s) from [AddEditSubjectFragment]
      */
+
     override fun onSaveSubjectClick(subject: Subject) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> replaceFragment(
@@ -247,6 +293,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Interaction interface(s) from [AddEditLessonFragment]
      */
+
     override fun onSaveLessonClick(lesson: Lesson) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> replaceFragment(
@@ -265,6 +312,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Interaction interface(s) from [AddEditTaskFragment]
      */
+
     override fun onSaveTaskClicked(task: Task) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> replaceFragment(
@@ -279,10 +327,57 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * Interaction interface(s) from [AddEditExamFragment]
+     */
+
+    override fun onSaveExamClicked(exam: Exam) {
+        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> replaceFragment(
+                SubjectDetailsFragment.newInstance(subject!!),
+                R.id.fragment_container
+            )
+            Fragments.EXAM_DETAILS -> replaceFragment(
+                ExamDetailsFragment.newInstance(exam),
+                R.id.fragment_container
+            )
+            else -> throw IllegalStateException("onSaveExamClicked tries to load unrecognised fragment $fragmentCalledFrom")
+        }
+    }
+
+
+    /**
+     * Interaction interface(s) from [SubjectDetailsFragment]
+     */
+    override fun subjectIsLoaded(subject: Subject) {
+        this.subject = subject
+    }
+
+
+    /**
+     * Interaction interface(s) from [LessonDetailsFragment]
+     */
+
+    override fun onDeleteLessonClick(subject: Subject) {
+        replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
+    }
+
+    override fun onEditLessonClick(lesson: Lesson) {
+        replaceFragment(
+            AddEditLessonFragment.newInstance(lesson, subject!!),
+            R.id.fragment_container
+        )
+    }
+
+    override fun lessonIsLoaded(lesson: Lesson) {
+        this.lesson = lesson
+    }
+
 
     /**
      * Interaction interface(s) from [TaskDetailsFragment]
      */
+
     override fun onDeleteTaskClick(subject: Subject) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> replaceFragment(
@@ -303,28 +398,24 @@ class MainActivity : AppCompatActivity(),
 
 
     /**
-     * Interaction interface(s) from [SubjectDetailsFragment]
+     * Interaction interface(s) from [ExamDetailsFragment]
      */
-    override fun subjectIsLoaded(subject: Subject) {
-        this.subject = subject
+
+    override fun onDeleteExamClick(subject: Subject) {
+        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> replaceFragment(
+                SubjectDetailsFragment.newInstance(subject),
+                R.id.fragment_container
+            )
+            else -> throw IllegalStateException("onDeleteExamClick tries to load unrecognised fragment $fragmentCalledFrom")
+        }
     }
 
-
-    /**
-     * Interaction interface(s) from [LessonDetailsFragment]
-     */
-    override fun onDeleteLessonClick(subject: Subject) {
-        replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
+    override fun onEditExamClick(exam: Exam) {
+        replaceFragment(AddEditExamFragment.newInstance(exam, subject), R.id.fragment_container)
     }
 
-    override fun onEditLessonClick(lesson: Lesson) {
-        replaceFragment(
-            AddEditLessonFragment.newInstance(lesson, subject!!),
-            R.id.fragment_container
-        )
-    }
-
-    override fun lessonIsLoaded(lesson: Lesson) {
-        this.lesson = lesson
+    override fun examIsLoaded(exam: Exam) {
+        this.exam = exam
     }
 }

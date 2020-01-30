@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackgroundPrimary"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackgroundPrimary"
+        android:backgroundTint="@color/colorBackgroundPrimary"
+        android:paddingTop="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <TextView
+            android:id="@+id/new_exam_name_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/add_edit_exam_name"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/new_exam_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="@string/add_edit_task_name_value"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/new_exam_name_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/new_exam_desc" />
+
+        <TextView
+            android:id="@+id/new_exam_desc_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/add_edit_task_desc"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_exam_name_title" />
+
+        <EditText
+            android:id="@+id/new_exam_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:ems="10"
+            android:fontFamily="@font/montserrat_regular"
+            android:hint="@string/add_edit_task_desc_value"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            android:textColor="@color/colorTextSecondary"
+            android:textSize="14sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/new_exam_desc_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/new_exam_desc_title" />
+
+        <TextView
+            android:id="@+id/new_exam_subject_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/add_edit_task_subject_title"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_exam_desc_title" />
+
+        <Button
+            android:id="@+id/new_exam_subject_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_semibold"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/add_edit_lesson_btn"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            app:layout_constraintBaseline_toBaselineOf="@+id/new_exam_subject_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/new_exam_desc" />
+
+        <TextView
+            android:id="@+id/new_exam_date_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/add_edit_exam_date_title"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_exam_subject_title" />
+
+        <Button
+            android:id="@+id/new_exam_date_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_semibold"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/add_edit_lesson_btn"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            app:layout_constraintBaseline_toBaselineOf="@+id/new_exam_date_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/new_exam_subject_btn" />
+
+        <TextView
+            android:id="@+id/new_exam_reminder_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="@string/add_edit_task_reminder_title"
+            android:textColor="@color/colorTextPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_exam_date_title" />
+
+        <Button
+            android:id="@+id/new_exam_reminder_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_semibold"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/add_edit_lesson_btn"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            app:layout_constraintBaseline_toBaselineOf="@+id/new_exam_reminder_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/new_exam_date_btn" />
+
+
+        <Button
+            android:id="@+id/new_exam_save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:layout_marginBottom="64dp"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_semibold"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="@string/new_subject_save_btn"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/new_exam_reminder_btn" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
