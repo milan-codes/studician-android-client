@@ -1,5 +1,6 @@
 package app.milanherke.mystudiez
 
+import android.app.Application
 import android.content.ContentUris
 import android.net.Uri
 import android.provider.BaseColumns

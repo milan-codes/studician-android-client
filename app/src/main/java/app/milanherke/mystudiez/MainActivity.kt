@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,6 +37,11 @@ class MainActivity : AppCompatActivity(),
     // The exam, whose details are displayed when ExamDetailsFragment is called
     private var exam: Exam? = null
 
+    private val sharedViewModel by lazy {
+        ViewModelProviders.of(this).get(SharedViewModel::class.java)
+    }
+
+
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate: starts")
@@ -43,7 +49,6 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
-        this.deleteDatabase("MyStudiez.db")
 
         replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
 
@@ -56,13 +61,10 @@ class MainActivity : AppCompatActivity(),
 
         fab.setOnClickListener {
             when (val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
-                is SubjectsFragment -> {
-                    replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
-                    bar.visibility = View.GONE
-                    fab.visibility = View.GONE
-                }
+                is SubjectsFragment -> fabBtnInSubjectsFragment()
+                is TasksFragment -> fabBtnInTasksFragment()
                 else -> {
-                    throw IllegalStateException("Unrecognised fragment $fragment")
+                    throw IllegalStateException("FAB Button pressed in unrecognised fragment $fragment")
                 }
             }
         }
@@ -107,6 +109,26 @@ class MainActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
+    // FAB BUTTON FUNCTIONS
+    // These functions are used to determine what should be done when the fab button is pressed in specific fragments
+
+    /**
+     * When the FAB button is pressed in [SubjectsFragment], it should launch [AddEditSubjectFragment]
+     * Because the user wants to add a new [Subject]
+     */
+    private fun fabBtnInSubjectsFragment() {
+        replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
+    }
+
+    /**
+     * When the FAB button is pressed in [TasksFragment], it should launch [AddEditTaskFragment]
+     * Because the user wants to add a new [Task]
+     */
+    private fun fabBtnInTasksFragment() {
+        replaceFragment(AddEditTaskFragment.newInstance(), R.id.fragment_container)
+    }
+
+
     // UP BUTTON FUNCTIONS
     // These functions are used to determine what should be loaded when the up button is pressed in specific fragments.
 
@@ -140,14 +162,20 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * [TaskDetailsFragment] can return only to [SubjectDetailsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment].
+     * [TaskDetailsFragment] can return only to [SubjectDetailsFragment] and [TasksFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment] and [TasksFragment].
      */
     private fun upBtnInTaskDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragment(
                     SubjectDetailsFragment.newInstance(subject!!),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.TASKS -> {
+                replaceFragment(
+                    TasksFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
@@ -221,11 +249,20 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * [AddEditTaskFragment] can return only to [SubjectDetailsFragment] and [TaskDetailsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [TaskDetailsFragment] (when editing an existing one).
+     * [AddEditTaskFragment] can return only to [TasksFragment] [SubjectDetailsFragment] and [TaskDetailsFragment].
+     * It can be called only by the following fragments:
+     *  [TasksFragment]: When pressing the FAB button and creating a new one
+     *  [SubjectDetailsFragment]: When adding a new one from [SubjectDetailsFragment]
+     *  [TaskDetailsFragment]: When editing an existing one
      */
     private fun upInAddEditTaskFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.TASKS -> {
+                replaceFragment(
+                    TasksFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragment(
                     SubjectDetailsFragment.newInstance(subject!!),
@@ -313,6 +350,10 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSaveTaskClicked(task: Task) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.TASKS -> replaceFragment(
+                TasksFragment.newInstance(),
+                R.id.fragment_container
+            )
             Fragments.SUBJECT_DETAILS -> replaceFragment(
                 SubjectDetailsFragment.newInstance(subject!!),
                 R.id.fragment_container
@@ -324,6 +365,7 @@ class MainActivity : AppCompatActivity(),
             else -> throw IllegalStateException("onSaveTaskClicked tries to load unrecognised fragment $fragmentCalledFrom")
         }
     }
+
 
     /**
      * Interaction interface(s) from [AddEditExamFragment]
@@ -382,12 +424,18 @@ class MainActivity : AppCompatActivity(),
                 SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
+            Fragments.TASKS -> {
+                replaceFragment(
+                    TasksFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
             else -> throw IllegalStateException("onDeleteTaskClick tries to load unrecognised fragment $fragmentCalledFrom")
         }
     }
 
     override fun onEditTaskClick(task: Task) {
-        replaceFragment(AddEditTaskFragment.newInstance(task, subject), R.id.fragment_container)
+        replaceFragment(AddEditTaskFragment.newInstance(task, sharedViewModel.subjectFromId(task.subjectId)), R.id.fragment_container)
     }
 
     override fun taskIsLoaded(task: Task) {

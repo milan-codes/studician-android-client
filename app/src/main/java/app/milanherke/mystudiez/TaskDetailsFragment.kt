@@ -69,6 +69,7 @@ class TaskDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         task = arguments?.getParcelable(ARG_TASK)
+        val task = task
         listener?.taskIsLoaded(task!!)
         subject = sharedViewModel.subjectFromId(task!!.subjectId)
     }

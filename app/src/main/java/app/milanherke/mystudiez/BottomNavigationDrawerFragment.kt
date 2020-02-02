@@ -25,7 +25,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                 }
                 R.id.bottomnav_tasks -> {
                     activity!!.replaceFragment(
-                        SubjectsFragment.newInstance(),
+                        TasksFragment.newInstance(),
                         R.id.fragment_container
                     )
                     activity!!.removeFragment(this)

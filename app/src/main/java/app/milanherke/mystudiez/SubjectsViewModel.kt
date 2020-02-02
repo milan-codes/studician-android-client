@@ -72,7 +72,7 @@ class SubjectsViewModel(application: Application) : AndroidViewModel(application
                 projection,
                 null,
                 null,
-                "${SubjectsContract.Columns.SUBJECT_NAME} DESC"
+                SubjectsContract.Columns.SUBJECT_NAME
             )
             databaseCursor.postValue(cursor)
         }

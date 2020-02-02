@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SubjectsFragment">
+    tools:context=".TasksFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/subject_list"
+        android:id="@+id/task_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -15,4 +15,5 @@
         android:nestedScrollingEnabled="false"
         android:paddingBottom="96dp"
         android:scrollbars="vertical" />
+
 </LinearLayout>

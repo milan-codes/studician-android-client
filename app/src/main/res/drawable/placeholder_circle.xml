@@ -7,6 +7,6 @@
         android:color="@color/colorTextSecondary"/>
 
     <size
-        android:width="21dp"
-        android:height="21dp"/>
+        android:width="16dp"
+        android:height="16dp"/>
 </shape>

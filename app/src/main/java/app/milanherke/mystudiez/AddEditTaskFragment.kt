@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,8 +37,13 @@ class AddEditTaskFragment : Fragment() {
     private var task: Task? = null
     private var subject: Subject? = null
     private var listener: AddEditTaskInteractions? = null
+    private var listOfSubjects: ArrayList<Subject>? = null
+    private var subjectIdClickedFromList: Long? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(AddEditTaskViewModel::class.java)
+    }
+    private val sharedViewModel by lazy {
+        ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
 
     /**
@@ -68,6 +74,7 @@ class AddEditTaskFragment : Fragment() {
         super.onCreate(savedInstanceState)
         task = arguments?.getParcelable(ARG_TASK)
         subject = arguments?.getParcelable(ARG_SUBJECT)
+        listOfSubjects = sharedViewModel.getAllSubjects()
     }
 
     override fun onCreateView(
@@ -87,7 +94,6 @@ class AddEditTaskFragment : Fragment() {
         if (task == null && subject == null) {
             // New task is created. Fragment was called from TasksFragment
             activity!!.toolbar.setTitle(R.string.add_new_task_title)
-
         } else if (task != null && subject != null) {
             // Task is edited. Fragment was called from TaskDetailsFragment
             activity!!.toolbar.title =
@@ -129,6 +135,12 @@ class AddEditTaskFragment : Fragment() {
             showTaskTypesPopUp(it)
         }
 
+        if (new_task_subject_btn.isEnabled) {
+            new_task_subject_btn.setOnClickListener {
+                showSubjectsPopUp(it)
+            }
+        }
+
         new_task_due_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
@@ -167,7 +179,7 @@ class AddEditTaskFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param task The task to be edited, or null when creating a new one.
-         * @param subject Subject associated with the task. Null if fragment was called from TasksFragment //TODO: Reference to TasksFragment when it was created
+         * @param subject Subject associated with the task. Null if fragment was called from [TasksFragment]
          * @return A new instance of fragment AddEditTaskFragment.
          */
         @JvmStatic
@@ -197,11 +209,14 @@ class AddEditTaskFragment : Fragment() {
     }
 
     private fun taskFromUi(): Task {
+        // Avoiding problems with smart cast
+        val subjectIdClickedFromList = subjectIdClickedFromList
+
         val task = Task(
             new_task_name.text.toString(),
             new_task_desc.text.toString(),
             new_task_type_btn.text.toString(),
-            subject!!.subjectId,
+            subjectIdClickedFromList ?: subject!!.subjectId,
             new_task_due_date_btn.text.toString(),
             new_task_reminder_btn.text.toString()
         )
@@ -221,6 +236,26 @@ class AddEditTaskFragment : Fragment() {
                 R.id.task_type_revision -> new_task_type_btn.setText(R.string.taskTypeRevision)
             }
             true
+        }
+    }
+
+    private fun showSubjectsPopUp(view: View) {
+        // Avoiding problems with smart cast
+        val listOfSubjects = listOfSubjects
+        if (listOfSubjects != null) {
+            val popupMenu = PopupMenu(activity!!, view)
+            val inflater = popupMenu.menuInflater
+            inflater.inflate(R.menu.empty_menu, popupMenu.menu)
+
+            // Adding the subjects to the list if it is not null
+            for(subject in listOfSubjects) {
+                popupMenu.menu.add(subject.name).setOnMenuItemClickListener {
+                    new_task_subject_btn.text = subject.name
+                    subjectIdClickedFromList = subject.subjectId
+                    true
+                }
+            }
+            popupMenu.show()
         }
     }
 

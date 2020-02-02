@@ -142,7 +142,7 @@ class AppProvider : ContentProvider() {
         }
 
         val db = AppDatabase.getInstance(context!!).readableDatabase
-        val cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, null)
+        val cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder)
         Log.i(TAG, "query: rows in returned cursor = ${cursor.count}")
 
         return cursor

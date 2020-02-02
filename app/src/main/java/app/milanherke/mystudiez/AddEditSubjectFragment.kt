@@ -1,5 +1,6 @@
 package app.milanherke.mystudiez
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -98,12 +99,16 @@ class AddEditSubjectFragment : Fragment() {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         if (activity is AppCompatActivity) {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
+
+        activity!!.bar.visibility = View.GONE
+        activity!!.fab.visibility = View.GONE
 
         new_subject_color_btn.setOnClickListener {
             showPopup(it)

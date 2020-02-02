@@ -26,13 +26,13 @@
     <string name="bottom_nav_tasks_title">Tasks</string>
     <string name="bottom_nav_exams_title">Exams</string>
     <string name="details_subject_item_time">%s - %s</string>
-    <string name="tasks_recycler_empty">You didn\'t add any task to this subject</string>
+    <string name="tasks_recycler_empty">No tasks</string>
     <string name="no_task_img_description">An illustration that describes that there are no Tasks</string>
-    <string name="exams_recycler_empty">You didn\'t add any exam to this subject</string>
+    <string name="exams_recycler_empty">No exams</string>
     <string name="no_exam_img_description">An illustration that describes that there are no Exams</string>
-    <string name="lessons_recycler_empty">You didn\'t add any lesson to this subject.</string>
+    <string name="lessons_recycler_empty">No lessons</string>
     <string name="no_lesson_img_description">An illustration that describes that there are no Lessons</string>
-    <string name="subjects_recycler_empty">You didn\'t add any subject. Tap on the + button!</string>
+    <string name="subjects_recycler_empty">No subjects\n Press the + button to add new</string>
     <string name="no_subject_img_description">An illustration that describes that there are no Subjects</string>
     <string name="new_subject_activity_title">New subject</string>
     <string name="title_activity_new_subject">NewSubjectActivity</string>
@@ -112,4 +112,5 @@
     <string name="exam_details_del_button">Delete exam</string>
     <string name="exam_details_title">Exam details</string>
     <string name="add_edit_exam_date_title">Date:</string>
+    <string name="tasks_any_recycler_empty">No tasks\n Press the + button to add new</string>
 </resources>

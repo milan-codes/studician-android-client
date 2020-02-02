@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subject_details.*
+import java.lang.IllegalStateException
 
 // the fragment initialization parameters, e.g. ARG_SUBJECT
 private const val ARG_SUBJECT = "subject"
@@ -204,6 +205,10 @@ class SubjectDetailsFragment : Fragment(),
         activity!!.replaceFragment(
             TaskDetailsFragment.newInstance(task), R.id.fragment_container
         )
+    }
+
+    override fun loadSubjectFromId(id: Long): Subject {
+        throw IllegalStateException("loadSubjectFromId should not and cannot be called from SubjectDetailsFragment")
     }
 
     override fun onExamClickListener(exam: Exam) {

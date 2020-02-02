@@ -173,7 +173,6 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
             )
         }
 
-        // Deleting subject
         GlobalScope.launch {
             getApplication<Application>().contentResolver?.delete(
                 SubjectsContract.buildUriFromId(
@@ -181,6 +180,7 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                 ), null, null
             )
         }
+
     }
 
 }
