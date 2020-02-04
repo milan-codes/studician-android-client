@@ -207,8 +207,12 @@ class SubjectDetailsFragment : Fragment(),
         )
     }
 
-    override fun loadSubjectFromId(id: Long): Subject {
-        throw IllegalStateException("loadSubjectFromId should not and cannot be called from SubjectDetailsFragment")
+    override fun loadSubjectFromExam(id: Long): Subject {
+        throw IllegalStateException("loadSubjectFromExam should not and cannot be called from SubjectDetailsFragment")
+    }
+
+    override fun loadSubjectFromTask(id: Long): Subject {
+        throw IllegalStateException("loadSubjectFromTask should not and cannot be called from SubjectDetailsFragment")
     }
 
     override fun onExamClickListener(exam: Exam) {

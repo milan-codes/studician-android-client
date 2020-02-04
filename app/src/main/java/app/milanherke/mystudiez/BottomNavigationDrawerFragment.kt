@@ -32,12 +32,12 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
                 }
                 R.id.bottomnav_exams -> {
                     activity!!.replaceFragment(
-                        SubjectsFragment.newInstance(),
+                        ExamsFragment.newInstance(),
                         R.id.fragment_container
                     )
                     activity!!.removeFragment(this)
                 }
-                else -> throw IllegalArgumentException("Unknown menuItem passed")
+                else -> throw IllegalArgumentException("Unknown menuItem ${menuItem.itemId}")
             }
             true
         }

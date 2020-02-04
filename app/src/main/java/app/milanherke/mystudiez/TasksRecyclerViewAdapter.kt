@@ -1,14 +1,10 @@
 package app.milanherke.mystudiez
 
-import android.content.Context
 import android.database.Cursor
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.details_list_item.view.*
@@ -26,7 +22,7 @@ class TasksRecyclerViewAdapter(
 
     interface OnTaskClickListener {
         fun onTaskClickListener(task: Task)
-        fun loadSubjectFromId(id: Long) : Subject
+        fun loadSubjectFromTask(id: Long) : Subject?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -140,22 +136,21 @@ class TasksRecyclerViewAdapter(
         ViewHolder(containerView) {
 
         override fun bind(task: Task) {
-            // We're only binding if there are more than 0 rows returned in cursor
-            if (cursorTasks!!.count > 0) {
-                // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
-                // Meaning we do not have to load nor display the subject details
-                if ( subjectIndicator != null) {
-                    containerView.details_list_title.text = task.name
-                    containerView.details_list_header1.text = task.dueDate
-                    containerView.details_list_header2.text = task.type
+            // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
+            // Meaning we do not have to load nor display the subject details
+            if ( subjectIndicator != null) {
+                containerView.details_list_title.text = task.name
+                containerView.details_list_header1.text = task.dueDate
+                containerView.details_list_header2.text = task.type
 
-                    // We're creating a clone because we do not want to affect the other instances
-                    containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
-                } else {
-                    Log.i("sss", "here")
-                    val subject = listener.loadSubjectFromId(task.subjectId)
+                // We're creating a clone because we do not want to affect the other instances
+                containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
+            } else {
+                val subject = listener.loadSubjectFromTask(task.subjectId)
+                // If the subject is null, it means that the task we're trying to load has been deleted
+                if (subject != null) {
                     containerView.details_list_title.text = task.name
-                    containerView.details_list_header1.text = "${subject.name} - ${task.type}"
+                    containerView.details_list_header1.text = containerView.resources.getString(R.string.details_subject_item_time, subject.name, task.type)
                     containerView.details_list_header2.text = task.dueDate
 
                     //Creating a clone drawable because we do not want to affect other instances of the original drawable
@@ -163,10 +158,10 @@ class TasksRecyclerViewAdapter(
                     clone.displayColor(subject.colorCode, containerView.context)
                     containerView.details_list_subject_indicator.setImageDrawable(clone)
                 }
+            }
 
-                containerView.details_list_container.setOnClickListener {
-                    listener.onTaskClickListener(task)
-                }
+            containerView.details_list_container.setOnClickListener {
+                listener.onTaskClickListener(task)
             }
         }
 

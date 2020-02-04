@@ -113,4 +113,6 @@
     <string name="exam_details_title">Exam details</string>
     <string name="add_edit_exam_date_title">Date:</string>
     <string name="tasks_any_recycler_empty">No tasks\n Press the + button to add new</string>
+    <string name="exams_any_recycler_empty">No exams\n Press the + button to add new</string>
+    <string name="required_fields_are_not_filled">You must fill in all required fields.</string>
 </resources>

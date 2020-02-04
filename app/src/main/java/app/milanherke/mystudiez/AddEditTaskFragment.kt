@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -200,11 +199,11 @@ class AddEditTaskFragment : Fragment() {
      */
     private fun saveTask() {
         val newTask = taskFromUi()
-        if (newTask != task && new_task_name.text.isNotEmpty()) {
+        if (newTask != task && requiredFieldsAreFilled()) {
             task = viewModel.saveTask(newTask)
             listener?.onSaveTaskClicked(task!!)
         } else {
-            Toast.makeText(context!!, "Enter details or go back", Toast.LENGTH_LONG).show()
+            Toast.makeText(context!!, getString(R.string.required_fields_are_not_filled), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -222,6 +221,19 @@ class AddEditTaskFragment : Fragment() {
         )
         task.taskId = this.task?.taskId ?: 0
         return task
+    }
+
+    private fun requiredFieldsAreFilled(): Boolean {
+        if (new_task_name.text.isNotEmpty()
+            && new_task_type_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_task_type_btn.text.isNotEmpty()
+            && new_task_subject_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_task_subject_btn.text.isNotEmpty()
+            && new_task_due_date_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_task_due_date_btn.text.isNotEmpty()) {
+            return true
+        }
+        return false
     }
 
     private fun showTaskTypesPopUp(view: View) {

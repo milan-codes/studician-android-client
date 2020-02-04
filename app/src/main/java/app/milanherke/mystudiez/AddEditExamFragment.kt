@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,8 +37,13 @@ class AddEditExamFragment : Fragment() {
     private var exam: Exam? = null
     private var subject: Subject? = null
     private var listener: AddEditExamInteractions? = null
+    private var listOfSubjects: ArrayList<Subject>? = null
+    private var subjectIdClickedFromList: Long? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(AddEditExamViewModel::class.java)
+    }
+    private val sharedViewModel by lazy {
+        ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
 
     /**
@@ -68,6 +74,7 @@ class AddEditExamFragment : Fragment() {
         super.onCreate(savedInstanceState)
         exam = arguments?.getParcelable(ARG_EXAM)
         subject = arguments?.getParcelable(ARG_SUBJECT)
+        listOfSubjects = sharedViewModel.getAllSubjects()
     }
 
     override fun onCreateView(
@@ -125,6 +132,12 @@ class AddEditExamFragment : Fragment() {
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
 
+        if (new_exam_subject_btn.isEnabled) {
+            new_exam_subject_btn.setOnClickListener {
+                showSubjectsPopUp(it)
+            }
+        }
+
         new_exam_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
@@ -165,7 +178,7 @@ class AddEditExamFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param exam The exam to be edited, or null when creating a new one.
-         * @param subject Subject associated with the exam. Null if fragment was called from ExamsFragment //TODO: Reference after ExamsFragment were created
+         * @param subject Subject associated with the exam. Null if fragment was called from [ExamsFragment]
          * @return A new instance of fragment AddEditExamFragment.
          */
         @JvmStatic
@@ -186,11 +199,11 @@ class AddEditExamFragment : Fragment() {
      */
     private fun saveExam() {
         val newExam = examFromUi()
-        if (newExam != exam && new_exam_name.text.isNotEmpty()) {
+        if (newExam != exam && requiredFieldsAreFilled()) {
             exam = viewModel.saveExam(newExam)
             listener?.onSaveExamClicked(exam!!)
         } else {
-            Toast.makeText(context!!, "Enter details or go back", Toast.LENGTH_LONG).show()
+            Toast.makeText(context!!, getString(R.string.required_fields_are_not_filled), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -198,12 +211,42 @@ class AddEditExamFragment : Fragment() {
         val exam = Exam(
             new_exam_name.text.toString(),
             new_exam_desc.text.toString(),
-            subject!!.subjectId,
+            subjectIdClickedFromList ?: subject!!.subjectId,
             new_exam_date_btn.text.toString(),
             new_exam_reminder_btn.text.toString()
         )
         exam.examId = this.exam?.examId ?: 0
         return exam
+    }
+
+    private fun requiredFieldsAreFilled(): Boolean {
+        if (new_exam_name.text.isNotEmpty()
+            && new_exam_subject_btn.text.isNotEmpty()
+            && new_exam_date_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_exam_date_btn.text.isNotEmpty()) {
+            return true
+        }
+        return false
+    }
+
+    private fun showSubjectsPopUp(view: View) {
+        // Avoiding problems with smart cast
+        val listOfSubjects = listOfSubjects
+        if (listOfSubjects != null) {
+            val popupMenu = PopupMenu(activity!!, view)
+            val inflater = popupMenu.menuInflater
+            inflater.inflate(R.menu.empty_menu, popupMenu.menu)
+
+            // Adding the subjects to the list if it is not null
+            for(subject in listOfSubjects) {
+                popupMenu.menu.add(subject.name).setOnMenuItemClickListener {
+                    new_exam_subject_btn.text = subject.name
+                    subjectIdClickedFromList = subject.subjectId
+                    true
+                }
+            }
+            popupMenu.show()
+        }
     }
 
     private fun getDate(@IdRes buttonId: Int, cal: Calendar): DatePickerDialog.OnDateSetListener {

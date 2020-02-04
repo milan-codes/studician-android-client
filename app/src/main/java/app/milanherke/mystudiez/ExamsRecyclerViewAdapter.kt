@@ -11,16 +11,18 @@ import kotlinx.android.synthetic.main.details_list_item.view.*
 
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
+private const val VIEW_TYPE_ALL_EXAMS_EMPTY = 2
 
 class ExamsRecyclerViewAdapter(
     private var cursorExams: Cursor?,
-    private var dayIndicator: Drawable?,
+    private var subjectIndicator: Drawable?,
     private val listener: OnExamClickListener
 ) :
     RecyclerView.Adapter<ExamsRecyclerViewAdapter.ViewHolder>() {
 
     interface OnExamClickListener {
         fun onExamClickListener(exam: Exam)
+        fun loadSubjectFromExam(id: Long) : Subject?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -28,6 +30,11 @@ class ExamsRecyclerViewAdapter(
             VIEW_TYPE_EMPTY -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.no_exam_list_item, parent, false)
+                EmptyExamViewHolder(view)
+            }
+            VIEW_TYPE_ALL_EXAMS_EMPTY -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.no_exams_for_any_subject, parent, false)
                 EmptyExamViewHolder(view)
             }
             VIEW_TYPE_NOT_EMPTY -> {
@@ -42,7 +49,7 @@ class ExamsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cursor = cursorExams
         when (getItemViewType(position)) {
-            VIEW_TYPE_EMPTY -> {
+            VIEW_TYPE_EMPTY, VIEW_TYPE_ALL_EXAMS_EMPTY -> {
                 // We are not putting any data into the empty view, therefore we do not need to do anything here
             }
             VIEW_TYPE_NOT_EMPTY -> {
@@ -76,7 +83,13 @@ class ExamsRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorExams
-        return if (cursor == null || cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+        return if (subjectIndicator == null && (cursor == null || cursor.count == 0)){
+            VIEW_TYPE_ALL_EXAMS_EMPTY
+        } else if(subjectIndicator != null && (cursor == null || cursor.count == 0)) {
+            VIEW_TYPE_EMPTY
+        }else {
+            VIEW_TYPE_NOT_EMPTY
+        }
     }
 
     /**
@@ -85,7 +98,7 @@ class ExamsRecyclerViewAdapter(
      * @param drawable The new drawable object to be used
      */
     fun swapDrawable(drawable: Drawable) {
-        dayIndicator = drawable
+        subjectIndicator = drawable
     }
 
     /**
@@ -122,18 +135,34 @@ class ExamsRecyclerViewAdapter(
         ViewHolder(containerView) {
 
         override fun bind(exam: Exam) {
-            containerView.details_list_title.text = exam.name
-            containerView.details_list_header1.text = exam.date
-            containerView.details_list_header2.visibility = View.GONE
+            // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
+            // Meaning we do not have to load nor display the subject detail
+            if (subjectIndicator != null) {
+                containerView.details_list_title.text = exam.name
+                containerView.details_list_header1.text = exam.date
+                containerView.details_list_header2.visibility = View.GONE
 
-            // We're creating a clone because we do not want to affect the other instances
-            containerView.details_list_subject_indicator.setImageDrawable(dayIndicator)
+                // We're creating a clone because we do not want to affect the other instances
+                containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
+            } else {
+                val subject = listener.loadSubjectFromExam(exam.subjectId)
+                // If the subject is null, it means that the exam we're trying to load has been deleted
+                if (subject != null) {
+                    containerView.details_list_title.text = exam.name
+                    containerView.details_list_header1.text = subject.name
+                    containerView.details_list_header2.text = exam.date
+
+                    //We're creating a clone drawable because we do not want to affect other instances of the original drawable
+                    val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
+                    clone.displayColor(subject.colorCode, containerView.context)
+                    containerView.details_list_subject_indicator.setImageDrawable(clone)
+                }
+            }
 
             containerView.details_list_container.setOnClickListener {
                 listener.onExamClickListener(exam)
             }
         }
-
     }
 
     // We do not need to override the bind method since we're not putting any data into the empty view

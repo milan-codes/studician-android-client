@@ -2,10 +2,6 @@ package app.milanherke.mystudiez
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
 class SharedViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -26,19 +22,18 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
         )
 
         if (cursor != null) {
-            if (!cursor.moveToNext()) {
-                throw IllegalStateException("Couldn't move cursor to position")
-            }
             try {
-                val subject = Subject(
-                    cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_NAME)),
-                    cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_TEACHER)),
-                    cursor.getInt(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
-                )
-                // Id is not set in the instructor
-                subject.subjectId =
-                    cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.ID))
-                return subject
+                if (cursor.moveToNext()) {
+                    val subject = Subject(
+                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_NAME)),
+                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_TEACHER)),
+                        cursor.getInt(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
+                    )
+                    // Id is not set in the instructor
+                    subject.subjectId =
+                        cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.ID))
+                    return subject
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 throw Exception(e)

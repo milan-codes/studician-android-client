@@ -1,42 +1,43 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_subject_details.*
-import kotlinx.android.synthetic.main.fragment_tasks.*
+import kotlinx.android.synthetic.main.fragment_exams.*
 import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass.
- * Use the [TasksFragment.newInstance] factory method to
+ * Use the [ExamsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
+class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
 
     private val viewModel by lazy {
-        ViewModelProviders.of(activity!!).get(TasksViewModel::class.java)
+        ViewModelProviders.of(activity!!).get(ExamsViewModel::class.java)
     }
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this)
+    private val examsAdapter = ExamsRecyclerViewAdapter(null, null, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cursorTasks.observe(
+        viewModel.loadExams()
+        viewModel.cursorExams.observe(
             this,
-            Observer { cursor -> tasksAdapter.swapTasksCursor(cursor)?.close() }
+            Observer { cursor -> examsAdapter.swapExamsCursor(cursor)?.close() }
         )
-        viewModel.loadTasks()
     }
 
     override fun onCreateView(
@@ -44,16 +45,15 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tasks, container, false)
+        return inflater.inflate(R.layout.fragment_exams, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity!!.toolbar.setTitle(R.string.tasks_title)
+        activity!!.toolbar.setTitle(R.string.exams_title)
 
-        task_list.layoutManager = LinearLayoutManager(context)
-        task_list.adapter = tasksAdapter
-
+        exam_list.layoutManager = LinearLayoutManager(context)
+        exam_list.adapter = examsAdapter
     }
 
     @SuppressLint("RestrictedApi")
@@ -68,13 +68,9 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         activity!!.fab.visibility = View.VISIBLE
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onDetach() {
         super.onDetach()
-        FragmentsStack.getInstance(context!!).push(Fragments.TASKS)
+        FragmentsStack.getInstance(context!!).push(Fragments.EXAMS)
     }
 
     companion object {
@@ -82,20 +78,20 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @return A new instance of fragment TasksFragment.
+         * @return A new instance of fragment ExamsFragment.
          */
         @JvmStatic
         fun newInstance() =
-            TasksFragment().apply {
+            ExamsFragment().apply {
                 arguments = Bundle().apply {}
             }
     }
 
-    override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragment(TaskDetailsFragment.newInstance(task), R.id.fragment_container)
+    override fun onExamClickListener(exam: Exam) {
+        activity!!.replaceFragment(ExamDetailsFragment.newInstance(exam), R.id.fragment_container)
     }
 
-    override fun loadSubjectFromTask(id: Long): Subject? {
+    override fun loadSubjectFromExam(id: Long): Subject? {
         return sharedViewModel.subjectFromId(id)
     }
 }

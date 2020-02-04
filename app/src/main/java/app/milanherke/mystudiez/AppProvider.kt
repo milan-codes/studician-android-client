@@ -372,7 +372,7 @@ class AppProvider : ContentProvider() {
             else -> throw IllegalArgumentException("Unknown uri: $uri")
         }
 
-        Log.i(TAG, "Exiting delete, returning count")
+        Log.i(TAG, "Exiting delete (with uri match $match), returning count $count")
         return count
     }
 }

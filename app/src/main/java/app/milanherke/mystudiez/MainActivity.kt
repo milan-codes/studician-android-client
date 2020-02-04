@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -63,6 +62,7 @@ class MainActivity : AppCompatActivity(),
             when (val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)) {
                 is SubjectsFragment -> fabBtnInSubjectsFragment()
                 is TasksFragment -> fabBtnInTasksFragment()
+                is ExamsFragment -> fabBtnInExamsFragment()
                 else -> {
                     throw IllegalStateException("FAB Button pressed in unrecognised fragment $fragment")
                 }
@@ -128,6 +128,14 @@ class MainActivity : AppCompatActivity(),
         replaceFragment(AddEditTaskFragment.newInstance(), R.id.fragment_container)
     }
 
+    /**
+     * When the FAB button is pressed in [ExamsFragment], it should launch [AddEditExamFragment]
+     * Because the user wants to add a new [Exam]
+     */
+    private fun fabBtnInExamsFragment() {
+        replaceFragment(AddEditExamFragment.newInstance(), R.id.fragment_container)
+    }
+
 
     // UP BUTTON FUNCTIONS
     // These functions are used to determine what should be loaded when the up button is pressed in specific fragments.
@@ -184,14 +192,20 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * [ExamDetailsFragment] can return only to [SubjectDetailsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment].
+     * [ExamDetailsFragment] can return only to [SubjectDetailsFragment] and [ExamsFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment] and [ExamsFragment].
      */
     private fun upBtnInExamDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragment(
                     SubjectDetailsFragment.newInstance(subject!!),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.EXAMS -> {
+                replaceFragment(
+                    ExamsFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
@@ -281,11 +295,20 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * [AddEditExamFragment] can return only to [SubjectDetailsFragment] and [ExamDetailsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [ExamDetailsFragment] (when editing an existing one).
+     * [AddEditExamFragment] can return only to [ExamsFragment] [SubjectDetailsFragment] and [ExamDetailsFragment].
+     * It can be called only by the following fragments:
+     *  [ExamsFragment]: When pressing the FAB button and creating a new one
+     *  [SubjectDetailsFragment]: When adding new
+     *  [ExamDetailsFragment]: When editing an existing one
      */
     private fun upInAddEditExamFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.EXAMS -> {
+                replaceFragment(
+                    ExamsFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragment(
                     SubjectDetailsFragment.newInstance(subject!!),
@@ -373,6 +396,10 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSaveExamClicked(exam: Exam) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+            Fragments.EXAMS -> replaceFragment(
+                ExamsFragment.newInstance(),
+                R.id.fragment_container
+            )
             Fragments.SUBJECT_DETAILS -> replaceFragment(
                 SubjectDetailsFragment.newInstance(subject!!),
                 R.id.fragment_container
@@ -453,12 +480,18 @@ class MainActivity : AppCompatActivity(),
                 SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
+            Fragments.EXAMS -> {
+                replaceFragment(
+                    ExamsFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
             else -> throw IllegalStateException("onDeleteExamClick tries to load unrecognised fragment $fragmentCalledFrom")
         }
     }
 
     override fun onEditExamClick(exam: Exam) {
-        replaceFragment(AddEditExamFragment.newInstance(exam, subject), R.id.fragment_container)
+        replaceFragment(AddEditExamFragment.newInstance(exam, sharedViewModel.subjectFromId(exam.subjectId)), R.id.fragment_container)
     }
 
     override fun examIsLoaded(exam: Exam) {

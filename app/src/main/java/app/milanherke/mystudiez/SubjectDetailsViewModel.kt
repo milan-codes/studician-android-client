@@ -161,18 +161,21 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                 "${LessonsContract.Columns.LESSON_SUBJECT} = ?",
                 arrayOf(subjectId.toString())
             )
+        }
+        GlobalScope.launch {
             getApplication<Application>().contentResolver?.delete(
                 TasksContract.CONTENT_URI,
                 "${TasksContract.Columns.TASK_SUBJECT} = ?",
                 arrayOf(subjectId.toString())
             )
+        }
+        GlobalScope.launch {
             getApplication<Application>().contentResolver?.delete(
                 ExamsContract.CONTENT_URI,
                 "${ExamsContract.Columns.EXAM_SUBJECT} = ?",
                 arrayOf(subjectId.toString())
             )
         }
-
         GlobalScope.launch {
             getApplication<Application>().contentResolver?.delete(
                 SubjectsContract.buildUriFromId(
@@ -180,7 +183,6 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                 ), null, null
             )
         }
-
     }
 
 }

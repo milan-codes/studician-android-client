@@ -122,6 +122,6 @@
         android:contentDescription="@string/selected_color_circle_description"
         app:layout_constraintBottom_toBottomOf="@+id/new_subject_color_title"
         app:layout_constraintStart_toStartOf="@+id/new_subject_teacher_value"
-        app:srcCompat="@drawable/subject_indicator_circle" />
+        app:srcCompat="@drawable/placeholder_circle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

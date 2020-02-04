@@ -172,11 +172,11 @@ class AddEditLessonFragment : Fragment() {
      */
     private fun saveLesson() {
         val newLesson = lessonFromUi()
-        if (newLesson != lesson) {
+        if (newLesson != lesson && requiredFieldsAreFilled()) {
             lesson = viewModel.saveLesson(newLesson)
             listener?.onSaveLessonClick(lesson!!)
         } else {
-            Toast.makeText(context!!, "Enter details or go back", Toast.LENGTH_LONG).show()
+            Toast.makeText(context!!, getString(R.string.required_fields_are_not_filled), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -191,6 +191,19 @@ class AddEditLessonFragment : Fragment() {
         )
         lesson.lessonId = this.lesson?.lessonId ?: 0
         return lesson
+    }
+
+    private fun requiredFieldsAreFilled(): Boolean {
+        if (new_lesson_day_btn.text.isNotEmpty()
+            && new_lesson_day_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_lesson_starts_at_btn.text.isNotEmpty()
+            && new_lesson_starts_at_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_lesson_ends_at_btn.text.isNotEmpty()
+            && new_lesson_ends_at_btn.text != getString(R.string.add_edit_lesson_btn)
+            && new_lesson_location.text.isNotEmpty()){
+            return true
+        }
+        return false
     }
 
     private fun showDaysPopUp(view: View) {

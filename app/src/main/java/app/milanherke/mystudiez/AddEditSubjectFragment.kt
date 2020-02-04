@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.ColorRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
@@ -32,6 +33,7 @@ class AddEditSubjectFragment : Fragment() {
     private var subject: Subject? = null
     private var listener: AddEditSubjectInteractions? = null
     private var selectedSubjectColor: Int = -1
+    private var subjectIsBeingEdited: Boolean = false
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(AddEditSubjectViewModel::class.java)
     }
@@ -79,21 +81,22 @@ class AddEditSubjectFragment : Fragment() {
         // Creating a clone of the subject indicator because we do not want to affect all of the drawable's instances
         // And setting default color
         createAndSetCloneColorIndicator()
-        setColor(R.color.subjectColorBlue, activity!!)
 
         // Avoiding problems with smart cast
         val subject = subject
 
         if (subject == null) {
             activity!!.toolbar.setTitle(R.string.add_new_subject_title)
-
+            subjectIsBeingEdited = false
+            selectedColor.visibility = View.INVISIBLE
         } else {
             activity!!.toolbar.title =
                 resources.getString(R.string.edit_subject_title, subject.name)
-
+            subjectIsBeingEdited = true
             new_subject_name_value.setText(subject.name)
             new_subject_teacher_value.setText(subject.teacher)
             selectedColor.drawable.displayColor(subject.colorCode, activity!!)
+            new_subject_color_btn.text = getColorName(subject.colorCode)
             selectedSubjectColor = subject.colorCode
 
         }
@@ -150,11 +153,11 @@ class AddEditSubjectFragment : Fragment() {
      */
     private fun saveSubject() {
         val newSubject = subjectFromUi()
-        if (newSubject != subject && new_subject_name_value.text.isNotEmpty()) {
+        if (newSubject != subject && requiredFieldsAreFilled()) {
             subject = viewModel.saveSubject(newSubject)
             listener?.onSaveSubjectClick(subject!!)
         } else {
-            Toast.makeText(context!!, "Enter details or go back", Toast.LENGTH_LONG).show()
+            Toast.makeText(context!!, getString(R.string.required_fields_are_not_filled), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -168,6 +171,15 @@ class AddEditSubjectFragment : Fragment() {
         return subject
     }
 
+    private fun requiredFieldsAreFilled(): Boolean {
+        if (new_subject_name_value.text.isNotEmpty()
+            && new_subject_teacher_value.text.isNotEmpty()
+            && new_subject_color_btn.text != getString(R.string.new_subject_color_button)
+            && new_subject_color_btn.text.isNotEmpty()){
+            return true
+        }
+        return false
+    }
 
     private fun showPopup(view: View) {
         val popupMenu = PopupMenu(activity!!, view)
@@ -178,58 +190,81 @@ class AddEditSubjectFragment : Fragment() {
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.color_option_red -> {
-                    setColor(R.color.subjectColorRed, activity!!)
+                    setColor(R.color.subjectColorRed, activity!!, R.string.colorRedTitle)
                 }
                 R.id.color_option_pink -> {
-                    setColor(R.color.subjectColorPink, activity!!)
+                    setColor(R.color.subjectColorPink, activity!!, R.string.colorPinkTitle)
                 }
                 R.id.color_option_purple -> {
-                    setColor(R.color.subjectColorPurple, activity!!)
+                    setColor(R.color.subjectColorPurple, activity!!, R.string.colorPurpleTitle)
                 }
                 R.id.color_option_deep_purple -> {
-                    setColor(R.color.subjectColorDeepPurple, activity!!)
+                    setColor(R.color.subjectColorDeepPurple, activity!!, R.string.colorDeepPurpleTitle)
                 }
                 R.id.color_option_indigo -> {
-                    setColor(R.color.subjectColorIndigo, activity!!)
+                    setColor(R.color.subjectColorIndigo, activity!!, R.string.colorIndigoTitle)
                 }
                 R.id.color_option_blue -> {
-                    setColor(R.color.subjectColorBlue, activity!!)
+                    setColor(R.color.subjectColorBlue, activity!!, R.string.colorBlueTitle)
                 }
                 R.id.color_option_light_blue -> {
-                    setColor(R.color.subjectColorLightBlue, activity!!)
+                    setColor(R.color.subjectColorLightBlue, activity!!, R.string.colorLightBlueTitle)
                 }
                 R.id.color_option_cyan -> {
-                    setColor(R.color.subjectColorCyan, activity!!)
+                    setColor(R.color.subjectColorCyan, activity!!, R.string.colorCyanTitle)
                 }
                 R.id.color_option_teal -> {
-                    setColor(R.color.subjectColorTeal, activity!!)
+                    setColor(R.color.subjectColorTeal, activity!!, R.string.colorTealTitle)
                 }
                 R.id.color_option_green -> {
-                    setColor(R.color.subjectColorGreen, activity!!)
+                    setColor(R.color.subjectColorGreen, activity!!, R.string.colorGreenTitle)
                 }
                 R.id.color_option_light_green -> {
-                    setColor(R.color.subjectColorLightGreen, activity!!)
+                    setColor(R.color.subjectColorLightGreen, activity!!, R.string.colorLightGreenTitle)
                 }
                 R.id.color_option_lime -> {
-                    setColor(R.color.subjectColorLime, activity!!)
+                    setColor(R.color.subjectColorLime, activity!!, R.string.colorLimeTitle)
                 }
                 R.id.color_option_yellow -> {
-                    setColor(R.color.subjectColorYellow, activity!!)
+                    setColor(R.color.subjectColorYellow, activity!!, R.string.colorYellowTitle)
                 }
                 R.id.color_option_amber -> {
-                    setColor(R.color.subjectColorAmber, activity!!)
+                    setColor(R.color.subjectColorAmber, activity!!, R.string.colorAmberTitle)
                 }
                 R.id.color_option_orange -> {
-                    setColor(R.color.subjectColorOrange, activity!!)
+                    setColor(R.color.subjectColorOrange, activity!!, R.string.colorOrangeTitle)
                 }
                 R.id.color_option_deep_orange -> {
-                    setColor(R.color.subjectColorDeepOrange, activity!!)
+                    setColor(R.color.subjectColorDeepOrange, activity!!, R.string.colorDeepOrangeTitle)
                 }
                 R.id.color_option_blue_gray -> {
-                    setColor(R.color.subjectColorBlueGray, activity!!)
+                    setColor(R.color.subjectColorBlueGray, activity!!, R.string.colorBlueGrayTitle)
                 }
             }
             true
+        }
+    }
+
+    private fun getColorName(@ColorRes colorId: Int): String {
+        return when (colorId) {
+            R.color.subjectColorRed -> getString(R.string.colorRedTitle)
+            R.color.subjectColorPink -> getString(R.string.colorPinkTitle)
+            R.color.subjectColorPurple -> getString(R.string.colorPurpleTitle)
+            R.color.subjectColorDeepPurple -> getString(R.string.colorDeepPurpleTitle)
+            R.color.subjectColorIndigo -> getString(R.string.colorIndigoTitle)
+            R.color.subjectColorBlue -> getString(R.string.colorBlueTitle)
+            R.color.subjectColorLightBlue -> getString(R.string.colorLightBlueTitle)
+            R.color.subjectColorCyan -> getString(R.string.colorCyanTitle)
+            R.color.subjectColorTeal -> getString(R.string.colorTealTitle)
+            R.color.subjectColorGreen -> getString(R.string.colorGreenTitle)
+            R.color.subjectColorLightGreen -> getString(R.string.colorLightGreenTitle)
+            R.color.subjectColorLime -> getString(R.string.colorLimeTitle)
+            R.color.subjectColorYellow -> getString(R.string.colorYellowTitle)
+            R.color.subjectColorAmber -> getString(R.string.colorAmberTitle)
+            R.color.subjectColorOrange -> getString(R.string.colorOrangeTitle)
+            R.color.subjectColorDeepOrange -> getString(R.string.colorDeepOrangeTitle)
+            R.color.subjectColorBlueGray -> getString(R.string.colorBlueGrayTitle)
+            else -> throw IllegalArgumentException("Subject has unrecognised color id")
         }
     }
 
@@ -238,9 +273,11 @@ class AddEditSubjectFragment : Fragment() {
         selectedColor.setImageDrawable(clone)
     }
 
-    private fun setColor(@ColorRes colorId: Int, context: Context) {
+    private fun setColor(@ColorRes colorId: Int, context: Context, @StringRes colorName: Int) {
         selectedColor.drawable.displayColor(colorId, context)
+        new_subject_color_btn.setText(colorName)
         selectedSubjectColor = colorId
+        if (selectedColor.visibility == View.INVISIBLE) selectedColor.visibility = View.VISIBLE
     }
 
 
