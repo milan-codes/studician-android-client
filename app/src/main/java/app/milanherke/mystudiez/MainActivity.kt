@@ -154,8 +154,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * [LessonDetailsFragment] can return only to [SubjectDetailsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment].
+     * [LessonDetailsFragment] can return only to [SubjectDetailsFragment] and [OverviewFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment] and [OverviewFragment].
      */
     private fun upBtnInLessonDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
@@ -165,13 +165,19 @@ class MainActivity : AppCompatActivity(),
                     R.id.fragment_container
                 )
             }
+            Fragments.OVERVIEW -> {
+                replaceFragment(
+                    OverviewFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
             else -> throw IllegalStateException("LessonDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
         }
     }
 
     /**
-     * [TaskDetailsFragment] can return only to [SubjectDetailsFragment] and [TasksFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment] and [TasksFragment].
+     * [TaskDetailsFragment] can return only to [SubjectDetailsFragment], [TasksFragment] and [OverviewFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment], [TasksFragment] and [OverviewFragment].
      */
     private fun upBtnInTaskDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
@@ -187,13 +193,19 @@ class MainActivity : AppCompatActivity(),
                     R.id.fragment_container
                 )
             }
+            Fragments.OVERVIEW -> {
+                replaceFragment(
+                    OverviewFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
             else -> throw IllegalStateException("TaskDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
         }
     }
 
     /**
-     * [ExamDetailsFragment] can return only to [SubjectDetailsFragment] and [ExamsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment] and [ExamsFragment].
+     * [ExamDetailsFragment] can return only to [SubjectDetailsFragment], [ExamsFragment] and [OverviewFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment], [ExamsFragment] and [OverviewFragment].
      */
     private fun upBtnInExamDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
@@ -206,6 +218,12 @@ class MainActivity : AppCompatActivity(),
             Fragments.EXAMS -> {
                 replaceFragment(
                     ExamsFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.OVERVIEW -> {
+                replaceFragment(
+                    OverviewFragment.newInstance(),
                     R.id.fragment_container
                 )
             }

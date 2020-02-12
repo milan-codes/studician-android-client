@@ -12,11 +12,13 @@ import kotlinx.android.synthetic.main.details_list_item.view.*
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 private const val VIEW_TYPE_ALL_EXAMS_EMPTY = 2
+private const val VIEW_TYPE_EMPTY_IN_OVERVIEW = 3
 
 class ExamsRecyclerViewAdapter(
     private var cursorExams: Cursor?,
     private var subjectIndicator: Drawable?,
-    private val listener: OnExamClickListener
+    private val listener: OnExamClickListener,
+    private val calledFromOverview: Boolean? = null
 ) :
     RecyclerView.Adapter<ExamsRecyclerViewAdapter.ViewHolder>() {
 
@@ -27,6 +29,11 @@ class ExamsRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
+            VIEW_TYPE_EMPTY_IN_OVERVIEW -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.no_exams_overview, parent, false)
+                EmptyExamViewHolder(view)
+            }
             VIEW_TYPE_EMPTY -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.no_exam_list_item, parent, false)
@@ -49,7 +56,7 @@ class ExamsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cursor = cursorExams
         when (getItemViewType(position)) {
-            VIEW_TYPE_EMPTY, VIEW_TYPE_ALL_EXAMS_EMPTY -> {
+            VIEW_TYPE_EMPTY, VIEW_TYPE_ALL_EXAMS_EMPTY, VIEW_TYPE_EMPTY_IN_OVERVIEW -> {
                 // We are not putting any data into the empty view, therefore we do not need to do anything here
             }
             VIEW_TYPE_NOT_EMPTY -> {
@@ -84,7 +91,11 @@ class ExamsRecyclerViewAdapter(
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorExams
         return if (subjectIndicator == null && (cursor == null || cursor.count == 0)){
-            VIEW_TYPE_ALL_EXAMS_EMPTY
+            if (calledFromOverview == true) {
+                VIEW_TYPE_EMPTY_IN_OVERVIEW
+            } else {
+                VIEW_TYPE_ALL_EXAMS_EMPTY
+            }
         } else if(subjectIndicator != null && (cursor == null || cursor.count == 0)) {
             VIEW_TYPE_EMPTY
         }else {
@@ -135,6 +146,9 @@ class ExamsRecyclerViewAdapter(
         ViewHolder(containerView) {
 
         override fun bind(exam: Exam) {
+            // Avoiding problems with smart-cast
+            val calledFromOverview = calledFromOverview
+
             // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
             // Meaning we do not have to load nor display the subject detail
             if (subjectIndicator != null) {
@@ -148,9 +162,21 @@ class ExamsRecyclerViewAdapter(
                 val subject = listener.loadSubjectFromExam(exam.subjectId)
                 // If the subject is null, it means that the exam we're trying to load has been deleted
                 if (subject != null) {
-                    containerView.details_list_title.text = exam.name
-                    containerView.details_list_header1.text = subject.name
-                    containerView.details_list_header2.text = exam.date
+                    // After null-check, we must decide if the ViewHolder is being used in OverviewFragment
+                    // And if so, we need to display the details in a different way
+                    if (calledFromOverview != null ) {
+                        if (calledFromOverview == true) {
+                            containerView.details_list_title.text = exam.name
+                            containerView.details_list_header1.text = subject.name
+                            containerView.details_list_header2.visibility = View.GONE
+                        } else {
+                            throw IllegalStateException("ExamViewHolder is being used in unrecognised fragment")
+                        }
+                    } else {
+                        containerView.details_list_title.text = exam.name
+                        containerView.details_list_header1.text = subject.name
+                        containerView.details_list_header2.text = exam.date
+                    }
 
                     //We're creating a clone drawable because we do not want to affect other instances of the original drawable
                     val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()

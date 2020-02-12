@@ -211,7 +211,7 @@ class AddEditExamFragment : Fragment() {
         val exam = Exam(
             new_exam_name.text.toString(),
             new_exam_desc.text.toString(),
-            subjectIdClickedFromList ?: subject!!.subjectId,
+            subjectIdClickedFromList ?: (subject?.subjectId ?: -1L),
             new_exam_date_btn.text.toString(),
             new_exam_reminder_btn.text.toString()
         )

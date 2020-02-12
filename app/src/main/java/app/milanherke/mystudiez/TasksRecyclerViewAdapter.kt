@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.details_list_item.view.*
@@ -12,11 +13,13 @@ import kotlinx.android.synthetic.main.details_list_item.view.*
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 private const val VIEW_TYPE_ALL_TASKS_EMPTY = 2
+private const val VIEW_TYPE_EMPTY_IN_OVERVIEW = 3
 
 class TasksRecyclerViewAdapter(
     private var cursorTasks: Cursor?,
     private var subjectIndicator: Drawable?,
-    private val listener: OnTaskClickListener
+    private val listener: OnTaskClickListener,
+    private val calledFromOverview: Boolean? = null
 ) :
     RecyclerView.Adapter<TasksRecyclerViewAdapter.ViewHolder>() {
 
@@ -27,6 +30,11 @@ class TasksRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
+            VIEW_TYPE_EMPTY_IN_OVERVIEW -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.no_tasks_overview, parent, false)
+                EmptyTaskViewHolder(view)
+            }
             VIEW_TYPE_EMPTY -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.no_task_list_item, parent, false)
@@ -49,7 +57,7 @@ class TasksRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cursor = cursorTasks
         when (getItemViewType(position)) {
-            VIEW_TYPE_EMPTY, VIEW_TYPE_ALL_TASKS_EMPTY -> {
+            VIEW_TYPE_EMPTY, VIEW_TYPE_ALL_TASKS_EMPTY, VIEW_TYPE_EMPTY_IN_OVERVIEW -> {
                 // We are not putting any data into the empty view, therefore we do not need to do anything here
             }
             VIEW_TYPE_NOT_EMPTY -> {
@@ -85,7 +93,11 @@ class TasksRecyclerViewAdapter(
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorTasks
         return if (subjectIndicator == null && (cursor == null || cursor.count == 0) ) {
-            VIEW_TYPE_ALL_TASKS_EMPTY
+            if (calledFromOverview == true) {
+                VIEW_TYPE_EMPTY_IN_OVERVIEW
+            } else {
+                VIEW_TYPE_ALL_TASKS_EMPTY
+            }
         } else if (subjectIndicator != null && (cursor == null || cursor.count == 0)) {
             VIEW_TYPE_EMPTY
         } else {
@@ -136,6 +148,9 @@ class TasksRecyclerViewAdapter(
         ViewHolder(containerView) {
 
         override fun bind(task: Task) {
+            // Avoiding problems with smart-cast
+            val calledFromOverview = calledFromOverview
+
             // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
             // Meaning we do not have to load nor display the subject details
             if ( subjectIndicator != null) {
@@ -149,9 +164,21 @@ class TasksRecyclerViewAdapter(
                 val subject = listener.loadSubjectFromTask(task.subjectId)
                 // If the subject is null, it means that the task we're trying to load has been deleted
                 if (subject != null) {
-                    containerView.details_list_title.text = task.name
-                    containerView.details_list_header1.text = containerView.resources.getString(R.string.details_subject_item_time, subject.name, task.type)
-                    containerView.details_list_header2.text = task.dueDate
+                    // After null-check, we must decide if the ViewHolder is being used in OverviewFragment
+                    // And if so, we need to display the details in a different way
+                    if(calledFromOverview != null) {
+                        if (calledFromOverview == true) {
+                            containerView.details_list_title.text = task.name
+                            containerView.details_list_header1.text = subject.name
+                            containerView.details_list_header2.visibility = View.GONE
+                        } else {
+                            throw IllegalStateException("TaskViewHolder is being used in unrecognised fragment")
+                        }
+                    } else {
+                        containerView.details_list_title.text = task.name
+                        containerView.details_list_header1.text = containerView.resources.getString(R.string.details_subject_item_time, subject.name, task.type)
+                        containerView.details_list_header2.text = task.dueDate
+                    }
 
                     //Creating a clone drawable because we do not want to affect other instances of the original drawable
                     val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()

@@ -12,20 +12,28 @@ import kotlinx.android.synthetic.main.details_list_item.view.*
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 private const val VIEW_TYPE_PLACEHOLDER = 2
+private const val VIEW_TYPE_EMPTY_IN_OVERVIEW = 3
 
 class LessonsRecyclerViewAdapter(
     private var cursorLessons: Cursor?,
     private var subjectIndicator: Drawable?,
-    private var listener: OnLessonClickListener
+    private var listener: OnLessonClickListener,
+    private val calledFromOverview: Boolean? = null
 ) :
     RecyclerView.Adapter<LessonsRecyclerViewAdapter.ViewHolder>() {
 
     interface OnLessonClickListener {
         fun onLessonClick(lesson: Lesson)
+        fun loadSubjectFromLesson(id: Long) : Subject?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
+            VIEW_TYPE_EMPTY_IN_OVERVIEW -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.no_lessons_overview, parent, false)
+                EmptyLessonViewHolder(view)
+            }
             VIEW_TYPE_EMPTY -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.no_lesson_list_item, parent, false)
@@ -48,7 +56,7 @@ class LessonsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cursor = cursorLessons
         when (getItemViewType(position)) {
-            VIEW_TYPE_EMPTY -> {
+            VIEW_TYPE_EMPTY, VIEW_TYPE_EMPTY_IN_OVERVIEW -> {
                 // We are not putting any data into the empty view, therefore we do not need to do anything here
             }
             VIEW_TYPE_NOT_EMPTY -> {
@@ -86,7 +94,17 @@ class LessonsRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorLessons
-        return if (cursor == null) VIEW_TYPE_PLACEHOLDER else if (cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+        return if (cursor == null) {
+            VIEW_TYPE_PLACEHOLDER
+        } else if (cursor.count == 0) {
+            if (calledFromOverview == true) {
+                VIEW_TYPE_EMPTY_IN_OVERVIEW
+            } else {
+                VIEW_TYPE_EMPTY
+            }
+        } else {
+            VIEW_TYPE_NOT_EMPTY
+        }
     }
 
     /**
@@ -132,14 +150,38 @@ class LessonsRecyclerViewAdapter(
         ViewHolder(containerView) {
 
         override fun bind(lesson: Lesson) {
-            containerView.details_list_title.text = lesson.day
-            containerView.details_list_header1.text = containerView.resources.getString(
-                R.string.details_subject_item_time,
-                lesson.starts,
-                lesson.ends
-            )
-            containerView.details_list_header2.text = lesson.location
-            containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
+            // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
+            // Meaning we do not have to load nor display the subject details
+            if (subjectIndicator != null) {
+                containerView.details_list_title.text = lesson.day
+                containerView.details_list_header1.text = containerView.resources.getString(
+                    R.string.details_subject_item_time,
+                    lesson.starts,
+                    lesson.ends
+                )
+                containerView.details_list_header2.text = lesson.location
+
+                // We're creating a clone because we do not want to affect the other instances
+                containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
+            } else {
+                val subject = listener.loadSubjectFromLesson(lesson.subjectId)
+                // If the subject is null, it means that the lesson we're trying to load has been deleted
+                if (subject != null) {
+                    containerView.details_list_title.text = subject.name
+                    containerView.details_list_header1.text = containerView.resources.getString(
+                        R.string.details_subject_item_time,
+                        lesson.starts,
+                        lesson.ends
+                    )
+                    containerView.details_list_header2.text = lesson.location
+
+                    //Creating a clone drawable because we do not want to affect other instances of the original drawable
+                    val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
+                    clone.displayColor(subject.colorCode, containerView.context)
+                    containerView.details_list_subject_indicator.setImageDrawable(clone)
+                }
+            }
+
             containerView.details_list_container.setOnClickListener {
                 listener.onLessonClick(lesson)
             }

@@ -68,10 +68,6 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         activity!!.fab.visibility = View.VISIBLE
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     override fun onDetach() {
         super.onDetach()
         FragmentsStack.getInstance(context!!).push(Fragments.TASKS)

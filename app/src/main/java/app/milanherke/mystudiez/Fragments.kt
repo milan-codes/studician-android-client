@@ -6,6 +6,7 @@ package app.milanherke.mystudiez
  * because no fragment can be opened by interacting with any of them.
  */
 enum class Fragments {
+    OVERVIEW,
     SUBJECTS,
     TASKS,
     EXAMS,

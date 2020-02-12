@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="none">
         <item
+            android:id="@+id/bottomnav_overview"
+            android:title="@string/bottom_nav_overview_title" />
+        <item
             android:id="@+id/bottomnav_subjects"
             android:title="@string/bottom_nav_subjects_title" />
         <item

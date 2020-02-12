@@ -208,14 +208,11 @@ class AddEditTaskFragment : Fragment() {
     }
 
     private fun taskFromUi(): Task {
-        // Avoiding problems with smart cast
-        val subjectIdClickedFromList = subjectIdClickedFromList
-
         val task = Task(
             new_task_name.text.toString(),
             new_task_desc.text.toString(),
             new_task_type_btn.text.toString(),
-            subjectIdClickedFromList ?: subject!!.subjectId,
+            subjectIdClickedFromList ?: (subject?.subjectId ?: -1L),
             new_task_due_date_btn.text.toString(),
             new_task_reminder_btn.text.toString()
         )

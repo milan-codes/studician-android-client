@@ -16,6 +16,13 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         navigation_view.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.bottomnav_overview -> {
+                    activity!!.replaceFragment(
+                        OverviewFragment.newInstance(),
+                        R.id.fragment_container
+                    )
+                    activity!!.removeFragment(this)
+                }
                 R.id.bottomnav_subjects -> {
                     activity!!.replaceFragment(
                         SubjectsFragment.newInstance(),

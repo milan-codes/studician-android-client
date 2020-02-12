@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/overview_scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackgroundPrimary"
+    android:backgroundTint="@color/colorBackgroundPrimary">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/overview_constraint_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBackgroundPrimary"
+        android:backgroundTint="@color/colorBackgroundPrimary"
+        android:orientation="vertical"
+        android:scrollIndicators="none">
+
+        <Button
+            android:id="@+id/overview_date_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/circular_button"
+            android:fontFamily="@font/montserrat_semibold"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/add_edit_lesson_btn"
+            android:textColor="#ffffff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/overview_tasks_cardview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/overview_exams_cardview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/overview_task_title">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/overview_task_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/overview_exams_cardview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/overview_tasks_cardview"
+            app:layout_constraintTop_toTopOf="@+id/overview_tasks_cardview">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/overview_exam_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/overview_task_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/tasks_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/overview_tasks_cardview"
+            app:layout_constraintTop_toBottomOf="@id/overview_date_button" />
+
+        <TextView
+            android:id="@+id/overview_exam_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/exams_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/overview_task_title"
+            app:layout_constraintStart_toStartOf="@+id/overview_exams_cardview" />
+
+        <TextView
+            android:id="@+id/overview_schedule_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_semibold"
+            android:text="@string/schedule_title"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/overview_tasks_cardview" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/overview_schedule_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="1dp"
+            android:clipToPadding="false"
+            android:paddingBottom="96dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/overview_schedule_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

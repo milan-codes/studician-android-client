@@ -201,14 +201,14 @@ class SubjectDetailsFragment : Fragment(),
         )
     }
 
+    override fun loadSubjectFromLesson(id: Long): Subject? {
+        throw IllegalStateException("loadSubjectFromLesson should not and cannot be called from SubjectDetailsFragment")
+    }
+
     override fun onTaskClickListener(task: Task) {
         activity!!.replaceFragment(
             TaskDetailsFragment.newInstance(task), R.id.fragment_container
         )
-    }
-
-    override fun loadSubjectFromExam(id: Long): Subject {
-        throw IllegalStateException("loadSubjectFromExam should not and cannot be called from SubjectDetailsFragment")
     }
 
     override fun loadSubjectFromTask(id: Long): Subject {
@@ -220,4 +220,9 @@ class SubjectDetailsFragment : Fragment(),
             ExamDetailsFragment.newInstance(exam), R.id.fragment_container
         )
     }
+
+    override fun loadSubjectFromExam(id: Long): Subject {
+        throw IllegalStateException("loadSubjectFromExam should not and cannot be called from SubjectDetailsFragment")
+    }
+    
 }
