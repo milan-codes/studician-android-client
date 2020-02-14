@@ -9,34 +9,23 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
-        android:id="@+id/new_subject_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="@string/new_subject_details"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/new_subject_name_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/new_subject_name_title"
         android:textColor="@color/colorTextPrimary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_subject_details" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/new_subject_teacher_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/new_subject_teacher_title"
         android:textColor="@color/colorTextPrimary"
         android:textSize="14sp"
@@ -48,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/new_subject_colorcode_title"
         android:textColor="@color/colorTextPrimary"
         android:textSize="14sp"
@@ -61,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:ems="10"
-        android:fontFamily="@font/montserrat_regular"
+        android:fontFamily="@font/roboto_regular"
         android:hint="@string/new_subject_name_hint"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
@@ -75,7 +64,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:fontFamily="@font/montserrat_regular"
+        android:fontFamily="@font/roboto_regular"
         android:hint="@string/new_subject_teacher_hint"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
@@ -90,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:background="@drawable/circular_button"
-        android:fontFamily="@font/montserrat_semibold"
+        android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/new_subject_color_button"
@@ -106,7 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:background="@drawable/circular_button"
-        android:fontFamily="@font/montserrat_semibold"
+        android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/new_subject_save_btn"

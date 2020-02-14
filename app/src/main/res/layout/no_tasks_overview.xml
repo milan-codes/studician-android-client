@@ -13,10 +13,10 @@
         android:id="@+id/no_tasks_overview_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_regular"
         android:text="@string/tasks_recycler_empty_overview"
         android:textAlignment="center"
-        android:textColor="@color/colorTextPrimary"
-        android:textSize="14sp" />
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="12sp" />
 
 </LinearLayout>

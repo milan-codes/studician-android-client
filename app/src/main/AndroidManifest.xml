@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".NotificationPublisher" />
+
         <provider
             android:name=".AppProvider"
             android:authorities="app.milanherke.mystudiez.provider"

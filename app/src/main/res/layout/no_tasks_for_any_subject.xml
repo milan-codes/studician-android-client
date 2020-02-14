@@ -12,7 +12,7 @@
         android:id="@+id/no_task_for_any_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/no_task_img_description"
+        android:contentDescription="@string/no_lesson_img_description"
         app:srcCompat="@drawable/no_task" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_regular"
         android:text="@string/tasks_any_recycler_empty"
         android:textAlignment="center"
         android:textColor="@color/colorTextPrimary"

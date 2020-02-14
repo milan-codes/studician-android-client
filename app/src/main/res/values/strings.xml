@@ -120,5 +120,8 @@
     <string name="overview_date_title">Selected day:</string>
     <string name="tasks_recycler_empty_overview">No tasks due to this day</string>
     <string name="exams_recycler_empty_overview">No exams on this day</string>
-    <string name="lessons_recycler_empty_overview">No lessons on this day.\nAdd lessons to your subjects under the \'Subjects\' menu point</string>
+    <string name="lessons_recycler_empty_overview">No lessons on this day.</string>
+    <string name="notification_task_reminder_title">Task reminder</string>
+    <string name="notification_exam_reminder_title">Exam reminder</string>
+    <string name="overview_day_description">Date (Tap to change):</string>
 </resources>

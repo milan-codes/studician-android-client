@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_regular"
         android:text="@string/exams_any_recycler_empty"
         android:textAlignment="center"
         android:textColor="@color/colorTextPrimary"

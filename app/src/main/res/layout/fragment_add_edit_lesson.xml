@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
         android:background="@drawable/circular_button"
-        android:fontFamily="@font/montserrat_semibold"
+        android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/add_edit_lesson_btn"
@@ -29,7 +29,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/circular_button"
-        android:fontFamily="@font/montserrat_semibold"
+        android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/add_edit_lesson_btn"
@@ -44,7 +44,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/circular_button"
-        android:fontFamily="@font/montserrat_semibold"
+        android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/add_edit_lesson_btn"
@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:background="@drawable/circular_button"
-        android:fontFamily="@font/montserrat_semibold"
+        android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:text="@string/new_subject_save_btn"
@@ -75,8 +75,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/add_edit_lesson_day_title"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,8 +86,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/add_edit_lesson_starts_at"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_lesson_day_title" />
 
@@ -95,8 +97,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/add_edit_lesson_ends_at"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_lesson_starts_at_title" />
 
@@ -105,8 +108,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:fontFamily="@font/montserrat_medium"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/add_edit_lesson_location"
+        android:textColor="@color/colorTextPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_lesson_ends_at_title" />
 
@@ -115,14 +119,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:fontFamily="@font/montserrat_regular"
+        android:fontFamily="@font/roboto_regular"
         android:hint="@string/add_edit_lesson_location_value"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/new_lesson_location_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/new_lesson_ends_at_btn"
-        android:importantForAutofill="no" />
+        app:layout_constraintStart_toStartOf="@+id/new_lesson_ends_at_btn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,7 @@ package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -152,6 +153,13 @@ class AddEditTaskFragment : Fragment() {
 
         new_task_reminder_btn.setOnClickListener {
             val cal = Calendar.getInstance()
+            TimePickerDialog(
+                context,
+                getTime(cal),
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE),
+                true
+            ).show()
             DatePickerDialog(
                 context!!, getDate(R.id.new_task_reminder_btn, cal),
                 cal.get(Calendar.YEAR),
@@ -277,6 +285,18 @@ class AddEditTaskFragment : Fragment() {
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
             button.text = SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(cal.time)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun getTime(cal: Calendar): TimePickerDialog.OnTimeSetListener {
+        val button = activity!!.findViewById<Button>(R.id.new_task_reminder_btn)
+
+        return TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+            cal.set(Calendar.HOUR_OF_DAY, hour)
+            cal.set(Calendar.MINUTE, minute)
+
+            button.text = "${button.text} ${SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)}"
         }
     }
 }
