@@ -24,7 +24,7 @@ class LessonsRecyclerViewAdapter(
 
     interface OnLessonClickListener {
         fun onLessonClick(lesson: Lesson)
-        fun loadSubjectFromLesson(id: Long) : Subject?
+        fun loadSubjectFromLesson(id: Long): Subject?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -176,7 +176,9 @@ class LessonsRecyclerViewAdapter(
                     containerView.details_list_header2.text = lesson.location
 
                     //Creating a clone drawable because we do not want to affect other instances of the original drawable
-                    val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
+                    val clone =
+                        containerView.resources.getDrawable(R.drawable.placeholder_circle, null)
+                            .mutatedClone()
                     clone.displayColor(subject.colorCode, containerView.context)
                     containerView.details_list_subject_indicator.setImageDrawable(clone)
                 }

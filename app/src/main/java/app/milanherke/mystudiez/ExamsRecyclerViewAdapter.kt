@@ -24,7 +24,7 @@ class ExamsRecyclerViewAdapter(
 
     interface OnExamClickListener {
         fun onExamClickListener(exam: Exam)
-        fun loadSubjectFromExam(id: Long) : Subject?
+        fun loadSubjectFromExam(id: Long): Subject?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -90,15 +90,15 @@ class ExamsRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorExams
-        return if (subjectIndicator == null && (cursor == null || cursor.count == 0)){
+        return if (subjectIndicator == null && (cursor == null || cursor.count == 0)) {
             if (calledFromOverview == true) {
                 VIEW_TYPE_EMPTY_IN_OVERVIEW
             } else {
                 VIEW_TYPE_ALL_EXAMS_EMPTY
             }
-        } else if(subjectIndicator != null && (cursor == null || cursor.count == 0)) {
+        } else if (subjectIndicator != null && (cursor == null || cursor.count == 0)) {
             VIEW_TYPE_EMPTY
-        }else {
+        } else {
             VIEW_TYPE_NOT_EMPTY
         }
     }
@@ -164,7 +164,7 @@ class ExamsRecyclerViewAdapter(
                 if (subject != null) {
                     // After null-check, we must decide if the ViewHolder is being used in OverviewFragment
                     // And if so, we need to display the details in a different way
-                    if (calledFromOverview != null ) {
+                    if (calledFromOverview != null) {
                         if (calledFromOverview == true) {
                             containerView.details_list_title.text = exam.name
                             containerView.details_list_header1.text = subject.name
@@ -179,7 +179,9 @@ class ExamsRecyclerViewAdapter(
                     }
 
                     //We're creating a clone drawable because we do not want to affect other instances of the original drawable
-                    val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
+                    val clone =
+                        containerView.resources.getDrawable(R.drawable.placeholder_circle, null)
+                            .mutatedClone()
                     clone.displayColor(subject.colorCode, containerView.context)
                     containerView.details_list_subject_indicator.setImageDrawable(clone)
                 }

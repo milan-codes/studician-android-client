@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.NotificationUtils.Companion.CHANNEL_ID
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -89,6 +90,10 @@ class MainActivity : AppCompatActivity(),
             }
         }
 
+        this.fragment_container.setOnScrollChangeListener { _, _, _, _, _ ->
+
+        }
+
     }
 
     private fun loadCorrectFragment(frag: String): Fragment {
@@ -129,7 +134,12 @@ class MainActivity : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
-    private fun scheduleNotification(notification: Notification, delay: Long, task: Task? = null, exam: Exam? = null) {
+    private fun scheduleNotification(
+        notification: Notification,
+        delay: Long,
+        task: Task? = null,
+        exam: Exam? = null
+    ) {
         val requestCode = when {
             task != null -> {
                 Integer.parseInt("${TASK_NOTIFICATION_PRE_CODE}${task.taskId}")
@@ -158,13 +168,15 @@ class MainActivity : AppCompatActivity(),
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private fun createNotification(contentTitle: String,contentText: String): Notification {
+    private fun createNotification(contentTitle: String, contentText: String): Notification {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.reminder_icon)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(contentText))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(contentText)
+            )
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
         return builder.build()
@@ -178,7 +190,7 @@ class MainActivity : AppCompatActivity(),
      * Because the user wants to add a new [Subject]
      */
     private fun fabBtnInSubjectsFragment() {
-        replaceFragment(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
+        replaceFragmentWithTransition(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
     }
 
     /**
@@ -186,7 +198,7 @@ class MainActivity : AppCompatActivity(),
      * Because the user wants to add a new [Task]
      */
     private fun fabBtnInTasksFragment() {
-        replaceFragment(AddEditTaskFragment.newInstance(), R.id.fragment_container)
+        replaceFragmentWithTransition(AddEditTaskFragment.newInstance(), R.id.fragment_container)
     }
 
     /**
@@ -194,7 +206,7 @@ class MainActivity : AppCompatActivity(),
      * Because the user wants to add a new [Exam]
      */
     private fun fabBtnInExamsFragment() {
-        replaceFragment(AddEditExamFragment.newInstance(), R.id.fragment_container)
+        replaceFragmentWithTransition(AddEditExamFragment.newInstance(), R.id.fragment_container)
     }
 
 
@@ -208,7 +220,10 @@ class MainActivity : AppCompatActivity(),
     private fun upBtnInSubjectDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECTS, Fragments.LESSON_DETAILS, Fragments.TASK_DETAILS, Fragments.EXAM_DETAILS -> {
-                replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+                replaceFragmentWithTransition(
+                    SubjectsFragment.newInstance(),
+                    R.id.fragment_container
+                )
             }
             else -> throw IllegalStateException("SubjectDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
         }
@@ -221,13 +236,13 @@ class MainActivity : AppCompatActivity(),
     private fun upBtnInLessonDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
             }
             Fragments.OVERVIEW -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     OverviewFragment.newInstance(),
                     R.id.fragment_container
                 )
@@ -243,19 +258,19 @@ class MainActivity : AppCompatActivity(),
     private fun upBtnInTaskDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
             }
             Fragments.TASKS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     TasksFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.OVERVIEW -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     OverviewFragment.newInstance(),
                     R.id.fragment_container
                 )
@@ -271,19 +286,19 @@ class MainActivity : AppCompatActivity(),
     private fun upBtnInExamDetailsFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
             }
             Fragments.EXAMS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     ExamsFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.OVERVIEW -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     OverviewFragment.newInstance(),
                     R.id.fragment_container
                 )
@@ -299,14 +314,14 @@ class MainActivity : AppCompatActivity(),
     private fun upBtnInAddEditSubjectFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECTS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectsFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.SUBJECT_DETAILS -> {
                 // We can use the subject variable because the fragment was called from SubjectDetails, therefore an object has already been assigned to it.
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
@@ -324,13 +339,13 @@ class MainActivity : AppCompatActivity(),
     private fun upInAddEditLessonFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
             }
             Fragments.LESSON_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     LessonDetailsFragment.newInstance(lesson!!),
                     R.id.fragment_container
                 )
@@ -351,18 +366,18 @@ class MainActivity : AppCompatActivity(),
     private fun upInAddEditTaskFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.TASKS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     TasksFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.SUBJECT_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
             }
-            Fragments.TASK_DETAILS -> replaceFragment(
+            Fragments.TASK_DETAILS -> replaceFragmentWithTransition(
                 TaskDetailsFragment.newInstance(
                     task!!
                 ), R.id.fragment_container
@@ -383,18 +398,18 @@ class MainActivity : AppCompatActivity(),
     private fun upInAddEditExamFragment() {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
             Fragments.EXAMS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     ExamsFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.SUBJECT_DETAILS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
                     R.id.fragment_container
                 )
             }
-            Fragments.EXAM_DETAILS -> replaceFragment(
+            Fragments.EXAM_DETAILS -> replaceFragmentWithTransition(
                 ExamDetailsFragment.newInstance(
                     exam!!
                 ), R.id.fragment_container
@@ -414,11 +429,11 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSaveSubjectClick(subject: Subject) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragment(
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
-            Fragments.SUBJECTS -> replaceFragment(
+            Fragments.SUBJECTS -> replaceFragmentWithTransition(
                 SubjectsFragment.newInstance(),
                 R.id.fragment_container
             )
@@ -433,11 +448,11 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSaveLessonClick(lesson: Lesson) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragment(
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject!!),
                 R.id.fragment_container
             )
-            Fragments.LESSON_DETAILS -> replaceFragment(
+            Fragments.LESSON_DETAILS -> replaceFragmentWithTransition(
                 LessonDetailsFragment.newInstance(lesson),
                 R.id.fragment_container
             )
@@ -452,22 +467,26 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSaveTaskClicked(task: Task) {
         if (task.reminder.isNotEmpty() && task.reminder != getString(R.string.add_edit_lesson_btn)) {
-            val notification = createNotification(getString(R.string.notification_task_reminder_title), task.name)
-            val reminder = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse(task.reminder+":00")
+            val notification =
+                createNotification(getString(R.string.notification_task_reminder_title), task.name)
+            val reminder = SimpleDateFormat(
+                "dd/MM/yyyy hh:mm:ss",
+                Locale.getDefault()
+            ).parse(task.reminder + ":00")
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, task, null)
         }
 
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.TASKS -> replaceFragment(
+            Fragments.TASKS -> replaceFragmentWithTransition(
                 TasksFragment.newInstance(),
                 R.id.fragment_container
             )
-            Fragments.SUBJECT_DETAILS -> replaceFragment(
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject!!),
                 R.id.fragment_container
             )
-            Fragments.TASK_DETAILS -> replaceFragment(
+            Fragments.TASK_DETAILS -> replaceFragmentWithTransition(
                 TaskDetailsFragment.newInstance(task),
                 R.id.fragment_container
             )
@@ -482,21 +501,25 @@ class MainActivity : AppCompatActivity(),
 
     override fun onSaveExamClicked(exam: Exam) {
         if (exam.reminder.isNotEmpty() && exam.reminder != getString(R.string.add_edit_lesson_btn)) {
-            val notification = createNotification(getString(R.string.notification_exam_reminder_title), exam.name)
-            val reminder = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.getDefault()).parse(exam.reminder+":00")
+            val notification =
+                createNotification(getString(R.string.notification_exam_reminder_title), exam.name)
+            val reminder = SimpleDateFormat(
+                "dd/MM/yyyy hh:mm:ss",
+                Locale.getDefault()
+            ).parse(exam.reminder + ":00")
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, null, exam)
         }
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.EXAMS -> replaceFragment(
+            Fragments.EXAMS -> replaceFragmentWithTransition(
                 ExamsFragment.newInstance(),
                 R.id.fragment_container
             )
-            Fragments.SUBJECT_DETAILS -> replaceFragment(
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject!!),
                 R.id.fragment_container
             )
-            Fragments.EXAM_DETAILS -> replaceFragment(
+            Fragments.EXAM_DETAILS -> replaceFragmentWithTransition(
                 ExamDetailsFragment.newInstance(exam),
                 R.id.fragment_container
             )
@@ -519,11 +542,14 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onDeleteLessonClick(subject: Subject) {
-        replaceFragment(SubjectDetailsFragment.newInstance(subject), R.id.fragment_container)
+        replaceFragmentWithTransition(
+            SubjectDetailsFragment.newInstance(subject),
+            R.id.fragment_container
+        )
     }
 
     override fun onEditLessonClick(lesson: Lesson) {
-        replaceFragment(
+        replaceFragmentWithTransition(
             AddEditLessonFragment.newInstance(lesson, subject!!),
             R.id.fragment_container
         )
@@ -540,18 +566,18 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDeleteTaskClick(subject: Subject) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragment(
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
             Fragments.TASKS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     TasksFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.OVERVIEW -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     OverviewFragment.newInstance(),
                     R.id.fragment_container
                 )
@@ -561,7 +587,12 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onEditTaskClick(task: Task) {
-        replaceFragment(AddEditTaskFragment.newInstance(task, sharedViewModel.subjectFromId(task.subjectId)), R.id.fragment_container)
+        replaceFragmentWithTransition(
+            AddEditTaskFragment.newInstance(
+                task,
+                sharedViewModel.subjectFromId(task.subjectId)
+            ), R.id.fragment_container
+        )
     }
 
     override fun taskIsLoaded(task: Task) {
@@ -575,18 +606,18 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDeleteExamClick(subject: Subject) {
         when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragment(
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
             Fragments.EXAMS -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     ExamsFragment.newInstance(),
                     R.id.fragment_container
                 )
             }
             Fragments.OVERVIEW -> {
-                replaceFragment(
+                replaceFragmentWithTransition(
                     OverviewFragment.newInstance(),
                     R.id.fragment_container
                 )
@@ -596,7 +627,12 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onEditExamClick(exam: Exam) {
-        replaceFragment(AddEditExamFragment.newInstance(exam, sharedViewModel.subjectFromId(exam.subjectId)), R.id.fragment_container)
+        replaceFragmentWithTransition(
+            AddEditExamFragment.newInstance(
+                exam,
+                sharedViewModel.subjectFromId(exam.subjectId)
+            ), R.id.fragment_container
+        )
     }
 
     override fun examIsLoaded(exam: Exam) {

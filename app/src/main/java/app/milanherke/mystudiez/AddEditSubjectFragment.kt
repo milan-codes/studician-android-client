@@ -157,7 +157,11 @@ class AddEditSubjectFragment : Fragment() {
             subject = viewModel.saveSubject(newSubject)
             listener?.onSaveSubjectClick(subject!!)
         } else {
-            Toast.makeText(context!!, getString(R.string.required_fields_are_not_filled), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context!!,
+                getString(R.string.required_fields_are_not_filled),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -175,7 +179,8 @@ class AddEditSubjectFragment : Fragment() {
         if (new_subject_name_value.text.isNotEmpty()
             && new_subject_teacher_value.text.isNotEmpty()
             && new_subject_color_btn.text != getString(R.string.new_subject_color_button)
-            && new_subject_color_btn.text.isNotEmpty()){
+            && new_subject_color_btn.text.isNotEmpty()
+        ) {
             return true
         }
         return false
@@ -199,7 +204,11 @@ class AddEditSubjectFragment : Fragment() {
                     setColor(R.color.subjectColorPurple, activity!!, R.string.colorPurpleTitle)
                 }
                 R.id.color_option_deep_purple -> {
-                    setColor(R.color.subjectColorDeepPurple, activity!!, R.string.colorDeepPurpleTitle)
+                    setColor(
+                        R.color.subjectColorDeepPurple,
+                        activity!!,
+                        R.string.colorDeepPurpleTitle
+                    )
                 }
                 R.id.color_option_indigo -> {
                     setColor(R.color.subjectColorIndigo, activity!!, R.string.colorIndigoTitle)
@@ -208,7 +217,11 @@ class AddEditSubjectFragment : Fragment() {
                     setColor(R.color.subjectColorBlue, activity!!, R.string.colorBlueTitle)
                 }
                 R.id.color_option_light_blue -> {
-                    setColor(R.color.subjectColorLightBlue, activity!!, R.string.colorLightBlueTitle)
+                    setColor(
+                        R.color.subjectColorLightBlue,
+                        activity!!,
+                        R.string.colorLightBlueTitle
+                    )
                 }
                 R.id.color_option_cyan -> {
                     setColor(R.color.subjectColorCyan, activity!!, R.string.colorCyanTitle)
@@ -220,7 +233,11 @@ class AddEditSubjectFragment : Fragment() {
                     setColor(R.color.subjectColorGreen, activity!!, R.string.colorGreenTitle)
                 }
                 R.id.color_option_light_green -> {
-                    setColor(R.color.subjectColorLightGreen, activity!!, R.string.colorLightGreenTitle)
+                    setColor(
+                        R.color.subjectColorLightGreen,
+                        activity!!,
+                        R.string.colorLightGreenTitle
+                    )
                 }
                 R.id.color_option_lime -> {
                     setColor(R.color.subjectColorLime, activity!!, R.string.colorLimeTitle)
@@ -235,7 +252,11 @@ class AddEditSubjectFragment : Fragment() {
                     setColor(R.color.subjectColorOrange, activity!!, R.string.colorOrangeTitle)
                 }
                 R.id.color_option_deep_orange -> {
-                    setColor(R.color.subjectColorDeepOrange, activity!!, R.string.colorDeepOrangeTitle)
+                    setColor(
+                        R.color.subjectColorDeepOrange,
+                        activity!!,
+                        R.string.colorDeepOrangeTitle
+                    )
                 }
                 R.id.color_option_blue_gray -> {
                     setColor(R.color.subjectColorBlueGray, activity!!, R.string.colorBlueGrayTitle)

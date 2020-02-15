@@ -11,7 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class TasksViewModel(application: Application) : AndroidViewModel(application){
+class TasksViewModel(application: Application) : AndroidViewModel(application) {
 
     private val contentObserverTasks = object : ContentObserver(Handler()) {
         override fun onChange(selfChange: Boolean, uri: Uri?) {

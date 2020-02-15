@@ -45,7 +45,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getAllSubjects(): ArrayList<Subject>? {
-        val list : ArrayList<Subject> = ArrayList()
+        val list: ArrayList<Subject> = ArrayList()
         val projection = arrayOf(
             SubjectsContract.Columns.ID,
             SubjectsContract.Columns.SUBJECT_NAME,

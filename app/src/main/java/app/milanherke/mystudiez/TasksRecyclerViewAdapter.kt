@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.marginBottom
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.details_list_item.view.*
@@ -25,7 +24,7 @@ class TasksRecyclerViewAdapter(
 
     interface OnTaskClickListener {
         fun onTaskClickListener(task: Task)
-        fun loadSubjectFromTask(id: Long) : Subject?
+        fun loadSubjectFromTask(id: Long): Subject?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -92,7 +91,7 @@ class TasksRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val cursor = cursorTasks
-        return if (subjectIndicator == null && (cursor == null || cursor.count == 0) ) {
+        return if (subjectIndicator == null && (cursor == null || cursor.count == 0)) {
             if (calledFromOverview == true) {
                 VIEW_TYPE_EMPTY_IN_OVERVIEW
             } else {
@@ -153,7 +152,7 @@ class TasksRecyclerViewAdapter(
 
             // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
             // Meaning we do not have to load nor display the subject details
-            if ( subjectIndicator != null) {
+            if (subjectIndicator != null) {
                 containerView.details_list_title.text = task.name
                 containerView.details_list_header1.text = task.dueDate
                 containerView.details_list_header2.text = task.type
@@ -166,7 +165,7 @@ class TasksRecyclerViewAdapter(
                 if (subject != null) {
                     // After null-check, we must decide if the ViewHolder is being used in OverviewFragment
                     // And if so, we need to display the details in a different way
-                    if(calledFromOverview != null) {
+                    if (calledFromOverview != null) {
                         if (calledFromOverview == true) {
                             containerView.details_list_title.text = task.name
                             containerView.details_list_header1.text = subject.name
@@ -176,12 +175,18 @@ class TasksRecyclerViewAdapter(
                         }
                     } else {
                         containerView.details_list_title.text = task.name
-                        containerView.details_list_header1.text = containerView.resources.getString(R.string.details_subject_item_time, subject.name, task.type)
+                        containerView.details_list_header1.text = containerView.resources.getString(
+                            R.string.details_subject_item_time,
+                            subject.name,
+                            task.type
+                        )
                         containerView.details_list_header2.text = task.dueDate
                     }
 
                     //Creating a clone drawable because we do not want to affect other instances of the original drawable
-                    val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
+                    val clone =
+                        containerView.resources.getDrawable(R.drawable.placeholder_circle, null)
+                            .mutatedClone()
                     clone.displayColor(subject.colorCode, containerView.context)
                     containerView.details_list_subject_indicator.setImageDrawable(clone)
                 }

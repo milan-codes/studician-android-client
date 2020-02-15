@@ -8,16 +8,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_exam.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -143,7 +140,7 @@ class AddEditExamFragment : Fragment() {
             val cal = Calendar.getInstance()
             DatePickerDialog(
                 context!!,
-                getDate(R.id.new_exam_date_btn, cal),
+                CalendarUtils.getDate(activity!!, R.id.new_exam_date_btn, cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -154,14 +151,14 @@ class AddEditExamFragment : Fragment() {
             val cal = Calendar.getInstance()
             TimePickerDialog(
                 context,
-                getTime(cal),
+                CalendarUtils.getTime(activity!!, R.id.new_exam_reminder_btn, cal),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
             ).show()
             DatePickerDialog(
                 context!!,
-                getDate(R.id.new_exam_reminder_btn, cal),
+                CalendarUtils.getDate(activity!!, R.id.new_exam_reminder_btn, cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -211,7 +208,11 @@ class AddEditExamFragment : Fragment() {
             exam = viewModel.saveExam(newExam)
             listener?.onSaveExamClicked(exam!!)
         } else {
-            Toast.makeText(context!!, getString(R.string.required_fields_are_not_filled), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context!!,
+                getString(R.string.required_fields_are_not_filled),
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -231,7 +232,8 @@ class AddEditExamFragment : Fragment() {
         if (new_exam_name.text.isNotEmpty()
             && new_exam_subject_btn.text.isNotEmpty()
             && new_exam_date_btn.text != getString(R.string.add_edit_lesson_btn)
-            && new_exam_date_btn.text.isNotEmpty()) {
+            && new_exam_date_btn.text.isNotEmpty()
+        ) {
             return true
         }
         return false
@@ -246,7 +248,7 @@ class AddEditExamFragment : Fragment() {
             inflater.inflate(R.menu.empty_menu, popupMenu.menu)
 
             // Adding the subjects to the list if it is not null
-            for(subject in listOfSubjects) {
+            for (subject in listOfSubjects) {
                 popupMenu.menu.add(subject.name).setOnMenuItemClickListener {
                     new_exam_subject_btn.text = subject.name
                     subjectIdClickedFromList = subject.subjectId
@@ -254,30 +256,6 @@ class AddEditExamFragment : Fragment() {
                 }
             }
             popupMenu.show()
-        }
-    }
-
-    private fun getDate(@IdRes buttonId: Int, cal: Calendar): DatePickerDialog.OnDateSetListener {
-        val button = activity!!.findViewById<Button>(buttonId)
-
-        return DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            cal.set(Calendar.YEAR, year)
-            cal.set(Calendar.MONTH, month)
-            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-            button.text = SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(cal.time)
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun getTime(cal: Calendar): TimePickerDialog.OnTimeSetListener {
-        val button = activity!!.findViewById<Button>(R.id.new_exam_reminder_btn)
-
-        return TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-            cal.set(Calendar.HOUR_OF_DAY, hour)
-            cal.set(Calendar.MINUTE, minute)
-
-            button.text = "${button.text} ${SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)}"
         }
     }
 }

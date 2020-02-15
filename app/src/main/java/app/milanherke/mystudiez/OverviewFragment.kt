@@ -1,17 +1,16 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,10 +24,11 @@ import java.util.*
  * Use the [OverviewFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
 class OverviewFragment : Fragment(),
     LessonsRecyclerViewAdapter.OnLessonClickListener,
     TasksRecyclerViewAdapter.OnTaskClickListener,
-    ExamsRecyclerViewAdapter.OnExamClickListener{
+    ExamsRecyclerViewAdapter.OnExamClickListener {
 
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(OverviewViewModel::class.java)
@@ -44,15 +44,30 @@ class OverviewFragment : Fragment(),
         super.onCreate(savedInstanceState)
         viewModel.cursorLessons.observe(
             this,
-            Observer { cursor ->  lessonsAdapter.swapLessonsCursor(cursor)?.close() }
+            Observer { cursor ->
+                lessonsAdapter.swapLessonsCursor(cursor)?.close()
+                if (overview_schedule_list != null && cursor.count != 0) Animations.runLayoutAnimation(
+                    overview_schedule_list
+                )
+            }
         )
         viewModel.cursorTasks.observe(
             this,
-            Observer { cursor -> tasksAdapter.swapTasksCursor(cursor)?.close() }
+            Observer { cursor ->
+                tasksAdapter.swapTasksCursor(cursor)?.close()
+                if (overview_task_list != null && cursor.count != 0) Animations.runLayoutAnimation(
+                    overview_task_list
+                )
+            }
         )
         viewModel.cursorExams.observe(
             this,
-            Observer { cursor -> examsAdapter.swapExamsCursor(cursor)?.close() }
+            Observer { cursor ->
+                examsAdapter.swapExamsCursor(cursor)?.close()
+                if (overview_exam_list != null && cursor.count != 0) Animations.runLayoutAnimation(
+                    overview_exam_list
+                )
+            }
         )
         viewModel.loadAllDetails(Date())
     }
@@ -78,6 +93,7 @@ class OverviewFragment : Fragment(),
 
         overview_exam_list.layoutManager = LinearLayoutManager(context)
         overview_exam_list.adapter = examsAdapter
+
     }
 
     @SuppressLint("RestrictedApi")
@@ -91,12 +107,13 @@ class OverviewFragment : Fragment(),
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.GONE
 
-        overview_date_button.text = SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(Date())
+        overview_date_button.text =
+            SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(Date())
 
         overview_date_button.setOnClickListener {
             val cal = Calendar.getInstance()
-            DatePickerDialog(
-                context!!, getDate(R.id.overview_date_button, cal),
+             DatePickerDialog(
+                context!!, getDate(cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -125,7 +142,10 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onLessonClick(lesson: Lesson) {
-        activity!!.replaceFragment(LessonDetailsFragment.newInstance(lesson), R.id.fragment_container)
+        activity!!.replaceFragmentWithTransition(
+            LessonDetailsFragment.newInstance(lesson),
+            R.id.fragment_container
+        )
     }
 
     override fun loadSubjectFromLesson(id: Long): Subject? {
@@ -133,7 +153,10 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragment(TaskDetailsFragment.newInstance(task), R.id.fragment_container)
+        activity!!.replaceFragmentWithTransition(
+            TaskDetailsFragment.newInstance(task),
+            R.id.fragment_container
+        )
     }
 
     override fun loadSubjectFromTask(id: Long): Subject? {
@@ -141,15 +164,19 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onExamClickListener(exam: Exam) {
-        activity!!.replaceFragment(ExamDetailsFragment.newInstance(exam), R.id.fragment_container)
+        activity!!.replaceFragmentWithTransition(
+            ExamDetailsFragment.newInstance(exam),
+            R.id.fragment_container
+        )
     }
 
     override fun loadSubjectFromExam(id: Long): Subject? {
         return sharedViewModel.subjectFromId(id)
     }
 
-    private fun getDate(@IdRes buttonId: Int, cal: Calendar): DatePickerDialog.OnDateSetListener {
-        val button = activity!!.findViewById<Button>(buttonId)
+    private fun getDate(
+        cal: Calendar
+    ): DatePickerDialog.OnDateSetListener {
 
         return DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
             cal.set(Calendar.YEAR, year)
@@ -157,7 +184,10 @@ class OverviewFragment : Fragment(),
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
             viewModel.loadAllDetails(cal.time)
-            button.text = SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(cal.time)
+
+            overview_date_button.text =
+                SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(cal.time)
         }
     }
+
 }

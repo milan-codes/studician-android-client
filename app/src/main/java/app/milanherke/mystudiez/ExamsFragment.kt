@@ -1,20 +1,17 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exams.*
-import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass.
@@ -36,7 +33,10 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         viewModel.loadExams()
         viewModel.cursorExams.observe(
             this,
-            Observer { cursor -> examsAdapter.swapExamsCursor(cursor)?.close() }
+            Observer { cursor ->
+                examsAdapter.swapExamsCursor(cursor)?.close()
+                if (exam_list != null && cursor.count != 0) Animations.runLayoutAnimation(exam_list)
+            }
         )
     }
 
@@ -88,7 +88,10 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
     }
 
     override fun onExamClickListener(exam: Exam) {
-        activity!!.replaceFragment(ExamDetailsFragment.newInstance(exam), R.id.fragment_container)
+        activity!!.replaceFragmentWithTransition(
+            ExamDetailsFragment.newInstance(exam),
+            R.id.fragment_container
+        )
     }
 
     override fun loadSubjectFromExam(id: Long): Subject? {

@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subject_details.*
-import java.lang.IllegalStateException
 
 // the fragment initialization parameters, e.g. ARG_SUBJECT
 private const val ARG_SUBJECT = "subject"
@@ -125,7 +124,7 @@ class SubjectDetailsFragment : Fragment(),
         subject_details_exams_recycler.adapter = examsAdapter
 
         button.setOnClickListener {
-            activity!!.replaceFragment(
+            activity!!.replaceFragmentWithTransition(
                 AddEditSubjectFragment.newInstance(subject!!),
                 R.id.fragment_container
             )
@@ -133,25 +132,25 @@ class SubjectDetailsFragment : Fragment(),
 
         del_subject_button.setOnClickListener {
             viewModel.deleteSubject(subject!!.subjectId)
-            activity!!.replaceFragment(SubjectsFragment.newInstance(), R.id.fragment_container)
+            activity!!.replaceFragmentWithTransition(SubjectsFragment.newInstance(), R.id.fragment_container)
         }
 
         subject_details_add_new_lesson_btn.setOnClickListener {
-            activity!!.replaceFragment(
+            activity!!.replaceFragmentWithTransition(
                 AddEditLessonFragment.newInstance(null, subject!!),
                 R.id.fragment_container
             )
         }
 
         subject_details_add_new_task_btn.setOnClickListener {
-            activity!!.replaceFragment(
+            activity!!.replaceFragmentWithTransition(
                 AddEditTaskFragment.newInstance(null, subject!!),
                 R.id.fragment_container
             )
         }
 
         subject_details_add_new_exam_btn.setOnClickListener {
-            activity!!.replaceFragment(
+            activity!!.replaceFragmentWithTransition(
                 AddEditExamFragment.newInstance(null, subject!!),
                 R.id.fragment_container
             )
@@ -195,7 +194,7 @@ class SubjectDetailsFragment : Fragment(),
     }
 
     override fun onLessonClick(lesson: Lesson) {
-        activity!!.replaceFragment(
+        activity!!.replaceFragmentWithTransition(
             LessonDetailsFragment.newInstance(lesson),
             R.id.fragment_container
         )
@@ -206,7 +205,7 @@ class SubjectDetailsFragment : Fragment(),
     }
 
     override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragment(
+        activity!!.replaceFragmentWithTransition(
             TaskDetailsFragment.newInstance(task), R.id.fragment_container
         )
     }
@@ -216,7 +215,7 @@ class SubjectDetailsFragment : Fragment(),
     }
 
     override fun onExamClickListener(exam: Exam) {
-        activity!!.replaceFragment(
+        activity!!.replaceFragmentWithTransition(
             ExamDetailsFragment.newInstance(exam), R.id.fragment_container
         )
     }
@@ -224,5 +223,5 @@ class SubjectDetailsFragment : Fragment(),
     override fun loadSubjectFromExam(id: Long): Subject {
         throw IllegalStateException("loadSubjectFromExam should not and cannot be called from SubjectDetailsFragment")
     }
-    
+
 }

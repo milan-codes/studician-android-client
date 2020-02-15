@@ -28,10 +28,20 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         super.onCreate(savedInstanceState)
         viewModel.cursorSubjects.observe(
             this,
-            Observer { cursor -> subjectsAdapter.swapSubjectsCursor(cursor)?.close() })
+            Observer { cursor ->
+                subjectsAdapter.swapSubjectsCursor(cursor)?.close()
+                if (subject_list != null && cursor.count != 0) Animations.runLayoutAnimation(
+                    subject_list
+                )
+            })
         viewModel.cursorLessons.observe(
             this,
-            Observer { cursor -> subjectsAdapter.swapLessonsCursor(cursor)?.close() })
+            Observer { cursor ->
+                subjectsAdapter.swapLessonsCursor(cursor)?.close()
+                if (subject_list != null && cursor.count != 0) Animations.runLayoutAnimation(
+                    subject_list
+                )
+            })
 
         // Loading subjects and selected lessons
         viewModel.loadSubjects()
@@ -87,7 +97,7 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     }
 
     override fun onSubjectClick(subject: Subject) {
-        activity!!.replaceFragment(
+        activity!!.replaceFragmentWithTransition(
             SubjectDetailsFragment.newInstance(subject),
             R.id.fragment_container
         )

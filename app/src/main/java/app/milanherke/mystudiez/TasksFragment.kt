@@ -11,9 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_subject_details.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
-import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass.
@@ -34,7 +32,10 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         super.onCreate(savedInstanceState)
         viewModel.cursorTasks.observe(
             this,
-            Observer { cursor -> tasksAdapter.swapTasksCursor(cursor)?.close() }
+            Observer { cursor ->
+                tasksAdapter.swapTasksCursor(cursor)?.close()
+                if (task_list != null && cursor.count != 0) Animations.runLayoutAnimation(task_list)
+            }
         )
         viewModel.loadTasks()
     }
@@ -53,7 +54,6 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
 
         task_list.layoutManager = LinearLayoutManager(context)
         task_list.adapter = tasksAdapter
-
     }
 
     @SuppressLint("RestrictedApi")
@@ -88,7 +88,10 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     }
 
     override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragment(TaskDetailsFragment.newInstance(task), R.id.fragment_container)
+        activity!!.replaceFragmentWithTransition(
+            TaskDetailsFragment.newInstance(task),
+            R.id.fragment_container
+        )
     }
 
     override fun loadSubjectFromTask(id: Long): Subject? {
