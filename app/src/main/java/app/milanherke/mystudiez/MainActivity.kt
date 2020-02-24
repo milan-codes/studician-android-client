@@ -13,27 +13,24 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.NotificationUtils.Companion.CHANNEL_ID
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 private const val TAG = "MainActivity"
 private const val TASK_NOTIFICATION_PRE_CODE = 100
 private const val EXAM_NOTIFICATION_PRE_CODE = 200
-
-const val SUBJECTS_STATE = "SubjectsState"
-var APP_STATE = SUBJECTS_STATE
-
-
 class MainActivity : AppCompatActivity(),
+    OverviewFragment.OverviewInteractions,
+    SubjectsFragment.SubjectsInteractions,
+    TasksFragment.TasksInteractions,
+    ExamsFragment.ExamsInteractions,
     AddEditSubjectFragment.AddEditSubjectInteractions,
     AddEditLessonFragment.OnSaveLessonClick,
     AddEditTaskFragment.AddEditTaskInteractions,
@@ -51,6 +48,8 @@ class MainActivity : AppCompatActivity(),
     private var task: Task? = null
     // The exam, whose details are displayed when ExamDetailsFragment is called
     private var exam: Exam? = null
+    // This variable is used to check whether the back button has already been pressed once
+    private var doubleBackToExitPressedOnce: Boolean = false
 
     private val sharedViewModel by lazy {
         ViewModelProviders.of(this).get(SharedViewModel::class.java)
@@ -65,9 +64,11 @@ class MainActivity : AppCompatActivity(),
         toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
 
-        replaceFragment(loadCorrectFragment(APP_STATE), R.id.fragment_container)
+        // Setting the home screen:
+        // OverviewFragment is the first fragment seen by the user, just after the app has been opened
+        replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
 
-        // Creating channel if to support android O and higher
+        // Creating channel to support android O and higher (for notifications)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationUtils(this)
         }
@@ -88,18 +89,6 @@ class MainActivity : AppCompatActivity(),
                     throw IllegalStateException("FAB Button pressed in unrecognised fragment $fragment")
                 }
             }
-        }
-
-        this.fragment_container.setOnScrollChangeListener { _, _, _, _, _ ->
-
-        }
-
-    }
-
-    private fun loadCorrectFragment(frag: String): Fragment {
-        return when (frag) {
-            SUBJECTS_STATE -> SubjectsFragment.newInstance()
-            else -> throw IllegalArgumentException("Unknown fragment passed")
         }
     }
 
@@ -132,6 +121,28 @@ class MainActivity : AppCompatActivity(),
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        when (val fragment = findFragmentById(R.id.fragment_container)) {
+            is SubjectDetailsFragment -> upBtnInSubjectDetailsFragment()
+            is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
+            is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
+            is ExamDetailsFragment -> upBtnInExamDetailsFragment()
+            is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
+            is AddEditLessonFragment -> upInAddEditLessonFragment()
+            is AddEditTaskFragment -> upInAddEditTaskFragment()
+            is AddEditExamFragment -> upInAddEditExamFragment()
+            is OverviewFragment, is SubjectsFragment, is TasksFragment, is ExamsFragment -> {
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed()
+                    return
+                }
+                doubleBackToExitPressedOnce = true
+                Toast.makeText(this, getString(R.string.press_again_to_exit), Toast.LENGTH_SHORT).show()
+            }
+            else -> throw IllegalArgumentException("Back button pressed in unrecognised fragment $fragment")
+        }
     }
 
     private fun scheduleNotification(
@@ -421,7 +432,49 @@ class MainActivity : AppCompatActivity(),
     }
 
     // INTERACTION INTERFACES
-    // Implementing the interfaces which are required to communicate with a fragment.
+    // Implementing the interfaces which are required to communicate with the fragments.
+
+
+    /**
+     * We need to set [doubleBackToExitPressedOnce]'s value to false,
+     * because we must prevent the app from closing after the back button has only been pressed just once
+     */
+    private fun setDoubleBackToFalse() {
+        doubleBackToExitPressedOnce = false
+    }
+
+
+    /**
+     * Interaction interface(s) from [OverviewFragment]
+     */
+    override fun overviewFragmentIsBeingCreated() {
+        setDoubleBackToFalse()
+    }
+
+
+    /**
+     * Interaction interface(s) from [SubjectsFragment]
+     */
+    override fun subjectsFragmentIsBeingCreated() {
+        setDoubleBackToFalse()
+    }
+
+
+    /**
+     * Interaction interface(s) from [TasksFragment]
+     */
+    override fun tasksFragmentIsBeingCreated() {
+        setDoubleBackToFalse()
+    }
+
+
+    /**
+     * Interaction interface(s) from [ExamsFragment]
+     */
+    override fun examsFragmentIsBeingCreated() {
+        setDoubleBackToFalse()
+    }
+
 
     /**
      * Interaction interface(s) from [AddEditSubjectFragment]

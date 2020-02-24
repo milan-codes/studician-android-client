@@ -124,4 +124,5 @@
     <string name="notification_task_reminder_title">Task reminder</string>
     <string name="notification_exam_reminder_title">Exam reminder</string>
     <string name="overview_day_description">Date (Tap to change):</string>
+    <string name="press_again_to_exit">Press again to exit</string>
 </resources>

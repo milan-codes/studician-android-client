@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +24,31 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         ViewModelProviders.of(activity!!).get(SubjectsViewModel::class.java)
     }
     private val subjectsAdapter = SubjectsRecyclerViewAdapter(null, null, this)
+    private var listener: SubjectsInteractions? = null
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     *
+     *
+     * See the Android Training lesson [Communicating with Other Fragments]
+     * (http://developer.android.com/training/basics/fragments/communicating.html)
+     * for more information.
+     */
+    interface SubjectsInteractions {
+        fun subjectsFragmentIsBeingCreated()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is SubjectsInteractions) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement SubjectInteractions")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +72,8 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         // Loading subjects and selected lessons
         viewModel.loadSubjects()
         viewModel.loadLessonsForSubjects()
+        // Listener will never be null since the program crashes in onAttach if the interface is not implemented
+        listener!!.subjectsFragmentIsBeingCreated()
     }
 
     @SuppressLint("RestrictedApi")

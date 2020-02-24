@@ -1,14 +1,12 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -39,6 +37,31 @@ class OverviewFragment : Fragment(),
     private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null, this, true)
     private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this, true)
     private val examsAdapter = ExamsRecyclerViewAdapter(null, null, this, true)
+    private var listener: OverviewInteractions? = null
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     *
+     *
+     * See the Android Training lesson [Communicating with Other Fragments]
+     * (http://developer.android.com/training/basics/fragments/communicating.html)
+     * for more information.
+     */
+    interface OverviewInteractions {
+        fun overviewFragmentIsBeingCreated()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OverviewInteractions) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement OverviewInteractions")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +93,8 @@ class OverviewFragment : Fragment(),
             }
         )
         viewModel.loadAllDetails(Date())
+        // Listener will never be null since the program crashes in onAttach if the interface is not implemented
+        listener!!.overviewFragmentIsBeingCreated()
     }
 
     override fun onCreateView(

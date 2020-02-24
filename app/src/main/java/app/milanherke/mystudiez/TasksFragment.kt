@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +28,31 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
     private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this)
+    private var listener: TasksInteractions? = null
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     *
+     *
+     * See the Android Training lesson [Communicating with Other Fragments]
+     * (http://developer.android.com/training/basics/fragments/communicating.html)
+     * for more information.
+     */
+    interface TasksInteractions {
+        fun tasksFragmentIsBeingCreated()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is TasksInteractions) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement TaskInteractions")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +64,8 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
             }
         )
         viewModel.loadTasks()
+        // Listener will never be null since the program crashes in onAttach if the interface is not implemented
+        listener!!.tasksFragmentIsBeingCreated()
     }
 
     override fun onCreateView(
