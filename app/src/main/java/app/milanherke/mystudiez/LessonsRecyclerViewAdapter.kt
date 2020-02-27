@@ -69,7 +69,7 @@ class LessonsRecyclerViewAdapter(
                     val lesson = Lesson(
                         cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.LESSON_SUBJECT)),
                         "A",
-                        cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
+                        cursor.getInt(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_STARTS)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_ENDS)),
                         cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_LOCATION))
@@ -153,7 +153,7 @@ class LessonsRecyclerViewAdapter(
             // If the subjectIndicator is not null, then the recycler view is being used in SubjectDetailsFragment
             // Meaning we do not have to load nor display the subject details
             if (subjectIndicator != null) {
-                containerView.details_list_title.text = lesson.day
+                containerView.details_list_title.text = CalendarUtils.getDayFromNumberOfDay(lesson.day, containerView.context)
                 containerView.details_list_header1.text = containerView.resources.getString(
                     R.string.details_subject_item_time,
                     lesson.starts,

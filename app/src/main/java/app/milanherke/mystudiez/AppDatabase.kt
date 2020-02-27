@@ -69,7 +69,7 @@ internal class AppDatabase private constructor(context: Context) :
                 ${LessonsContract.Columns.ID} INTEGER PRIMARY KEY NOT NULL,
                 ${LessonsContract.Columns.LESSON_SUBJECT} INTEGER,
                 ${LessonsContract.Columns.LESSON_WEEK} TEXT,
-                ${LessonsContract.Columns.LESSON_DAY} TEXT NOT NULL,
+                ${LessonsContract.Columns.LESSON_DAY} INT NOT NULL,
                 ${LessonsContract.Columns.LESSON_STARTS} TEXT NOT NULL,
                 ${LessonsContract.Columns.LESSON_ENDS} TEXT NOT NULL,
                 ${LessonsContract.Columns.LESSON_LOCATION} TEXT NOT NULL,

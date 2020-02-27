@@ -92,7 +92,9 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
 
     @SuppressLint("SimpleDateFormat")
     private fun loadLessons(date: Date) {
-        val day = SimpleDateFormat("EEEE").format(date)
+        val cal = Calendar.getInstance()
+        cal.time = date
+        val numOfDay = cal.get(Calendar.DAY_OF_WEEK)
         val projection = arrayOf(
             LessonsContract.Columns.ID,
             LessonsContract.Columns.LESSON_SUBJECT,
@@ -107,7 +109,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                 LessonsContract.CONTENT_URI,
                 projection,
                 "${LessonsContract.Columns.LESSON_DAY} = ?",
-                arrayOf(day),
+                arrayOf(numOfDay.toString()),
                 "${LessonsContract.Columns.LESSON_STARTS} ASC"
             )
             databaseCursorLessons.postValue(cursor)

@@ -56,7 +56,7 @@
             android:id="@+id/new_task_desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="75dp"
             android:ems="10"
             android:fontFamily="@font/roboto_regular"
             android:hint="@string/add_edit_task_desc_value"

@@ -41,7 +41,7 @@
                 android:id="@+id/lesson_details_name_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="15dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="14sp"
@@ -66,13 +66,14 @@
                 android:id="@+id/lesson_details_starts_at_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/colorTextSecondary"
                 android:textSize="14sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/lesson_details_starts_at"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/lesson_details_name_value"
+                app:layout_constraintStart_toEndOf="@+id/lesson_details_starts_at"
                 tools:text="07:45" />
 
             <TextView
@@ -90,12 +91,13 @@
                 android:id="@+id/lesson_details_ends_at_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/colorTextSecondary"
                 app:layout_constraintBaseline_toBaselineOf="@+id/lesson_details_ends_at"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/lesson_details_starts_at_value"
+                app:layout_constraintStart_toEndOf="@+id/lesson_details_ends_at"
                 tools:text="8:30" />
 
             <TextView
@@ -113,12 +115,13 @@
                 android:id="@+id/lesson_details_location_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/colorTextSecondary"
                 app:layout_constraintBaseline_toBaselineOf="@id/lesson_details_location"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/lesson_details_ends_at_value"
+                app:layout_constraintStart_toEndOf="@+id/lesson_details_location"
                 tools:text="Building A" />
 
             <Button

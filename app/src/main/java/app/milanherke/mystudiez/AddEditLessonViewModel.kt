@@ -10,7 +10,7 @@ class AddEditLessonViewModel(application: Application) : AndroidViewModel(applic
 
     fun saveLesson(lesson: Lesson): Lesson {
         val values = ContentValues()
-        if (lesson.subjectId != 0L && lesson.day.isNotEmpty() && lesson.starts.isNotEmpty() && lesson.ends.isNotEmpty() && lesson.location.isNotEmpty()) {
+        if (lesson.subjectId != 0L && lesson.day != 0 && lesson.starts.isNotEmpty() && lesson.ends.isNotEmpty() && lesson.location.isNotEmpty()) {
             values.put(LessonsContract.Columns.LESSON_SUBJECT, lesson.subjectId)
             values.put(LessonsContract.Columns.LESSON_DAY, lesson.day)
             values.put(LessonsContract.Columns.LESSON_STARTS, lesson.starts)

@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 data class Lesson(
     var subjectId: Long,
     var week: String,
-    var day: String,
+    var day: Int,
     var starts: String,
     var ends: String,
     var location: String,

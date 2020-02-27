@@ -116,9 +116,9 @@
                     android:text="@string/details_edit_button"
                     android:textAllCaps="false"
                     android:textColor="#ffffff"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/del_subject_button"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/del_subject_button" />
+                    app:layout_constraintStart_toEndOf="@+id/del_subject_button"
+                    app:layout_constraintTop_toTopOf="@+id/del_subject_button" />
 
                 <Button
                     android:id="@+id/del_subject_button"
@@ -253,7 +253,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="32dp"
             android:background="@drawable/circular_button"
-            android:fontFamily="@font/montserrat_medium"
+            android:fontFamily="@font/roboto_medium"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:text="@string/no_exam_add_exam_btn_title"

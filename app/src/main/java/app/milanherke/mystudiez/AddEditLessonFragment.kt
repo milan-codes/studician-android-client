@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_lesson.*
+import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,6 +39,7 @@ class AddEditLessonFragment : Fragment() {
 
     private var lesson: Lesson? = null
     private var subject: Subject? = null
+    private var numOfSelectedDay: Int = 0
     private var listener: OnSaveLessonClick? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(AddEditLessonViewModel::class.java)
@@ -90,7 +94,7 @@ class AddEditLessonFragment : Fragment() {
         } else {
             activity!!.toolbar.title =
                 resources.getString(R.string.edit_lesson_title, subject!!.name)
-            new_lesson_day_btn.text = lesson.day
+            new_lesson_day_btn.text = CalendarUtils.getDayFromNumberOfDay(lesson.day, context!!)
             new_lesson_starts_at_btn.text = lesson.starts
             new_lesson_ends_at_btn.text = lesson.ends
             new_lesson_location.setText(lesson.location)
@@ -171,11 +175,19 @@ class AddEditLessonFragment : Fragment() {
      * and only save if they are different
      */
     private fun saveLesson() {
-        val newLesson = lessonFromUi()
-        if (newLesson != lesson && requiredFieldsAreFilled()) {
-            lesson = viewModel.saveLesson(newLesson)
-            listener?.onSaveLessonClick(lesson!!)
-        } else {
+        if (requiredFieldsAreFilled()) {
+            val newLesson = lessonFromUi()
+            if (newLesson != lesson) {
+                lesson = viewModel.saveLesson(newLesson)
+                listener?.onSaveLessonClick(lesson!!)
+            } else {
+                Toast.makeText(
+                    context!!,
+                    getString(R.string.did_not_change),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }else {
             Toast.makeText(
                 context!!,
                 getString(R.string.required_fields_are_not_filled),
@@ -188,7 +200,7 @@ class AddEditLessonFragment : Fragment() {
         val lesson = Lesson(
             subject!!.subjectId,
             "A",
-            new_lesson_day_btn.text.toString(),
+            if (numOfSelectedDay != 0) numOfSelectedDay else throw IllegalArgumentException(""),
             new_lesson_starts_at_btn.text.toString(),
             new_lesson_ends_at_btn.text.toString(),
             new_lesson_location.text.toString()
@@ -219,13 +231,34 @@ class AddEditLessonFragment : Fragment() {
 
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.day_option_monday -> new_lesson_day_btn.setText(R.string.dayOptionMonday)
-                R.id.day_option_tuesday -> new_lesson_day_btn.setText(R.string.dayOptionTuesday)
-                R.id.day_option_wednesday -> new_lesson_day_btn.setText(R.string.dayOptionWednesday)
-                R.id.day_option_thursday -> new_lesson_day_btn.setText(R.string.dayOptionThursday)
-                R.id.day_option_friday -> new_lesson_day_btn.setText(R.string.dayOptionFriday)
-                R.id.day_option_saturday -> new_lesson_day_btn.setText(R.string.dayOptionSaturday)
-                R.id.day_option_sunday -> new_lesson_day_btn.setText(R.string.dayOptionSunday)
+                R.id.day_option_sunday -> {
+                    numOfSelectedDay = 1
+                    new_lesson_day_btn.setText(R.string.dayOptionSunday)
+                }
+                R.id.day_option_monday -> {
+                    numOfSelectedDay = 2
+                    new_lesson_day_btn.setText(R.string.dayOptionMonday)
+                }
+                R.id.day_option_tuesday -> {
+                    numOfSelectedDay = 3
+                    new_lesson_day_btn.setText(R.string.dayOptionTuesday)
+                }
+                R.id.day_option_wednesday -> {
+                    numOfSelectedDay = 4
+                    new_lesson_day_btn.setText(R.string.dayOptionWednesday)
+                }
+                R.id.day_option_thursday -> {
+                    numOfSelectedDay = 5
+                    new_lesson_day_btn.setText(R.string.dayOptionThursday)
+                }
+                R.id.day_option_friday -> {
+                    numOfSelectedDay = 6
+                    new_lesson_day_btn.setText(R.string.dayOptionFriday)
+                }
+                R.id.day_option_saturday -> {
+                    numOfSelectedDay = 7
+                    new_lesson_day_btn.setText(R.string.dayOptionSaturday)
+                }
             }
             true
         }
@@ -241,5 +274,4 @@ class AddEditLessonFragment : Fragment() {
             button.text = SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)
         }
     }
-
 }

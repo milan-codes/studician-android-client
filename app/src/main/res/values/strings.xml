@@ -2,8 +2,6 @@
     <string name="app_name">MyStudiez</string>
     <string name="action_settings">Settings</string>
     <string name="subjects_title">Subjects</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_subjects">SubjectsActivity</string>
     <string name="lessons_title">Subject details</string>
     <string name="tasks_title">Tasks</string>
     <string name="exams_title">Exams</string>
@@ -35,7 +33,6 @@
     <string name="subjects_recycler_empty">No subjects\n Press the + button to add new</string>
     <string name="no_subject_img_description">An illustration that describes that there are no Subjects</string>
     <string name="new_subject_activity_title">New subject</string>
-    <string name="title_activity_new_subject">NewSubjectActivity</string>
     <string name="new_subject_details">Details</string>
     <string name="new_subject_name_title">Name:</string>
     <string name="new_subject_teacher_title">Teacher:</string>
@@ -45,8 +42,7 @@
     <string name="new_subject_color_button">Select color</string>
     <string name="new_subject_save_btn">Save changes</string>
     <string name="selected_color_circle_description">The color selected by the user for the subject</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    
     <string name="add_new_subject_title">Add new subject</string>
     <string name="edit_subject_title">Edit %s</string>
     <string name="colorRedTitle">Red</string>
@@ -125,4 +121,5 @@
     <string name="notification_exam_reminder_title">Exam reminder</string>
     <string name="overview_day_description">Date (Tap to change):</string>
     <string name="press_again_to_exit">Press again to exit</string>
+    <string name="did_not_change">You did not make any changes</string>
 </resources>

@@ -12,7 +12,7 @@
         android:id="@+id/new_lesson_day_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="75dp"
         android:background="@drawable/circular_button"
         android:fontFamily="@font/roboto_bold"
         android:paddingStart="15dp"

@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.widget.Button
 import androidx.annotation.IdRes
+import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,6 +44,19 @@ class CalendarUtils {
 
                 button.text =
                     "${button.text} ${SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)}"
+            }
+        }
+
+        fun getDayFromNumberOfDay(num: Int, context: Context): String {
+            return when(num) {
+                1 -> context.resources.getString(R.string.dayOptionSunday)
+                2 -> context.resources.getString(R.string.dayOptionMonday)
+                3 -> context.resources.getString(R.string.dayOptionTuesday)
+                4 -> context.resources.getString(R.string.dayOptionWednesday)
+                5 -> context.resources.getString(R.string.dayOptionThursday)
+                6 -> context.resources.getString(R.string.dayOptionFriday)
+                7 -> context.resources.getString(R.string.dayOptionSaturday)
+                else -> throw IllegalArgumentException("Parameter num $num must be between one and seven")
             }
         }
     }
