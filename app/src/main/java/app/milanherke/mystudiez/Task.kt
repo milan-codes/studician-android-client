@@ -7,7 +7,7 @@ import kotlinx.android.parcel.Parcelize
 data class Task(
     var name: String,
     var description: String,
-    var type: String,
+    var type: Int,
     var subjectId: Long,
     var dueDate: String,
     var reminder: String,

@@ -36,6 +36,7 @@ class AddEditTaskFragment : Fragment() {
     private var listener: AddEditTaskInteractions? = null
     private var listOfSubjects: ArrayList<Subject>? = null
     private var subjectIdClickedFromList: Long? = null
+    private var taskType: Int = 0
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(AddEditTaskViewModel::class.java)
     }
@@ -87,18 +88,32 @@ class AddEditTaskFragment : Fragment() {
 
         // Avoiding problems with smart cast
         val task = task
+        val subject = subject
+        val listOfSubjects = listOfSubjects
 
         if (task == null && subject == null) {
             // New task is created. Fragment was called from TasksFragment
             activity!!.toolbar.setTitle(R.string.add_new_task_title)
+
+            if (listOfSubjects != null) {
+                if (listOfSubjects.size == 0) {
+                    new_task_subject_btn.text = getString(R.string.no_subjects_to_select_from)
+                    new_task_subject_btn.background =
+                        resources.getDrawable(R.drawable.circular_disabled_button, null)
+                    new_task_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
+                    new_task_subject_btn.isEnabled = false
+                }
+            }
+
         } else if (task != null && subject != null) {
             // Task is edited. Fragment was called from TaskDetailsFragment
             activity!!.toolbar.title =
-                resources.getString(R.string.edit_subject_title, subject!!.name)
+                resources.getString(R.string.edit_subject_title, subject.name)
             new_task_name.setText(task.name)
             new_task_desc.setText(task.description)
-            new_task_type_btn.text = task.type
-            new_task_subject_btn.text = subject!!.name
+            new_task_type_btn.text = TaskUtils.getTaskType(task.type, context!!)
+            taskType = task.type
+            new_task_subject_btn.text = subject.name
             new_task_subject_btn.background =
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_task_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
@@ -109,7 +124,7 @@ class AddEditTaskFragment : Fragment() {
         } else if (task == null && subject != null) {
             // New task is created. Fragment was called from SubjectDetailsFragment
             activity!!.toolbar.setTitle(R.string.add_new_task_title)
-            new_task_subject_btn.text = subject!!.name
+            new_task_subject_btn.text = subject.name
             new_task_subject_btn.isEnabled = false
             new_task_subject_btn.background =
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
@@ -203,10 +218,18 @@ class AddEditTaskFragment : Fragment() {
      * and only save if they are different
      */
     private fun saveTask() {
-        val newTask = taskFromUi()
-        if (newTask != task && requiredFieldsAreFilled()) {
-            task = viewModel.saveTask(newTask)
-            listener?.onSaveTaskClicked(task!!)
+        if (requiredFieldsAreFilled()) {
+            val newTask = taskFromUi()
+            if (newTask != task) {
+                task = viewModel.saveTask(newTask)
+                listener?.onSaveTaskClicked(task!!)
+            } else {
+                Toast.makeText(
+                    context!!,
+                    getString(R.string.did_not_change),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         } else {
             Toast.makeText(
                 context!!,
@@ -220,7 +243,7 @@ class AddEditTaskFragment : Fragment() {
         val task = Task(
             new_task_name.text.toString(),
             new_task_desc.text.toString(),
-            new_task_type_btn.text.toString(),
+            if (taskType != 0) taskType else throw IllegalArgumentException("Parameter taskType ($taskType) must be one or two"),
             subjectIdClickedFromList ?: (subject?.subjectId ?: -1L),
             new_task_due_date_btn.text.toString(),
             new_task_reminder_btn.text.toString()
@@ -251,8 +274,14 @@ class AddEditTaskFragment : Fragment() {
 
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.task_type_assignment -> new_task_type_btn.setText(R.string.taskTypeAssignment)
-                R.id.task_type_revision -> new_task_type_btn.setText(R.string.taskTypeRevision)
+                R.id.task_type_assignment -> {
+                    taskType = 1
+                    new_task_type_btn.setText(R.string.taskTypeAssignment)
+                }
+                R.id.task_type_revision -> {
+                    taskType = 2
+                    new_task_type_btn.setText(R.string.taskTypeRevision)
+                }
             }
             true
         }

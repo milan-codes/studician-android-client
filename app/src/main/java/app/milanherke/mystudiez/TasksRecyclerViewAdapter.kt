@@ -69,7 +69,7 @@ class TasksRecyclerViewAdapter(
                     val task = Task(
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_NAME)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_DESCRIPTION)),
-                        cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_TYPE)),
+                        cursor.getInt(cursor.getColumnIndex(TasksContract.Columns.TASK_TYPE)),
                         cursor.getLong(cursor.getColumnIndex(TasksContract.Columns.TASK_SUBJECT)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_DUEDATE)),
                         cursor.getString(cursor.getColumnIndex(TasksContract.Columns.TASK_REMINDER))
@@ -155,7 +155,7 @@ class TasksRecyclerViewAdapter(
             if (subjectIndicator != null) {
                 containerView.details_list_title.text = task.name
                 containerView.details_list_header1.text = task.dueDate
-                containerView.details_list_header2.text = task.type
+                containerView.details_list_header2.text = TaskUtils.getTaskType(task.type, containerView.context)
 
                 // We're creating a clone because we do not want to affect the other instances
                 containerView.details_list_subject_indicator.setImageDrawable(subjectIndicator)
@@ -178,7 +178,7 @@ class TasksRecyclerViewAdapter(
                         containerView.details_list_header1.text = containerView.resources.getString(
                             R.string.details_subject_item_time,
                             subject.name,
-                            task.type
+                            TaskUtils.getTaskType(task.type, containerView.context)
                         )
                         containerView.details_list_header2.text = task.dueDate
                     }

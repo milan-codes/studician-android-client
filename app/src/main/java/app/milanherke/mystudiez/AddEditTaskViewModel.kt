@@ -10,7 +10,7 @@ class AddEditTaskViewModel(application: Application) : AndroidViewModel(applicat
 
     fun saveTask(task: Task): Task {
         val values = ContentValues()
-        if (task.name.isNotEmpty() && task.type.isNotEmpty() && task.subjectId != 0L && task.dueDate.isNotEmpty()) {
+        if (task.name.isNotEmpty() && task.type != 0 && task.subjectId != 0L && task.dueDate.isNotEmpty()) {
             values.put(TasksContract.Columns.TASK_NAME, task.name)
             values.put(TasksContract.Columns.TASK_DESCRIPTION, task.description)
             values.put(TasksContract.Columns.TASK_TYPE, task.type)

@@ -42,7 +42,7 @@
     <string name="new_subject_color_button">Select color</string>
     <string name="new_subject_save_btn">Save changes</string>
     <string name="selected_color_circle_description">The color selected by the user for the subject</string>
-    
+
     <string name="add_new_subject_title">Add new subject</string>
     <string name="edit_subject_title">Edit %s</string>
     <string name="colorRedTitle">Red</string>
@@ -122,4 +122,5 @@
     <string name="overview_day_description">Date (Tap to change):</string>
     <string name="press_again_to_exit">Press again to exit</string>
     <string name="did_not_change">You did not make any changes</string>
+    <string name="no_subjects_to_select_from">No subjects to select from</string>
 </resources>

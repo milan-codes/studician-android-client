@@ -89,10 +89,21 @@ class AddEditExamFragment : Fragment() {
         // Avoiding problems with smart cast
         val exam = exam
         val subject = subject
+        val listOfSubjects = listOfSubjects
 
         if (exam == null && subject == null) {
             // New exam is created. Fragment was called from ExamsFragment
             activity!!.toolbar.setTitle(R.string.add_new_exam_title)
+
+            if (listOfSubjects != null) {
+                if (listOfSubjects.size == 0) {
+                    new_exam_subject_btn.text = getString(R.string.no_subjects_to_select_from)
+                    new_exam_subject_btn.background =
+                        resources.getDrawable(R.drawable.circular_disabled_button, null)
+                    new_exam_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
+                    new_exam_subject_btn.isEnabled = false
+                }
+            }
 
         } else if (exam != null && subject != null) {
             // Exam is edited. Fragment was called from ExamDetailsFragment

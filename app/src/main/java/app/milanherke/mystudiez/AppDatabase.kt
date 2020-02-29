@@ -89,7 +89,7 @@ internal class AppDatabase private constructor(context: Context) :
                 ${TasksContract.Columns.ID} INTEGER PRIMARY KEY NOT NULL,
                 ${TasksContract.Columns.TASK_NAME} TEXT NOT NULL,
                 ${TasksContract.Columns.TASK_DESCRIPTION} TEXT,
-                ${TasksContract.Columns.TASK_TYPE} TEXT NOT NULL,
+                ${TasksContract.Columns.TASK_TYPE} INT NOT NULL,
                 ${TasksContract.Columns.TASK_SUBJECT} INTEGER,
                 ${TasksContract.Columns.TASK_DUEDATE} TEXT NOT NULL,
                 ${TasksContract.Columns.TASK_REMINDER} TEXT,

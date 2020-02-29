@@ -93,7 +93,7 @@ class TaskDetailsFragment : Fragment() {
             activity!!.toolbar.setTitle(R.string.task_details_title)
             task_details_name_value.text = task.name
             task_details_desc_value.text = task.description
-            task_details_type_value.text = task.type
+            task_details_type_value.text = TaskUtils.getTaskType(task.type, context!!)
             task_details_subject_value.text = subject.name
             task_details_due_date_value.text = task.dueDate
             task_details_reminder_value.text = task.reminder

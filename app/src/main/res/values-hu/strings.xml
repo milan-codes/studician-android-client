@@ -122,4 +122,5 @@
     <string name="overview_day_description">Dátum:</string>
     <string name="press_again_to_exit">Nyomja meg mégegyszer a kilépéshez</string>
     <string name="did_not_change">Nem változtatott semmit.</string>
+    <string name="no_subjects_to_select_from">Nincsenek tantárgyak hozzáadva</string>
 </resources>

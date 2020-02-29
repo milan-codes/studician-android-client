@@ -95,6 +95,7 @@ class AddEditLessonFragment : Fragment() {
             activity!!.toolbar.title =
                 resources.getString(R.string.edit_lesson_title, subject!!.name)
             new_lesson_day_btn.text = CalendarUtils.getDayFromNumberOfDay(lesson.day, context!!)
+            numOfSelectedDay = lesson.day
             new_lesson_starts_at_btn.text = lesson.starts
             new_lesson_ends_at_btn.text = lesson.ends
             new_lesson_location.setText(lesson.location)
@@ -200,7 +201,7 @@ class AddEditLessonFragment : Fragment() {
         val lesson = Lesson(
             subject!!.subjectId,
             "A",
-            if (numOfSelectedDay != 0) numOfSelectedDay else throw IllegalArgumentException(""),
+            if (numOfSelectedDay != 0) numOfSelectedDay else throw IllegalArgumentException("Parameter numOfSelectedDay $numOfSelectedDay must be between one and seven"),
             new_lesson_starts_at_btn.text.toString(),
             new_lesson_ends_at_btn.text.toString(),
             new_lesson_location.text.toString()
