@@ -519,7 +519,7 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onSaveTaskClicked(task: Task) {
-        if (task.reminder.isNotEmpty() && task.reminder != getString(R.string.add_edit_lesson_btn)) {
+        if (task.reminder.isNotEmpty()) {
             val notification =
                 createNotification(getString(R.string.notification_task_reminder_title), task.name)
             val reminder = SimpleDateFormat(

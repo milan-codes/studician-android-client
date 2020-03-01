@@ -119,7 +119,7 @@ class AddEditTaskFragment : Fragment() {
             new_task_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
             new_task_subject_btn.isEnabled = false
             new_task_due_date_btn.text = task.dueDate
-            new_task_reminder_btn.text = task.reminder
+            new_task_reminder_btn.text = if (task.reminder.isEmpty()) getString(R.string.add_edit_lesson_btn) else task.reminder
 
         } else if (task == null && subject != null) {
             // New task is created. Fragment was called from SubjectDetailsFragment
@@ -246,7 +246,7 @@ class AddEditTaskFragment : Fragment() {
             if (taskType != 0) taskType else throw IllegalArgumentException("Parameter taskType ($taskType) must be one or two"),
             subjectIdClickedFromList ?: (subject?.subjectId ?: -1L),
             new_task_due_date_btn.text.toString(),
-            new_task_reminder_btn.text.toString()
+            if (new_task_reminder_btn.text.toString() != getString(R.string.add_edit_lesson_btn)) new_task_reminder_btn.text.toString() else ""
         )
         task.taskId = this.task?.taskId ?: 0
         return task

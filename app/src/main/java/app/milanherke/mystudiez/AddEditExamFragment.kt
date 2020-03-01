@@ -214,10 +214,18 @@ class AddEditExamFragment : Fragment() {
      * and only save if they are different
      */
     private fun saveExam() {
-        val newExam = examFromUi()
-        if (newExam != exam && requiredFieldsAreFilled()) {
-            exam = viewModel.saveExam(newExam)
-            listener?.onSaveExamClicked(exam!!)
+        if (requiredFieldsAreFilled()) {
+            val newExam = examFromUi()
+            if (newExam != exam) {
+                exam = viewModel.saveExam(newExam)
+                listener?.onSaveExamClicked(exam!!)
+            } else {
+                Toast.makeText(
+                    context!!,
+                    getString(R.string.did_not_change),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         } else {
             Toast.makeText(
                 context!!,
@@ -233,7 +241,7 @@ class AddEditExamFragment : Fragment() {
             new_exam_desc.text.toString(),
             subjectIdClickedFromList ?: (subject?.subjectId ?: -1L),
             new_exam_date_btn.text.toString(),
-            new_exam_reminder_btn.text.toString()
+            if (new_exam_reminder_btn.text.toString() != getString(R.string.add_edit_lesson_btn)) new_exam_reminder_btn.text.toString() else ""
         )
         exam.examId = this.exam?.examId ?: 0
         return exam
