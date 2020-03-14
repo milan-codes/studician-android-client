@@ -10,9 +10,11 @@ I decided to make this open source, this way everyone can contribute to it, ever
 As you've read it in the title: *For students, by students.*
 
 ## Tech used⚙
-The entire application is built using **[Kotlin](https://kotlinlang.org/)** and for the layouts, it uses **XML**.\
-The application uses a **[SQLite3](https://www.sqlite.org/index.html)** database.\
-**[Click](https://drive.google.com/file/d/1xhEoIiWYa9Y49B4lh1xcfVynXXvYynAw/view?usp=sharing)** to view the database scheme.
+The entire application is built using **[Kotlin](https://kotlinlang.org/)** and for the layouts, it uses **XML**.
+Documentation can be found [here](https://kotlinlang.org/docs/reference/basic-syntax.html)\
+The application uses a **[SQLite3](https://www.sqlite.org/index.html)** database.
+Docs are available [here](https://www.sqlite.org/docs.html)\
+**[Click](https://drive.google.com/file/d/1xhEoIiWYa9Y49B4lh1xcfVynXXvYynAw/view?usp=sharing)** to view the app's database schema.
 
 ## Code style👔
 I don't use any special formatting, only the built-in code formatter by Android Studio. Before you commit anything, you must format your code.\
@@ -22,18 +24,17 @@ You can do that by pressing the following combinations:\
 **macOS:** *`Option`* + *`Command`* + *`L`*
 
 ## Features💻
-In the up-to-date version of the app *(0.3.3)*
-you can add your **classes**, **lessons**, **tasks** and upcoming **exams** to the app, but most importantly, you can set **reminders**.
+In the up-to-date version of the app *(0.3.4.2)* you can add your classes, lessons, tasks and upcoming exams to the app and if you want to, you'll be notified at a selected time before each task/exam.
 
 ## Contribution🏗
+If you experience any problems with the software, please open a new issue!
 New ideas are always welcomed!\
-*Contribution guideline is on the way...*
+*Contribution guidline is on the wqy*
 
 ## Installation💿
-The preferred code editor is **[Android Studio](https://developer.android.com/studio)**.\
-You need to have a physical android device or emulator running Android 6 (*M, Marshmallow, API Level 23*) or higher.
-After you plugged in the physical device or started the emulator (*Note that if you have a physical device you must turn on Developer Options and USB Debugging*)\
-After you finished setting up everything, you need to select the device which you want to run the application on and click run!
+I use **[Android Studio](https://developer.android.com/studio)** for development.\
+You need to have a physical android device or emulator running Android 6 (*M, Marshmallow, API Level 23*), which is the minimum api-level, or higher.
+After you plugged in the physical device or started the emulator (*Note that if you have a physical device you must turn on Developer Options and USB Debugging*), you need to select the device which you want to run the application on and click run!
 
 ## How to use?📚
 As you have already read it, you can add your classes, lessons, tasks and exams to this app. Using the bottom navigation drawer you'll find four menu points. Those will be **Overview**, **Subjects**, **Tasks**, and **Exams**.
