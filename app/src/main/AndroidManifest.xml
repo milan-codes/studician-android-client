@@ -22,11 +22,6 @@
 
         <receiver android:name=".NotificationPublisher" />
 
-        <provider
-            android:name=".AppProvider"
-            android:authorities="app.milanherke.mystudiez.provider"
-            android:exported="false" />
-
         <uses-library
             android:name="android.test.runner"
             android:required="false" />

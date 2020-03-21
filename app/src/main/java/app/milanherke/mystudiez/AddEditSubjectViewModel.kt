@@ -1,42 +1,41 @@
 package app.milanherke.mystudiez
 
 import android.app.Application
-import android.content.ContentValues
 import androidx.lifecycle.AndroidViewModel
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to save/update [Subject] objects in the database
+ * And belongs to [AddEditSubjectFragment]
+ */
 class AddEditSubjectViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Use this function to save/update a [Subject].
+     *
+     * @param subject Subject that the user wants to save
+     * @return Saved subject
+     */
     fun saveSubject(subject: Subject): Subject {
-        val values = ContentValues()
-        if (subject.name.isNotEmpty() && subject.teacher.isNotEmpty()) {
-            values.put(SubjectsContract.Columns.SUBJECT_NAME, subject.name)
-            values.put(SubjectsContract.Columns.SUBJECT_TEACHER, subject.teacher)
-            values.put(SubjectsContract.Columns.SUBJECT_COLORCODE, subject.colorCode)
-
-            if (subject.subjectId == 0L) {
-                GlobalScope.launch {
-                    val uri = getApplication<Application>().contentResolver.insert(
-                        SubjectsContract.CONTENT_URI,
-                        values
-                    )
-                    if (uri != null) {
-                        subject.subjectId = SubjectsContract.getId(uri)
-                    }
+        GlobalScope.launch {
+            val database = Firebase.database
+            // If the subject's ID is empty, we're creating a new subject, otherwise, we're updating an existing one
+            if (subject.id.isEmpty()) {
+                val key = database.getReference("subjects/${FirebaseUtils.getUserId()}").push().key
+                if (key != null) {
+                    subject.id = key
+                    database.getReference("subjects/${FirebaseUtils.getUserId()}/$key")
+                        .setValue(subject)
                 }
             } else {
-                // Subject already has an id, which means it has been created before so we are just updating it
-                GlobalScope.launch {
-                    getApplication<Application>().contentResolver.update(
-                        SubjectsContract.buildUriFromId(
-                            subject.subjectId
-                        ), values, null, null
-                    )
-                }
+                database.getReference("subjects/${FirebaseUtils.getUserId()}/${subject.id}")
+                    .setValue(subject)
             }
         }
-
         return subject
     }
 

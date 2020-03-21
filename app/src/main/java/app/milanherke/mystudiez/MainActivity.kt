@@ -16,6 +16,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.NotificationUtils.Companion.CHANNEL_ID
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -26,15 +27,16 @@ import java.util.*
 private const val TAG = "MainActivity"
 private const val TASK_NOTIFICATION_PRE_CODE = 100
 private const val EXAM_NOTIFICATION_PRE_CODE = 200
+
 class MainActivity : AppCompatActivity(),
     OverviewFragment.OverviewInteractions,
     SubjectsFragment.SubjectsInteractions,
     TasksFragment.TasksInteractions,
     ExamsFragment.ExamsInteractions,
     AddEditSubjectFragment.AddEditSubjectInteractions,
-    AddEditLessonFragment.OnSaveLessonClick,
-    AddEditTaskFragment.AddEditTaskInteractions,
-    AddEditExamFragment.AddEditExamInteractions,
+    AddEditLessonFragment.LessonSaved,
+    AddEditTaskFragment.TaskSaved,
+    AddEditExamFragment.ExamSaved,
     SubjectDetailsFragment.SubjectDetailsInteractions,
     LessonDetailsFragment.LessonDetailsInteraction,
     TaskDetailsFragment.TaskDetailsInteraction,
@@ -42,19 +44,22 @@ class MainActivity : AppCompatActivity(),
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
     private var subject: Subject? = null
+
     // The lesson, whose details are displayed when LessonDetailsFragment is called
     private var lesson: Lesson? = null
+
     // The task, whose details are displayed when TaskDetailsFragment is called
     private var task: Task? = null
+
     // The exam, whose details are displayed when ExamDetailsFragment is called
     private var exam: Exam? = null
+
     // This variable is used to check whether the back button has already been pressed once
-    private var doubleBackToExitPressedOnce: Boolean = false
+    private var doubleBackToExit: Boolean = false
 
     private val sharedViewModel by lazy {
         ViewModelProviders.of(this).get(SharedViewModel::class.java)
     }
-
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,14 +69,23 @@ class MainActivity : AppCompatActivity(),
         toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
 
-        // Setting the home screen:
-        // OverviewFragment is the first fragment seen by the user, just after the app has been opened
-        replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
+        // First we check if there's internet connection, then we check if the user is logged in
+        if (FirebaseUtils.userIsLoggedIn()) {
+            // Setting the home screen:
+            // OverviewFragment is the first fragment seen by the user, just after the app has been opened
+            replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
+            Toast.makeText(this, "User logged in", Toast.LENGTH_SHORT).show()
+        } else {
+            replaceFragment(SettingsFragment.newInstance(), R.id.fragment_container)
+            Toast.makeText(this, "User is not logged in, please log in", Toast.LENGTH_SHORT).show()
+        }
 
         // Creating channel to support android O and higher (for notifications)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationUtils(this)
         }
+
+        registerObservers()
 
         // Showing the bottom navigation bar
         val bottomBar = findViewById<BottomAppBar>(R.id.bar)
@@ -134,12 +148,13 @@ class MainActivity : AppCompatActivity(),
             is AddEditTaskFragment -> upInAddEditTaskFragment()
             is AddEditExamFragment -> upInAddEditExamFragment()
             is OverviewFragment, is SubjectsFragment, is TasksFragment, is ExamsFragment -> {
-                if (doubleBackToExitPressedOnce) {
+                if (doubleBackToExit) {
                     super.onBackPressed()
                     return
                 }
-                doubleBackToExitPressedOnce = true
-                Toast.makeText(this, getString(R.string.press_again_to_exit), Toast.LENGTH_SHORT).show()
+                doubleBackToExit = true
+                Toast.makeText(this, getString(R.string.press_again_to_exit), Toast.LENGTH_SHORT)
+                    .show()
             }
             else -> throw IllegalArgumentException("Back button pressed in unrecognised fragment $fragment")
         }
@@ -153,10 +168,10 @@ class MainActivity : AppCompatActivity(),
     ) {
         val requestCode = when {
             task != null -> {
-                Integer.parseInt("${TASK_NOTIFICATION_PRE_CODE}${task.taskId}")
+                Integer.parseInt("${TASK_NOTIFICATION_PRE_CODE}${task.id}".filter { it.isDigit() })
             }
             exam != null -> {
-                Integer.parseInt("${EXAM_NOTIFICATION_PRE_CODE}${exam.examId}")
+                Integer.parseInt("${EXAM_NOTIFICATION_PRE_CODE}${exam.id}".filter { it.isDigit() })
             }
             else -> {
                 throw IllegalStateException("Unrecognised notification type")
@@ -229,7 +244,7 @@ class MainActivity : AppCompatActivity(),
      * It can be called only by the following fragments: [SubjectsFragment], [LessonDetailsFragment], [TaskDetailsFragment] and [ExamDetailsFragment].
      */
     private fun upBtnInSubjectDetailsFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECTS, Fragments.LESSON_DETAILS, Fragments.TASK_DETAILS, Fragments.EXAM_DETAILS -> {
                 replaceFragmentWithTransition(
                     SubjectsFragment.newInstance(),
@@ -245,7 +260,7 @@ class MainActivity : AppCompatActivity(),
      * It can be called only by the following fragments: [SubjectDetailsFragment] and [OverviewFragment].
      */
     private fun upBtnInLessonDetailsFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
@@ -267,7 +282,7 @@ class MainActivity : AppCompatActivity(),
      * It can be called only by the following fragments: [SubjectDetailsFragment], [TasksFragment] and [OverviewFragment].
      */
     private fun upBtnInTaskDetailsFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
@@ -295,7 +310,7 @@ class MainActivity : AppCompatActivity(),
      * It can be called only by the following fragments: [SubjectDetailsFragment], [ExamsFragment] and [OverviewFragment].
      */
     private fun upBtnInExamDetailsFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
@@ -323,7 +338,7 @@ class MainActivity : AppCompatActivity(),
      * It can be called only by the following fragments: [SubjectsFragment] (when adding new) and [SubjectDetailsFragment] (when editing an existing one).
      */
     private fun upBtnInAddEditSubjectFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECTS -> {
                 replaceFragmentWithTransition(
                     SubjectsFragment.newInstance(),
@@ -348,7 +363,7 @@ class MainActivity : AppCompatActivity(),
      * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [LessonDetailsFragment] (when editing an existing one).
      */
     private fun upInAddEditLessonFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragmentWithTransition(
                     SubjectDetailsFragment.newInstance(subject!!),
@@ -357,7 +372,7 @@ class MainActivity : AppCompatActivity(),
             }
             Fragments.LESSON_DETAILS -> {
                 replaceFragmentWithTransition(
-                    LessonDetailsFragment.newInstance(lesson!!),
+                    LessonDetailsFragment.newInstance(lesson!!, subject!!),
                     R.id.fragment_container
                 )
             }
@@ -375,7 +390,7 @@ class MainActivity : AppCompatActivity(),
      *  [TaskDetailsFragment]: When editing an existing one
      */
     private fun upInAddEditTaskFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.TASKS -> {
                 replaceFragmentWithTransition(
                     TasksFragment.newInstance(),
@@ -390,7 +405,7 @@ class MainActivity : AppCompatActivity(),
             }
             Fragments.TASK_DETAILS -> replaceFragmentWithTransition(
                 TaskDetailsFragment.newInstance(
-                    task!!
+                    task!!, subject!!
                 ), R.id.fragment_container
             )
             else -> {
@@ -407,7 +422,7 @@ class MainActivity : AppCompatActivity(),
      *  [ExamDetailsFragment]: When editing an existing one
      */
     private fun upInAddEditExamFragment() {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.EXAMS -> {
                 replaceFragmentWithTransition(
                     ExamsFragment.newInstance(),
@@ -422,7 +437,7 @@ class MainActivity : AppCompatActivity(),
             }
             Fragments.EXAM_DETAILS -> replaceFragmentWithTransition(
                 ExamDetailsFragment.newInstance(
-                    exam!!
+                    exam!!, subject!!
                 ), R.id.fragment_container
             )
             else -> {
@@ -436,18 +451,18 @@ class MainActivity : AppCompatActivity(),
 
 
     /**
-     * We need to set [doubleBackToExitPressedOnce]'s value to false,
+     * We need to set [doubleBackToExit]'s value to false,
      * because we must prevent the app from closing after the back button has only been pressed just once
      */
     private fun setDoubleBackToFalse() {
-        doubleBackToExitPressedOnce = false
+        doubleBackToExit = false
     }
 
 
     /**
      * Interaction interface(s) from [OverviewFragment]
      */
-    override fun overviewFragmentIsBeingCreated() {
+    override fun setDoubleBackToDefault() {
         setDoubleBackToFalse()
     }
 
@@ -471,7 +486,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Interaction interface(s) from [ExamsFragment]
      */
-    override fun examsFragmentIsBeingCreated() {
+    override fun onCreateCalled() {
         setDoubleBackToFalse()
     }
 
@@ -481,7 +496,7 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onSaveSubjectClick(subject: Subject) {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
                 SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
@@ -499,14 +514,14 @@ class MainActivity : AppCompatActivity(),
      * Interaction interface(s) from [AddEditLessonFragment]
      */
 
-    override fun onSaveLessonClick(lesson: Lesson) {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+    override fun onSaveLessonClickListener(lesson: Lesson, subject: Subject) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject!!),
+                SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
             Fragments.LESSON_DETAILS -> replaceFragmentWithTransition(
-                LessonDetailsFragment.newInstance(lesson),
+                LessonDetailsFragment.newInstance(lesson, subject),
                 R.id.fragment_container
             )
             else -> throw IllegalStateException("onSaveLessonClick tries to load unrecognised fragment $fragmentCalledFrom")
@@ -518,7 +533,7 @@ class MainActivity : AppCompatActivity(),
      * Interaction interface(s) from [AddEditTaskFragment]
      */
 
-    override fun onSaveTaskClicked(task: Task) {
+    override fun onSaveTaskClickListener(task: Task, subject: Subject) {
         if (task.reminder.isNotEmpty()) {
             val notification =
                 createNotification(getString(R.string.notification_task_reminder_title), task.name)
@@ -530,17 +545,17 @@ class MainActivity : AppCompatActivity(),
             scheduleNotification(notification, delay, task, null)
         }
 
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.TASKS -> replaceFragmentWithTransition(
                 TasksFragment.newInstance(),
                 R.id.fragment_container
             )
             Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject!!),
+                SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
             Fragments.TASK_DETAILS -> replaceFragmentWithTransition(
-                TaskDetailsFragment.newInstance(task),
+                TaskDetailsFragment.newInstance(task, subject),
                 R.id.fragment_container
             )
             else -> throw IllegalStateException("onSaveTaskClicked tries to load unrecognised fragment $fragmentCalledFrom")
@@ -552,7 +567,7 @@ class MainActivity : AppCompatActivity(),
      * Interaction interface(s) from [AddEditExamFragment]
      */
 
-    override fun onSaveExamClicked(exam: Exam) {
+    override fun onSaveExamClickListener(exam: Exam, subject: Subject) {
         if (exam.reminder.isNotEmpty() && exam.reminder != getString(R.string.add_edit_lesson_btn)) {
             val notification =
                 createNotification(getString(R.string.notification_exam_reminder_title), exam.name)
@@ -563,17 +578,17 @@ class MainActivity : AppCompatActivity(),
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, null, exam)
         }
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.EXAMS -> replaceFragmentWithTransition(
                 ExamsFragment.newInstance(),
                 R.id.fragment_container
             )
             Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject!!),
+                SubjectDetailsFragment.newInstance(subject),
                 R.id.fragment_container
             )
             Fragments.EXAM_DETAILS -> replaceFragmentWithTransition(
-                ExamDetailsFragment.newInstance(exam),
+                ExamDetailsFragment.newInstance(exam, subject),
                 R.id.fragment_container
             )
             else -> throw IllegalStateException("onSaveExamClicked tries to load unrecognised fragment $fragmentCalledFrom")
@@ -589,26 +604,11 @@ class MainActivity : AppCompatActivity(),
         this.subject = subject
     }
 
-
     /**
-     * Interaction interface(s) from [LessonDetailsFragment]
+     * Interaction interface(s) from [SubjectDetailsFragment]
      */
 
-    override fun onDeleteLessonClick(subject: Subject) {
-        replaceFragmentWithTransition(
-            SubjectDetailsFragment.newInstance(subject),
-            R.id.fragment_container
-        )
-    }
-
-    override fun onEditLessonClick(lesson: Lesson) {
-        replaceFragmentWithTransition(
-            AddEditLessonFragment.newInstance(lesson, subject!!),
-            R.id.fragment_container
-        )
-    }
-
-    override fun lessonIsLoaded(lesson: Lesson) {
+    override fun swapLesson(lesson: Lesson) {
         this.lesson = lesson
     }
 
@@ -616,37 +616,6 @@ class MainActivity : AppCompatActivity(),
     /**
      * Interaction interface(s) from [TaskDetailsFragment]
      */
-
-    override fun onDeleteTaskClick(subject: Subject) {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject),
-                R.id.fragment_container
-            )
-            Fragments.TASKS -> {
-                replaceFragmentWithTransition(
-                    TasksFragment.newInstance(),
-                    R.id.fragment_container
-                )
-            }
-            Fragments.OVERVIEW -> {
-                replaceFragmentWithTransition(
-                    OverviewFragment.newInstance(),
-                    R.id.fragment_container
-                )
-            }
-            else -> throw IllegalStateException("onDeleteTaskClick tries to load unrecognised fragment $fragmentCalledFrom")
-        }
-    }
-
-    override fun onEditTaskClick(task: Task) {
-        replaceFragmentWithTransition(
-            AddEditTaskFragment.newInstance(
-                task,
-                sharedViewModel.subjectFromId(task.subjectId)
-            ), R.id.fragment_container
-        )
-    }
 
     override fun taskIsLoaded(task: Task) {
         this.task = task
@@ -657,38 +626,18 @@ class MainActivity : AppCompatActivity(),
      * Interaction interface(s) from [ExamDetailsFragment]
      */
 
-    override fun onDeleteExamClick(subject: Subject) {
-        when (val fragmentCalledFrom = FragmentsStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject),
-                R.id.fragment_container
-            )
-            Fragments.EXAMS -> {
-                replaceFragmentWithTransition(
-                    ExamsFragment.newInstance(),
-                    R.id.fragment_container
-                )
-            }
-            Fragments.OVERVIEW -> {
-                replaceFragmentWithTransition(
-                    OverviewFragment.newInstance(),
-                    R.id.fragment_container
-                )
-            }
-            else -> throw IllegalStateException("onDeleteExamClick tries to load unrecognised fragment $fragmentCalledFrom")
-        }
-    }
-
-    override fun onEditExamClick(exam: Exam) {
-        replaceFragmentWithTransition(
-            AddEditExamFragment.newInstance(
-                exam,
-                sharedViewModel.subjectFromId(exam.subjectId)
-            ), R.id.fragment_container
-        )
-    }
-
-    override fun examIsLoaded(exam: Exam) {
+    override fun swapExam(exam: Exam) {
         this.exam = exam
+    }
+
+    override fun swapSubject(subject: Subject) {
+        this.subject = subject
+    }
+
+    private fun registerObservers() {
+        sharedViewModel.subjectLiveData.observe(
+            this,
+            Observer { subject -> this.subject = subject }
+        )
     }
 }

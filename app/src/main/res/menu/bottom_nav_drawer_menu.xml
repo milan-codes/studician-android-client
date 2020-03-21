@@ -13,6 +13,9 @@
         <item
             android:id="@+id/bottomnav_exams"
             android:title="@string/bottom_nav_exams_title" />
+        <item
+            android:id="@+id/bottomnav_settings"
+            android:title="@string/bottomnav_settings" />
 
     </group>
 </menu>

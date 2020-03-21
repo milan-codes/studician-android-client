@@ -6,6 +6,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
+/**
+ * A [BroadcastReceiver] subclass.
+ * Receives and handles broadcast intents sent by [Context.sendBroadcast].
+ */
 class NotificationPublisher : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -18,6 +22,6 @@ class NotificationPublisher : BroadcastReceiver() {
 
     companion object {
         const val NOTIFICATION = "notification"
-        const val NOTIFICATION_ID = "notification-id"
+        const val NOTIFICATION_ID = "notification-intent"
     }
 }

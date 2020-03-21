@@ -9,6 +9,10 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 
+/**
+ * A [ContextWrapper] subclass.
+ * Creates notification channels for Android O and higher.
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 class NotificationUtils(base: Context) : ContextWrapper(base) {
 
@@ -19,6 +23,11 @@ class NotificationUtils(base: Context) : ContextWrapper(base) {
         createChannels()
     }
 
+    /**
+     * Creates a notification channel.
+     * All notifications must be
+     * assigned to a channel starting in Android O.
+     */
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createChannels() {
         val notificationChannel = NotificationChannel(
@@ -35,7 +44,7 @@ class NotificationUtils(base: Context) : ContextWrapper(base) {
     }
 
     companion object {
-        const val CHANNEL_ID = "app.milanherke.mystudiez.CHANNEL_ID"
-        const val CHANNEL_NAME = "app.milanherke.mystudiez.Notification"
+        const val CHANNEL_ID = "app.milanherke.mystudiez.100200"
+        const val CHANNEL_NAME = "app.milanherke.mystudiez.TasksAndExams"
     }
 }

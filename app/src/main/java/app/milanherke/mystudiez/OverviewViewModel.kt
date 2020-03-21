@@ -2,164 +2,164 @@ package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.database.ContentObserver
-import android.database.Cursor
-import android.net.Uri
-import android.os.Handler
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to load all [Lesson], [Task] and [Exam] objects
+ * for a specified date and it belongs to [OverviewFragment].
+ */
 class OverviewViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val contentObserverLessons = object : ContentObserver(Handler()) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            loadLessons(dateFilter.value!!)
-        }
-    }
+    private val lessonsList = MutableLiveData<ArrayList<Lesson>>()
+    val lessonsListLiveData: LiveData<ArrayList<Lesson>>
+        get() = lessonsList
 
-    private val contentObserverTasks = object : ContentObserver(Handler()) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            loadTasks(dateFilter.value!!)
-        }
-    }
+    private val tasksList = MutableLiveData<ArrayList<Task>>()
+    val tasksListLiveData: LiveData<ArrayList<Task>>
+        get() = tasksList
 
-    private val contentObserverExams = object : ContentObserver(Handler()) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            loadExams(dateFilter.value!!)
-        }
-    }
-
-    val dateFilter = MutableLiveData<Date>()
-
-    private val databaseCursorLessons = MutableLiveData<Cursor>()
-    val cursorLessons: LiveData<Cursor>
-        get() = databaseCursorLessons
-
-    private val databaseCursorExams = MutableLiveData<Cursor>()
-    val cursorExams: LiveData<Cursor>
-        get() = databaseCursorExams
-
-
-    private val databaseCursorTasks = MutableLiveData<Cursor>()
-    val cursorTasks: LiveData<Cursor>
-        get() = databaseCursorTasks
+    private val examsList = MutableLiveData<ArrayList<Exam>>()
+    val examsListLiveData: LiveData<ArrayList<Exam>>
+        get() = examsList
 
     init {
-        // Register the content observer for lessons
-        getApplication<Application>().contentResolver.registerContentObserver(
-            LessonsContract.CONTENT_URI,
-            true,
-            contentObserverLessons
-        )
-
-        // Register the content observer for tasks
-        getApplication<Application>().contentResolver.registerContentObserver(
-            TasksContract.CONTENT_URI,
-            true,
-            contentObserverTasks
-        )
-
-        // Register the content observer for exams
-        getApplication<Application>().contentResolver.registerContentObserver(
-            ExamsContract.CONTENT_URI,
-            true,
-            contentObserverExams
-        )
+        loadAllDetails(Date())
     }
 
-    override fun onCleared() {
-        getApplication<Application>().contentResolver.unregisterContentObserver(
-            contentObserverLessons
-        )
-        getApplication<Application>().contentResolver.unregisterContentObserver(
-            contentObserverTasks
-        )
-        getApplication<Application>().contentResolver.unregisterContentObserver(
-            contentObserverExams
-        )
-    }
-
+    /**
+     * Calls the necessary functions
+     * to load all details.
+     * (All lessons, tasks, exams)
+     */
     fun loadAllDetails(date: Date) {
         loadLessons(date)
         loadTasks(date)
         loadExams(date)
     }
 
+    /**
+     * This function gets all lessons from the database
+     * and passes the result to [lessonsList].
+     *
+     * @param date Specified date
+     */
     @SuppressLint("SimpleDateFormat")
     private fun loadLessons(date: Date) {
-        val cal = Calendar.getInstance()
-        cal.time = date
-        val numOfDay = cal.get(Calendar.DAY_OF_WEEK)
-        val projection = arrayOf(
-            LessonsContract.Columns.ID,
-            LessonsContract.Columns.LESSON_SUBJECT,
-            LessonsContract.Columns.LESSON_WEEK,
-            LessonsContract.Columns.LESSON_DAY,
-            LessonsContract.Columns.LESSON_STARTS,
-            LessonsContract.Columns.LESSON_ENDS,
-            LessonsContract.Columns.LESSON_LOCATION
-        )
         GlobalScope.launch {
-            val cursor = getApplication<Application>().contentResolver.query(
-                LessonsContract.CONTENT_URI,
-                projection,
-                "${LessonsContract.Columns.LESSON_DAY} = ?",
-                arrayOf(numOfDay.toString()),
-                "${LessonsContract.Columns.LESSON_STARTS} ASC"
-            )
-            databaseCursorLessons.postValue(cursor)
+            val cal = Calendar.getInstance()
+            cal.time = date
+            val numOfDay = cal.get(Calendar.DAY_OF_WEEK)
+            val lessons: ArrayList<Lesson> = arrayListOf()
+            val database = Firebase.database
+            val ref = database.getReference("lessons/${FirebaseUtils.getUserId()}")
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(e: DatabaseError) {
+                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (subjectSnapshot in dataSnapshot.children) {
+                        for (lessonSnapshot in subjectSnapshot.children) {
+                            if (lessonSnapshot != null) {
+                                val lesson = lessonSnapshot.getValue<Lesson>()
+                                if (lesson != null) {
+                                    if (lesson.day == numOfDay) {
+                                        lessons.add(lesson)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    lessonsList.postValue(lessons)
+                }
+            })
         }
     }
 
+    /**
+     * This function gets all tasks from the database
+     * and passes the result to [tasksList]
+     *
+     * @param date Specified date
+     */
     @SuppressLint("SimpleDateFormat")
     private fun loadTasks(date: Date) {
-        val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
-        val projection = arrayOf(
-            TasksContract.Columns.ID,
-            TasksContract.Columns.TASK_NAME,
-            TasksContract.Columns.TASK_DESCRIPTION,
-            TasksContract.Columns.TASK_TYPE,
-            TasksContract.Columns.TASK_SUBJECT,
-            TasksContract.Columns.TASK_DUEDATE,
-            TasksContract.Columns.TASK_REMINDER
-        )
         GlobalScope.launch {
-            val cursor = getApplication<Application>().contentResolver.query(
-                TasksContract.CONTENT_URI,
-                projection,
-                "${TasksContract.Columns.TASK_DUEDATE} = ?",
-                arrayOf(currentDate),
-                "${TasksContract.Columns.TASK_NAME} DESC"
-            )
-            databaseCursorTasks.postValue(cursor)
+            val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
+            val tasks: ArrayList<Task> = arrayListOf()
+            val database = Firebase.database
+            val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}")
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(e: DatabaseError) {
+                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (subjectSnapshot in dataSnapshot.children) {
+                        for (taskSnapshot in subjectSnapshot.children) {
+                            if (taskSnapshot != null) {
+                                val task = taskSnapshot.getValue<Task>()
+                                Log.e("dddd", "task to string  ${task}")
+                                if (task != null) {
+                                    if (task.dueDate == currentDate) {
+                                        tasks.add(task)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    tasksList.postValue(tasks)
+                }
+            })
         }
     }
 
+    /**
+     * This function gets all exams from the database
+     * and passes the result to [examsList]
+     *
+     * @param date Specified date
+     */
     @SuppressLint("SimpleDateFormat")
     private fun loadExams(date: Date) {
-        val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
-        val projection = arrayOf(
-            ExamsContract.Columns.ID,
-            ExamsContract.Columns.EXAM_NAME,
-            ExamsContract.Columns.EXAM_DESCRIPTION,
-            ExamsContract.Columns.EXAM_SUBJECT,
-            ExamsContract.Columns.EXAM_DATE,
-            ExamsContract.Columns.EXAM_REMINDER
-        )
         GlobalScope.launch {
-            val cursor = getApplication<Application>().contentResolver.query(
-                ExamsContract.CONTENT_URI,
-                projection,
-                "${ExamsContract.Columns.EXAM_DATE} = ?",
-                arrayOf(currentDate),
-                "${ExamsContract.Columns.ID} DESC"
-            )
-            databaseCursorExams.postValue(cursor)
+            val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
+            val exams: ArrayList<Exam> = arrayListOf()
+            val database = Firebase.database
+            val ref = database.getReference("exams/${FirebaseUtils.getUserId()}")
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(e: DatabaseError) {
+                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (subjectSnapshot in dataSnapshot.children) {
+                        for (examSnapshot in subjectSnapshot.children) {
+                            val exam = examSnapshot.getValue<Exam>()
+                            if (exam != null) {
+                                if (exam.date == currentDate) {
+                                    exams.add(exam)
+                                }
+                            }
+                        }
+                    }
+                    examsList.postValue(exams)
+                }
+            })
         }
     }
 }

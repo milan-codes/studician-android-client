@@ -1,44 +1,41 @@
 package app.milanherke.mystudiez
 
 import android.app.Application
-import android.content.ContentValues
 import androidx.lifecycle.AndroidViewModel
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to save/update [Lesson] objects in the database
+ * and belongs to [AddEditLessonFragment].
+ */
 class AddEditLessonViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Use this function to save/update a [Lesson].
+     *
+     * @param lesson Lesson that the user wants to save
+     * @return Saved lesson
+     */
     fun saveLesson(lesson: Lesson): Lesson {
-        val values = ContentValues()
-        if (lesson.subjectId != 0L && lesson.day != 0 && lesson.starts.isNotEmpty() && lesson.ends.isNotEmpty() && lesson.location.isNotEmpty()) {
-            values.put(LessonsContract.Columns.LESSON_SUBJECT, lesson.subjectId)
-            values.put(LessonsContract.Columns.LESSON_DAY, lesson.day)
-            values.put(LessonsContract.Columns.LESSON_STARTS, lesson.starts)
-            values.put(LessonsContract.Columns.LESSON_ENDS, lesson.ends)
-            values.put(LessonsContract.Columns.LESSON_LOCATION, lesson.location)
-
-            if (lesson.lessonId == 0L) {
-                GlobalScope.launch {
-                    val uri = getApplication<Application>().contentResolver.insert(
-                        LessonsContract.CONTENT_URI,
-                        values
-                    )
-                    if (uri != null) {
-                        lesson.lessonId = LessonsContract.getId(uri)
-                    }
+        GlobalScope.launch {
+            val database = Firebase.database
+            // If the lessons's ID is empty, we're creating a new lesson, otherwise, we're updating an existing one
+            if (lesson.id.isEmpty()) {
+                val key = database.getReference("subjects/${FirebaseUtils.getUserId()}").push().key
+                if (key != null) {
+                    lesson.id = key
+                    database.getReference("lessons/${FirebaseUtils.getUserId()}/${lesson.subjectId}/$key")
+                        .setValue(lesson)
                 }
             } else {
-                // Lesson already has an id, which means it has been created before so we are just updating it
-                GlobalScope.launch {
-                    getApplication<Application>().contentResolver.update(
-                        LessonsContract.buildUriFromId(
-                            lesson.lessonId
-                        ), values, null, null
-                    )
-                }
+                database.getReference("lessons/${FirebaseUtils.getUserId()}/${lesson.subjectId}/${lesson.id}")
+                    .setValue(lesson)
             }
         }
-
         return lesson
     }
 

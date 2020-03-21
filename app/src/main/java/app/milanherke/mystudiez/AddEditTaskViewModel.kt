@@ -1,45 +1,41 @@
 package app.milanherke.mystudiez
 
 import android.app.Application
-import android.content.ContentValues
 import androidx.lifecycle.AndroidViewModel
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to save/update [Task] objects in the database
+ * and belongs to [AddEditTaskFragment].
+ */
 class AddEditTaskViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Use this function to save/update a [Task].
+     *
+     * @param task Task that the user wants to save
+     * @return Saved task
+     */
     fun saveTask(task: Task): Task {
-        val values = ContentValues()
-        if (task.name.isNotEmpty() && task.type != 0 && task.subjectId != 0L && task.dueDate.isNotEmpty()) {
-            values.put(TasksContract.Columns.TASK_NAME, task.name)
-            values.put(TasksContract.Columns.TASK_DESCRIPTION, task.description)
-            values.put(TasksContract.Columns.TASK_TYPE, task.type)
-            values.put(TasksContract.Columns.TASK_SUBJECT, task.subjectId)
-            values.put(TasksContract.Columns.TASK_DUEDATE, task.dueDate)
-            values.put(TasksContract.Columns.TASK_REMINDER, task.reminder)
-
-            if (task.taskId == 0L) {
-                GlobalScope.launch {
-                    val uri = getApplication<Application>().contentResolver.insert(
-                        TasksContract.CONTENT_URI,
-                        values
-                    )
-                    if (uri != null) {
-                        task.taskId = TasksContract.getId(uri)
-                    }
+        GlobalScope.launch {
+            val database = Firebase.database
+            // If the task's ID is empty, we're creating a new task, otherwise we're updating an existing one
+            if (task.id.isEmpty()) {
+                val key = database.getReference("subjects/${FirebaseUtils.getUserId()}").push().key
+                if (key != null) {
+                    task.id = key
+                    database.getReference("tasks/${FirebaseUtils.getUserId()}/${task.subjectId}/$key")
+                        .setValue(task)
                 }
             } else {
-                // Task already has an id, which means it has been created before so we are just updating it
-                GlobalScope.launch {
-                    getApplication<Application>().contentResolver.update(
-                        TasksContract.buildUriFromId(
-                            task.taskId
-                        ), values, null, null
-                    )
-                }
+                database.getReference("tasks/${FirebaseUtils.getUserId()}/${task.subjectId}/${task.id}")
+                    .setValue(task)
             }
         }
-
         return task
     }
 
