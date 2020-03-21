@@ -11,11 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.Fragments.EXAMS
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exams.*
 
 /**
  * A simple [Fragment] subclass.
+ * The main purpose of this fragment is to display all [Exam] objects from the database.
+ * Activities that contain this fragment must implement the
+ * [ExamsFragment.ExamsInteractions] interface
+ * to handle interaction events.
  * Use the [ExamsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -27,7 +32,8 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, null, this)
+    private val examsAdapter = ExamsRecyclerViewAdapter(null, this, EXAMS)
+    private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: ExamsInteractions? = null
 
     /**
@@ -35,14 +41,9 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface ExamsInteractions {
-        fun examsFragmentIsBeingCreated()
+        fun onCreateCalled()
     }
 
     override fun onAttach(context: Context) {
@@ -56,16 +57,10 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadExams()
-        viewModel.cursorExams.observe(
-            this,
-            Observer { cursor ->
-                examsAdapter.swapExamsCursor(cursor)?.close()
-                if (exam_list != null && cursor.count != 0) Animations.runLayoutAnimation(exam_list)
-            }
-        )
-        // Listener will never be null since the program crashes in onAttach if the interface is not implemented
-        listener!!.examsFragmentIsBeingCreated()
+
+        // Listener will never be null
+        // because the program crashes in onAttach if the interface is not implemented
+        listener!!.onCreateCalled()
     }
 
     override fun onCreateView(
@@ -80,8 +75,17 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.exams_title)
 
-        exam_list.layoutManager = LinearLayoutManager(context)
-        exam_list.adapter = examsAdapter
+        // Getting all subjects from the database,
+        // examsAdapter must have a map of subjects in order to display
+        // details about an exam's subject
+        sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
+            override fun onSuccess(subjects: MutableMap<String, Subject>) {
+                exam_list.layoutManager = LinearLayoutManager(context)
+                exam_list.adapter = examsAdapter
+                examsAdapter.swapSubjectsMap(subjects)
+                subjectsList = subjects
+            }
+        })
     }
 
     @SuppressLint("RestrictedApi")
@@ -92,13 +96,27 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.VISIBLE
+
+        // Registering observer
+        // Swapping the exams list in ExamsRecyclerViewAdapter
+        // and running layout animation
+        viewModel.examsListLiveData.observe(
+            this,
+            Observer { list ->
+                examsAdapter.swapExamsList(list)
+                if (exam_list != null && list.size != 0) Animations.runLayoutAnimation(exam_list)
+            }
+        )
+        viewModel.loadExams()
     }
 
     override fun onDetach() {
         super.onDetach()
-        FragmentsStack.getInstance(context!!).push(Fragments.EXAMS)
+        listener = null
+        FragmentBackStack.getInstance(context!!).push(EXAMS)
     }
 
     companion object {
@@ -116,13 +134,12 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
     }
 
     override fun onExamClickListener(exam: Exam) {
-        activity!!.replaceFragmentWithTransition(
-            ExamDetailsFragment.newInstance(exam),
-            R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromExam(id: Long): Subject? {
-        return sharedViewModel.subjectFromId(id)
+        val subjects = subjectsList
+        if (subjects != null) {
+            activity!!.replaceFragmentWithTransition(
+                ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
+                R.id.fragment_container
+            )
+        }
     }
 }

@@ -12,16 +12,15 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_lesson_details.*
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+// Fragment initialization parameters
 private const val ARG_LESSON = "lesson"
+private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
- * This fragment was created to list the details of a lesson.
+ * The purpose of this fragment is to display the details of a [Lesson].
  * The user can delete a lesson from this fragment
  * or launch a new fragment ([AddEditLessonFragment]) to edit it.
- * This fragment can return only to [SubjectDetailsFragment].
- * This fragment can be called only by the following fragments: [SubjectDetailsFragment].
  * Activities that contain this fragment must implement the
  * [LessonDetailsFragment.LessonDetailsInteraction] interface
  * to handle interaction events.
@@ -45,16 +44,9 @@ class LessonDetailsFragment : Fragment() {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface LessonDetailsInteraction {
-        fun onDeleteLessonClick(subject: Subject)
-        fun onEditLessonClick(lesson: Lesson)
-        fun lessonIsLoaded(lesson: Lesson)
+        fun swapLesson(lesson: Lesson)
     }
 
     override fun onAttach(context: Context) {
@@ -69,8 +61,8 @@ class LessonDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lesson = arguments?.getParcelable(ARG_LESSON)
-        listener?.lessonIsLoaded(lesson!!)
-        subject = sharedViewModel.subjectFromId(lesson!!.subjectId)
+        subject = arguments?.getParcelable(ARG_SUBJECT)
+        listener?.swapLesson(lesson!!)
     }
 
     override fun onCreateView(
@@ -104,23 +96,37 @@ class LessonDetailsFragment : Fragment() {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
 
+        // Swapping in the Subject in MainActivity
+        // MainActivity always needs to have the currently used Subject
+        val subject = subject
+        if (subject != null) {
+            sharedViewModel.swapSubject(subject)
+        }
+
         lesson_details_del_subject_btn.setOnClickListener {
-            viewModel.deleteLesson(lesson!!.lessonId)
-            listener?.onDeleteLessonClick(subject!!)
+            viewModel.deleteLesson(lesson!!)
+            activity!!.replaceFragmentWithTransition(
+                SubjectDetailsFragment.newInstance(subject!!),
+                R.id.fragment_container
+            )
         }
 
         lesson_details_edit_subject_btn.setOnClickListener {
-            listener?.onEditLessonClick(lesson!!)
+            activity!!.replaceFragmentWithTransition(
+                AddEditLessonFragment.newInstance(lesson, subject!!),
+                R.id.fragment_container
+            )
         }
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-        FragmentsStack.getInstance(context!!).push(Fragments.LESSON_DETAILS)
+        FragmentBackStack.getInstance(context!!).push(Fragments.LESSON_DETAILS)
     }
 
     companion object {
@@ -132,10 +138,11 @@ class LessonDetailsFragment : Fragment() {
          * @return A new instance of fragment LessonDetailsFragment.
          */
         @JvmStatic
-        fun newInstance(lesson: Lesson) =
+        fun newInstance(lesson: Lesson, subject: Subject? = null) =
             LessonDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_LESSON, lesson)
+                    putParcelable(ARG_SUBJECT, subject)
                 }
             }
     }

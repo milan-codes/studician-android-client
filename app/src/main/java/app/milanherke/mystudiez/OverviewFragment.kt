@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.CalendarUtils.Companion.DateSet
+import app.milanherke.mystudiez.Fragments.OVERVIEW
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_overview.*
 import java.text.SimpleDateFormat
@@ -19,24 +21,28 @@ import java.util.*
 
 /**
  * A simple [Fragment] subclass.
+ * The main purpose of this fragment is to give the user a brief overview of their day.
+ * This includes displaying their lessons, tasks and exams for that specified date.
+ * Activities that contain this fragment must implement the
+ * [OverviewFragment.OverviewInteractions] interface
+ * to handle interaction events.
  * Use the [OverviewFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-
 class OverviewFragment : Fragment(),
     LessonsRecyclerViewAdapter.OnLessonClickListener,
     TasksRecyclerViewAdapter.OnTaskClickListener,
     ExamsRecyclerViewAdapter.OnExamClickListener {
-
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(OverviewViewModel::class.java)
     }
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null, this, true)
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this, true)
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, null, this, true)
+    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, this, OVERVIEW)
+    private val tasksAdapter = TasksRecyclerViewAdapter(null, this, OVERVIEW)
+    private val examsAdapter = ExamsRecyclerViewAdapter(null, this, OVERVIEW)
+    private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: OverviewInteractions? = null
 
     /**
@@ -44,14 +50,9 @@ class OverviewFragment : Fragment(),
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface OverviewInteractions {
-        fun overviewFragmentIsBeingCreated()
+        fun setDoubleBackToDefault()
     }
 
     override fun onAttach(context: Context) {
@@ -65,36 +66,9 @@ class OverviewFragment : Fragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cursorLessons.observe(
-            this,
-            Observer { cursor ->
-                lessonsAdapter.swapLessonsCursor(cursor)?.close()
-                if (overview_schedule_list != null && cursor.count != 0) Animations.runLayoutAnimation(
-                    overview_schedule_list
-                )
-            }
-        )
-        viewModel.cursorTasks.observe(
-            this,
-            Observer { cursor ->
-                tasksAdapter.swapTasksCursor(cursor)?.close()
-                if (overview_task_list != null && cursor.count != 0) Animations.runLayoutAnimation(
-                    overview_task_list
-                )
-            }
-        )
-        viewModel.cursorExams.observe(
-            this,
-            Observer { cursor ->
-                examsAdapter.swapExamsCursor(cursor)?.close()
-                if (overview_exam_list != null && cursor.count != 0) Animations.runLayoutAnimation(
-                    overview_exam_list
-                )
-            }
-        )
-        viewModel.loadAllDetails(Date())
-        // Listener will never be null since the program crashes in onAttach if the interface is not implemented
-        listener!!.overviewFragmentIsBeingCreated()
+        // Listener will never be null
+        // because the program crashes in onAttach if the interface is not implemented
+        listener!!.setDoubleBackToDefault()
     }
 
     override fun onCreateView(
@@ -109,6 +83,16 @@ class OverviewFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.overview_title)
+
+        // Getting all subjects from the database
+        sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
+            override fun onSuccess(subjects: MutableMap<String, Subject>) {
+                lessonsAdapter.swapSubjectMap(subjects)
+                tasksAdapter.swapSubjectsMap(subjects)
+                examsAdapter.swapSubjectsMap(subjects)
+                subjectsList = subjects
+            }
+        })
 
         overview_schedule_list.layoutManager = LinearLayoutManager(context)
         overview_schedule_list.adapter = lessonsAdapter
@@ -129,16 +113,57 @@ class OverviewFragment : Fragment(),
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.GONE
 
+        //Registering observers
+        // Swapping subject list in RecyclerViewAdapters
+        // and running layout animations
+        viewModel.lessonsListLiveData.observe(
+            this,
+            Observer { list ->
+                lessonsAdapter.swapLessonsList(list)
+                if (overview_schedule_list != null && list.size != 0) Animations.runLayoutAnimation(
+                    overview_schedule_list
+                )
+            }
+        )
+        viewModel.tasksListLiveData.observe(
+            this,
+            Observer { list ->
+                tasksAdapter.swapTasksList(list)
+                if (overview_task_list != null && list.size != 0) Animations.runLayoutAnimation(
+                    overview_task_list
+                )
+            }
+        )
+        viewModel.examsListLiveData.observe(
+            this,
+            Observer { list ->
+                examsAdapter.swapExamsList(list)
+                if (overview_exam_list != null && list.size != 0) Animations.runLayoutAnimation(
+                    overview_exam_list
+                )
+            }
+        )
+        viewModel.loadAllDetails(Date())
+
+        // Setting the default date
         overview_date_button.text =
             SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(Date())
 
+
         overview_date_button.setOnClickListener {
             val cal = Calendar.getInstance()
-             DatePickerDialog(
-                context!!, getDate(cal),
+            val listener =
+                CalendarUtils.getDateSetListener(activity!!, R.id.overview_date_button, cal, object : DateSet {
+                    override fun onSuccess(date: Date) {
+                        viewModel.loadAllDetails(date)
+                    }
+                })
+            DatePickerDialog(
+                context!!, listener,
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -148,8 +173,7 @@ class OverviewFragment : Fragment(),
 
     override fun onDetach() {
         super.onDetach()
-        viewModel.dateFilter.postValue(null)
-        FragmentsStack.getInstance(context!!).push(Fragments.OVERVIEW)
+        FragmentBackStack.getInstance(context!!).push(OVERVIEW)
     }
 
     companion object {
@@ -167,52 +191,32 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onLessonClick(lesson: Lesson) {
-        activity!!.replaceFragmentWithTransition(
-            LessonDetailsFragment.newInstance(lesson),
-            R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromLesson(id: Long): Subject? {
-        return sharedViewModel.subjectFromId(id)
-    }
-
-    override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragmentWithTransition(
-            TaskDetailsFragment.newInstance(task),
-            R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromTask(id: Long): Subject? {
-        return sharedViewModel.subjectFromId(id)
-    }
-
-    override fun onExamClickListener(exam: Exam) {
-        activity!!.replaceFragmentWithTransition(
-            ExamDetailsFragment.newInstance(exam),
-            R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromExam(id: Long): Subject? {
-        return sharedViewModel.subjectFromId(id)
-    }
-
-    private fun getDate(
-        cal: Calendar
-    ): DatePickerDialog.OnDateSetListener {
-
-        return DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            cal.set(Calendar.YEAR, year)
-            cal.set(Calendar.MONTH, month)
-            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-
-            viewModel.loadAllDetails(cal.time)
-
-            overview_date_button.text =
-                SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(cal.time)
+        val subjects = subjectsList
+        if (subjects != null) {
+            activity!!.replaceFragmentWithTransition(
+                LessonDetailsFragment.newInstance(lesson, subjects[lesson.subjectId]),
+                R.id.fragment_container
+            )
         }
     }
 
+    override fun onTaskClickListener(task: Task) {
+        val subjects = subjectsList
+        if (subjects != null) {
+            activity!!.replaceFragmentWithTransition(
+                TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
+                R.id.fragment_container
+            )
+        }
+    }
+
+    override fun onExamClickListener(exam: Exam) {
+        val subjects = subjectsList
+        if (subjects != null) {
+            activity!!.replaceFragmentWithTransition(
+                ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
+                R.id.fragment_container
+            )
+        }
+    }
 }

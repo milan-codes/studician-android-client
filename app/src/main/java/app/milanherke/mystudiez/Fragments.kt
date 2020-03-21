@@ -1,7 +1,7 @@
 package app.milanherke.mystudiez
 
 /**
- * Simple enum class to represent the type of fragment being stored in [FragmentsStack].
+ * Enum class to represent the type of fragment being stored in [FragmentBackStack].
  * [AddEditSubjectFragment], [AddEditLessonFragment] and [AddEditTaskFragment] are missing
  * because no fragment can be opened by interacting with any of them.
  */

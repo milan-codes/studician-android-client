@@ -1,62 +1,55 @@
 package app.milanherke.mystudiez
 
 import android.app.Application
-import android.database.ContentObserver
-import android.database.Cursor
-import android.net.Uri
-import android.os.Handler
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to get all [Task] objects from the database
+ * and belongs to [TasksViewModel].
+ */
 class TasksViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val contentObserverTasks = object : ContentObserver(Handler()) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            loadTasks()
-        }
-    }
+    private val tasksList = MutableLiveData<ArrayList<Task>>()
+    val tasksListLiveData: LiveData<ArrayList<Task>>
+        get() = tasksList
 
-    private val databaseCursor = MutableLiveData<Cursor>()
-    val cursorTasks: LiveData<Cursor>
-        get() = databaseCursor
-
-    init {
-        // Register the content observer for tasks
-        getApplication<Application>().contentResolver.registerContentObserver(
-            TasksContract.CONTENT_URI,
-            true,
-            contentObserverTasks
-        )
-    }
-
-    override fun onCleared() {
-        getApplication<Application>().contentResolver.unregisterContentObserver(
-            contentObserverTasks
-        )
-    }
-
+    /**
+     * Gets all tasks from the database
+     * and passes the result to [tasksList]
+     */
     fun loadTasks() {
-        val projection = arrayOf(
-            TasksContract.Columns.ID,
-            TasksContract.Columns.TASK_NAME,
-            TasksContract.Columns.TASK_DESCRIPTION,
-            TasksContract.Columns.TASK_TYPE,
-            TasksContract.Columns.TASK_SUBJECT,
-            TasksContract.Columns.TASK_DUEDATE,
-            TasksContract.Columns.TASK_REMINDER
-        )
         GlobalScope.launch {
-            val cursor = getApplication<Application>().contentResolver.query(
-                TasksContract.CONTENT_URI,
-                projection,
-                null,
-                null,
-                "${TasksContract.Columns.ID} DESC"
-            )
-            databaseCursor.postValue(cursor)
+            val tasks: ArrayList<Task> = arrayListOf()
+            val database = Firebase.database
+            val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}")
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(e: DatabaseError) {
+                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (subjectSnapshot in dataSnapshot.children) {
+                        for (taskSnapshot in subjectSnapshot.children) {
+                            val task = taskSnapshot.getValue<Task>()
+                            if (task != null) {
+                                tasks.add(task)
+                            }
+                        }
+                    }
+                    tasksList.postValue(tasks)
+                }
+            })
         }
     }
 

@@ -15,6 +15,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subjects.*
 
 /**
+ * A simple [Fragment] subclass.
+ * The main purpose of this fragment is to display all [Subject] objects from the database.
+ * Activities that contain this fragment must implement the
+ * [SubjectsFragment.SubjectsInteractions] interface
+ * to handle interaction events.
  * Use the [SubjectsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -31,11 +36,6 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface SubjectsInteractions {
         fun subjectsFragmentIsBeingCreated()
@@ -52,48 +52,8 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cursorSubjects.observe(
-            this,
-            Observer { cursor ->
-                subjectsAdapter.swapSubjectsCursor(cursor)?.close()
-                if (subject_list != null && cursor.count != 0) Animations.runLayoutAnimation(
-                    subject_list
-                )
-            })
-        viewModel.cursorLessons.observe(
-            this,
-            Observer { cursor ->
-                subjectsAdapter.swapLessonsCursor(cursor)?.close()
-                if (subject_list != null && cursor.count != 0) Animations.runLayoutAnimation(
-                    subject_list
-                )
-            })
-
-        // Loading subjects and selected lessons
-        viewModel.loadSubjects()
-        viewModel.loadLessonsForSubjects()
         // Listener will never be null since the program crashes in onAttach if the interface is not implemented
         listener!!.subjectsFragmentIsBeingCreated()
-    }
-
-    @SuppressLint("RestrictedApi")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        if (activity is AppCompatActivity) {
-            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        }
-
-        activity!!.bar.visibility = View.VISIBLE
-        activity!!.fab.visibility = View.VISIBLE
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        activity!!.toolbar.setTitle(R.string.subjects_title)
-
-        subject_list.layoutManager = LinearLayoutManager(context)
-        subject_list.adapter = subjectsAdapter
     }
 
     override fun onCreateView(
@@ -105,9 +65,50 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         return inflater.inflate(R.layout.fragment_subjects, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activity!!.toolbar.setTitle(R.string.subjects_title)
+
+        subject_list.layoutManager = LinearLayoutManager(context)
+        subject_list.adapter = subjectsAdapter
+    }
+
+    @SuppressLint("RestrictedApi")
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if (activity is AppCompatActivity) {
+            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
+
+        // Hiding bottom navigation bar and fab button
+        activity!!.bar.visibility = View.VISIBLE
+        activity!!.fab.visibility = View.VISIBLE
+
+        // Registering observers
+        viewModel.subjectsListLiveData.observe(
+            this,
+            Observer { list ->
+                subjectsAdapter.swapSubjectsList(list)
+                if (subject_list != null && list.size != 0) Animations.runLayoutAnimation(
+                    subject_list
+                )
+            })
+        viewModel.lessonsListLiveData.observe(
+            this,
+            Observer { list ->
+                subjectsAdapter.swapLessonsList(list)
+                if (subject_list != null && list.size != 0) Animations.runLayoutAnimation(
+                    subject_list
+                )
+            })
+        viewModel.loadSubjects()
+        viewModel.loadLessonsForSubjects()
+    }
+
     override fun onDetach() {
         super.onDetach()
-        FragmentsStack.getInstance(context!!).push(Fragments.SUBJECTS)
+        FragmentBackStack.getInstance(context!!).push(Fragments.SUBJECTS)
     }
 
     companion object {

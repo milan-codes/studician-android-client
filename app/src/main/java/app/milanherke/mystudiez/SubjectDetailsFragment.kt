@@ -11,14 +11,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subject_details.*
 
-// the fragment initialization parameters, e.g. ARG_SUBJECT
+// Fragment initialization parameters
 private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
+ * The purpose of this fragment is to display the details of a [Subject]
+ * The user can delete a subject from this fragment
+ * or launch a new fragment ([AddEditSubjectFragment]) to edit it.
  * Activities that contain this fragment must implement the
  * [SubjectDetailsFragment.SubjectDetailsInteractions] interface
  * to handle interaction events.
@@ -32,26 +36,21 @@ class SubjectDetailsFragment : Fragment(),
 
     private var subject: Subject? = null
     private var listener: SubjectDetailsInteractions? = null
+    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
+    private val tasksAdapter = TasksRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
+    private val examsAdapter = ExamsRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(SubjectDetailsViewModel::class.java)
     }
-    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, null, this)
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this)
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, null, this)
+    private val sharedViewModel by lazy {
+        ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
+    }
 
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     * We need to pass a Subject object to the main activity
-     * because it needs to know which subject's details should be loaded after tapping the up button.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface SubjectDetailsInteractions {
         fun subjectIsLoaded(subject: Subject)
@@ -70,16 +69,6 @@ class SubjectDetailsFragment : Fragment(),
         super.onCreate(savedInstanceState)
         subject = arguments?.getParcelable(ARG_SUBJECT)
         listener?.subjectIsLoaded(subject!!)
-        viewModel.cursorSelectedLessons.observe(
-            this,
-            Observer { cursor -> lessonsAdapter.swapLessonsCursor(cursor)?.close() })
-        viewModel.cursorSelectedTasks.observe(
-            this,
-            Observer { cursor -> tasksAdapter.swapTasksCursor(cursor)?.close() })
-        viewModel.cursorSelectedExams.observe(
-            this,
-            Observer { cursor -> examsAdapter.swapExamsCursor(cursor)?.close() })
-        viewModel.loadAllDetails(subject!!.subjectId)
     }
 
     override fun onCreateView(
@@ -94,24 +83,17 @@ class SubjectDetailsFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.lessons_title)
+
+        // Avoiding problems with smart-cast
         val subject = subject
-        if (savedInstanceState == null) {
-            if (subject != null) {
-                // Loading the data into the subject details section
-                subject_details_name_value.text = subject.name
-                subject_details_teacher_value.text = subject.teacher
+        if (subject != null) {
+            subject_details_name_value.text = subject.name
+            subject_details_teacher_value.text = subject.teacher
 
-                //Creating a clone drawable because we do not want to affect other instances of the original drawable
-                val clone = subject_details_color_value.drawable.mutatedClone()
-                clone.displayColor(subject.colorCode, context!!)
-                subject_details_color_value.setImageDrawable(clone)
-
-
-                // Passing the drawable to the adapters
-                lessonsAdapter.swapDrawable(clone)
-                tasksAdapter.swapDrawable(clone)
-                examsAdapter.swapDrawable(clone)
-            }
+            //Creating a clone drawable because we do not want to affect other instances of the original one
+            val clone = subject_details_color_value.drawable.mutatedClone()
+            clone.setColor(subject.colorCode, context!!)
+            subject_details_color_value.setImageDrawable(clone)
         }
 
         subject_details_lessons_recycler.layoutManager = LinearLayoutManager(context)
@@ -130,11 +112,18 @@ class SubjectDetailsFragment : Fragment(),
             )
         }
 
+        // After deleting a subject
+        // the application returns to SubjectsFragment
         del_subject_button.setOnClickListener {
-            viewModel.deleteSubject(subject!!.subjectId)
-            activity!!.replaceFragmentWithTransition(SubjectsFragment.newInstance(), R.id.fragment_container)
+            viewModel.deleteSubject(subject!!.id)
+            activity!!.replaceFragmentWithTransition(
+                SubjectsFragment.newInstance(),
+                R.id.fragment_container
+            )
         }
 
+        // If users want to add a new lesson to the subject
+        // the application takes them to AddEditLessonFragment
         subject_details_add_new_lesson_btn.setOnClickListener {
             activity!!.replaceFragmentWithTransition(
                 AddEditLessonFragment.newInstance(null, subject!!),
@@ -142,6 +131,8 @@ class SubjectDetailsFragment : Fragment(),
             )
         }
 
+        // If users want to add a new task to the subject
+        // the application takes them to AddEditTaskFragment
         subject_details_add_new_task_btn.setOnClickListener {
             activity!!.replaceFragmentWithTransition(
                 AddEditTaskFragment.newInstance(null, subject!!),
@@ -149,6 +140,8 @@ class SubjectDetailsFragment : Fragment(),
             )
         }
 
+        // If users want to add a new exam to the subject
+        // the application takes them to AddEditExamFragment
         subject_details_add_new_exam_btn.setOnClickListener {
             activity!!.replaceFragmentWithTransition(
                 AddEditExamFragment.newInstance(null, subject!!),
@@ -165,15 +158,34 @@ class SubjectDetailsFragment : Fragment(),
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
+
+        // Passing the subject
+        // MainActivity always needs to have the currently used subject
+        val subject = subject
+        if (subject != null) {
+            sharedViewModel.swapSubject(subject)
+        }
+
+        // Registering observers
+        viewModel.selectedLessonsLiveData.observe(
+            this,
+            Observer { list -> lessonsAdapter.swapLessonsList(list) })
+        viewModel.selectedTasksLiveData.observe(
+            this,
+            Observer { list -> tasksAdapter.swapTasksList(list) })
+        viewModel.selectedExamsLiveData.observe(
+            this,
+            Observer { list -> examsAdapter.swapExamsList(list) })
+        viewModel.loadAllDetails(subject!!.id)
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-        viewModel.subjectFilter.postValue(null)
-        FragmentsStack.getInstance(context!!).push(Fragments.SUBJECT_DETAILS)
+        FragmentBackStack.getInstance(context!!).push(SUBJECT_DETAILS)
     }
 
     companion object {
@@ -181,8 +193,8 @@ class SubjectDetailsFragment : Fragment(),
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param subject The subject to be edited.
-         * @return A new instance of fragment SubjectDetailsFragment.
+         * @param subject The subject, whose details are displayed
+         * @return A new instance of fragment SubjectDetailsFragment
          */
         @JvmStatic
         fun newInstance(subject: Subject) =
@@ -194,34 +206,31 @@ class SubjectDetailsFragment : Fragment(),
     }
 
     override fun onLessonClick(lesson: Lesson) {
-        activity!!.replaceFragmentWithTransition(
-            LessonDetailsFragment.newInstance(lesson),
-            R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromLesson(id: Long): Subject? {
-        throw IllegalStateException("loadSubjectFromLesson should not and cannot be called from SubjectDetailsFragment")
+        val subject = subject
+        if (subject != null) {
+            activity!!.replaceFragmentWithTransition(
+                LessonDetailsFragment.newInstance(lesson, subject),
+                R.id.fragment_container
+            )
+        }
     }
 
     override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragmentWithTransition(
-            TaskDetailsFragment.newInstance(task), R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromTask(id: Long): Subject {
-        throw IllegalStateException("loadSubjectFromTask should not and cannot be called from SubjectDetailsFragment")
+        val subject = subject
+        if (subject != null) {
+            activity!!.replaceFragmentWithTransition(
+                TaskDetailsFragment.newInstance(task, subject), R.id.fragment_container
+            )
+        }
     }
 
     override fun onExamClickListener(exam: Exam) {
-        activity!!.replaceFragmentWithTransition(
-            ExamDetailsFragment.newInstance(exam), R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromExam(id: Long): Subject {
-        throw IllegalStateException("loadSubjectFromExam should not and cannot be called from SubjectDetailsFragment")
+        val subject = subject
+        if (subject != null) {
+            activity!!.replaceFragmentWithTransition(
+                ExamDetailsFragment.newInstance(exam, subject), R.id.fragment_container
+            )
+        }
     }
 
 }
