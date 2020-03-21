@@ -11,11 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.Fragments.TASKS
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
 /**
  * A simple [Fragment] subclass.
+ * The main purpose of this fragment is to display all [Task] objects from the database.
+ * Activities that contain this fragment must implement the
+ * [TasksFragment.TasksInteractions] interface
+ * to handle interaction events.
  * Use the [TasksFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -27,7 +32,8 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, null, this)
+    private val tasksAdapter = TasksRecyclerViewAdapter(null, this, TASKS)
+    private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: TasksInteractions? = null
 
     /**
@@ -35,11 +41,6 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface TasksInteractions {
         fun tasksFragmentIsBeingCreated()
@@ -56,14 +57,6 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.cursorTasks.observe(
-            this,
-            Observer { cursor ->
-                tasksAdapter.swapTasksCursor(cursor)?.close()
-                if (task_list != null && cursor.count != 0) Animations.runLayoutAnimation(task_list)
-            }
-        )
-        viewModel.loadTasks()
         // Listener will never be null since the program crashes in onAttach if the interface is not implemented
         listener!!.tasksFragmentIsBeingCreated()
     }
@@ -80,6 +73,16 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.tasks_title)
 
+        // Getting all subjects from the database,
+        // tasksAdapter must have a map of subjects in order to display
+        // details about a task's subject
+        sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
+            override fun onSuccess(subjects: MutableMap<String, Subject>) {
+                tasksAdapter.swapSubjectsMap(subjects)
+                subjectsList = subjects
+            }
+        })
+
         task_list.layoutManager = LinearLayoutManager(context)
         task_list.adapter = tasksAdapter
     }
@@ -92,13 +95,27 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.VISIBLE
+
+        // Registering observer
+        // Swapping the tasks list in TasksRecyclerViewAdapter
+        // and running layout animation
+        viewModel.tasksListLiveData.observe(
+            this,
+            Observer { list ->
+                tasksAdapter.swapTasksList(list)
+                if (task_list != null && list.size != 0) Animations.runLayoutAnimation(task_list)
+            }
+        )
+        viewModel.loadTasks()
     }
 
     override fun onDetach() {
         super.onDetach()
-        FragmentsStack.getInstance(context!!).push(Fragments.TASKS)
+        listener = null
+        FragmentBackStack.getInstance(context!!).push(TASKS)
     }
 
     companion object {
@@ -116,13 +133,12 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     }
 
     override fun onTaskClickListener(task: Task) {
-        activity!!.replaceFragmentWithTransition(
-            TaskDetailsFragment.newInstance(task),
-            R.id.fragment_container
-        )
-    }
-
-    override fun loadSubjectFromTask(id: Long): Subject? {
-        return sharedViewModel.subjectFromId(id)
+        val subjects = subjectsList
+        if (subjects != null) {
+            activity!!.replaceFragmentWithTransition(
+                TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
+                R.id.fragment_container
+            )
+        }
     }
 }

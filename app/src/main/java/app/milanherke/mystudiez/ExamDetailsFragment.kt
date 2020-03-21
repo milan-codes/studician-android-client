@@ -12,16 +12,15 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exam_details.*
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+// Fragment initialization parameters
 private const val ARG_EXAM = "exam"
+private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
- * This fragment was created to list the details of an exam.
+ * The purpose if this fragment is to display the details of an [Exam].
  * The user can delete an exam from this fragment
  * or launch a new fragment ([AddEditExamFragment]) to edit it.
- * This fragment can return only to [SubjectDetailsFragment].
- * This fragment can be called only by the following fragments: [SubjectDetailsFragment].
  * Activities that contain this fragment must implement the
  * [ExamDetailsFragment.ExamDetailsInteraction] interface
  * to handle interaction events.
@@ -45,16 +44,9 @@ class ExamDetailsFragment : Fragment() {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface ExamDetailsInteraction {
-        fun onDeleteExamClick(subject: Subject)
-        fun onEditExamClick(exam: Exam)
-        fun examIsLoaded(exam: Exam)
+        fun swapExam(exam: Exam)
     }
 
     override fun onAttach(context: Context) {
@@ -69,9 +61,8 @@ class ExamDetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         exam = arguments?.getParcelable(ARG_EXAM)
-        listener?.examIsLoaded(exam!!)
-        subject = sharedViewModel.subjectFromId(exam!!.subjectId)
-
+        subject = arguments?.getParcelable(ARG_SUBJECT)
+        listener?.swapExam(exam!!)
     }
 
     override fun onCreateView(
@@ -107,23 +98,30 @@ class ExamDetailsFragment : Fragment() {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
 
+        // Passing the subject to MainActivity
+        // MainActivity always needs to have the currently used subject
+        val subject = subject
+        if (subject != null) {
+            sharedViewModel.swapSubject(subject)
+        }
+
         exam_details_del_exam_btn.setOnClickListener {
-            viewModel.deleteExam(exam!!.examId)
-            listener?.onDeleteExamClick(subject!!)
+            deleteExam()
         }
 
         exam_details_edit_exam_btn.setOnClickListener {
-            listener?.onEditExamClick(exam!!)
+            editExam()
         }
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-        FragmentsStack.getInstance(context!!).push(Fragments.EXAM_DETAILS)
+        FragmentBackStack.getInstance(context!!).push(Fragments.EXAM_DETAILS)
     }
 
 
@@ -133,14 +131,57 @@ class ExamDetailsFragment : Fragment() {
          * this fragment using the provided parameters.
          *
          * @param exam The exam, whose details are displayed
-         * @return A new instance of fragment ExamDetailsFragment.
+         * @return A new instance of fragment ExamDetailsFragment
          */
         @JvmStatic
-        fun newInstance(exam: Exam) =
+        fun newInstance(exam: Exam, subject: Subject? = null) =
             ExamDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_EXAM, exam)
+                    putParcelable(ARG_SUBJECT, subject)
                 }
             }
+    }
+
+    /**
+     * Allows the user to delete an [Exam] object from the database.
+     * First, it calls the [viewModel]'s deleteExam function
+     * and then it opens a new fragment based on [FragmentBackStack].
+     */
+    private fun deleteExam() {
+        // Deleting exam
+        viewModel.deleteExam(exam!!)
+
+        // Opening the previous fragment
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(activity!!).peek()) {
+            Fragments.SUBJECT_DETAILS -> activity!!.replaceFragmentWithTransition(
+                SubjectDetailsFragment.newInstance(subject!!),
+                R.id.fragment_container
+            )
+            Fragments.EXAMS -> {
+                activity!!.replaceFragmentWithTransition(
+                    ExamsFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.OVERVIEW -> {
+                activity!!.replaceFragmentWithTransition(
+                    OverviewFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
+            else -> throw IllegalStateException("onDeleteExamClick tries to load unrecognised fragment $fragmentCalledFrom")
+        }
+    }
+
+    /**
+     * Allows the user to edit an [Exam] object
+     * by opening [AddEditExamFragment].
+     */
+    private fun editExam() {
+        activity!!.replaceFragmentWithTransition(
+            AddEditExamFragment.newInstance(exam!!, subject!!),
+            R.id.fragment_container
+        )
     }
 }

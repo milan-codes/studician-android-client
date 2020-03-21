@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_subject.*
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+// Fragment initialization parameters
 private const val ARG_SUBJECT = "subject"
 
 /**
@@ -43,11 +43,6 @@ class AddEditSubjectFragment : Fragment() {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
      */
     interface AddEditSubjectInteractions {
         fun onSaveSubjectClick(subject: Subject)
@@ -78,24 +73,27 @@ class AddEditSubjectFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Creating a clone of the subject indicator because we do not want to affect all of the drawable's instances
-        // And setting default color
+        // Creating a clone of the subject's color indicator circle
+        // because we do not want to affect all of the drawable's instances
+        // and setting default color
         createAndSetCloneColorIndicator()
 
         // Avoiding problems with smart cast
         val subject = subject
 
         if (subject == null) {
+            // User wants to create a new subject
             activity!!.toolbar.setTitle(R.string.add_new_subject_title)
             subjectIsBeingEdited = false
             selectedColor.visibility = View.INVISIBLE
         } else {
+            // User wants to edit an existing subject
             activity!!.toolbar.title =
                 resources.getString(R.string.edit_subject_title, subject.name)
             subjectIsBeingEdited = true
             new_subject_name_value.setText(subject.name)
             new_subject_teacher_value.setText(subject.teacher)
-            selectedColor.drawable.displayColor(subject.colorCode, activity!!)
+            selectedColor.drawable.setColor(subject.colorCode, activity!!)
             new_subject_color_btn.text = getColorName(subject.colorCode)
             selectedSubjectColor = subject.colorCode
 
@@ -110,12 +108,15 @@ class AddEditSubjectFragment : Fragment() {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        // Hiding bottom navigation bar and fab button
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
 
+        // User must select a color for the subject
         new_subject_color_btn.setOnClickListener {
-            showPopup(it)
+            showColorsPopUp(it)
         }
+
         new_subject_save_btn.setOnClickListener {
             saveSubject()
         }
@@ -125,7 +126,7 @@ class AddEditSubjectFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
-        FragmentsStack.getInstance(context!!).pop()
+        FragmentBackStack.getInstance(context!!).pop()
     }
 
     companion object {
@@ -133,7 +134,7 @@ class AddEditSubjectFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param subject The subject to be edited or null if creating a new one
+         * @param subject The subject to be edited, or null when creating a new one.
          * @return A new instance of fragment AddEditSubjectFragment.
          */
         @JvmStatic
@@ -146,16 +147,22 @@ class AddEditSubjectFragment : Fragment() {
     }
 
     /**
-     * Creates a newSubject object with the details to be saved, then
-     * call the viewModel's saveSubject function to save it
-     * Subject is not a data class, so we can compare the new details with the original subject
-     * and only save if they are different
+     * Creates a new [Subject] object with the details to be saved, then
+     * calls the [viewModel]'s saveSubject function to save it.
      */
     private fun saveSubject() {
-        val newSubject = subjectFromUi()
-        if (newSubject != subject && requiredFieldsAreFilled()) {
-            subject = viewModel.saveSubject(newSubject)
-            listener?.onSaveSubjectClick(subject!!)
+        if (requiredFieldsAreFilled()) {
+            val newSubject = subjectFromUi()
+            if (newSubject != subject) {
+                subject = viewModel.saveSubject(newSubject)
+                listener?.onSaveSubjectClick(subject!!)
+            } else {
+                Toast.makeText(
+                    context!!,
+                    getString(R.string.did_not_change),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         } else {
             Toast.makeText(
                 context!!,
@@ -165,16 +172,27 @@ class AddEditSubjectFragment : Fragment() {
         }
     }
 
+    /**
+     * If we're creating a new [Subject], we set its ID to an empty string.
+     * If we're updating a [Subject], we're not changing its ID.
+     *
+     * @return A [Subject] object created from UI
+     */
     private fun subjectFromUi(): Subject {
         val subject = Subject(
             new_subject_name_value.text.toString(),
             new_subject_teacher_value.text.toString(),
             selectedSubjectColor
         )
-        subject.subjectId = this.subject?.subjectId ?: 0
+        subject.id = this.subject?.id ?: ""
         return subject
     }
 
+    /**
+     * Simple function to check whether the required fields are filled.
+     *
+     * @return True if required fields are filled, otherwise false
+     */
     private fun requiredFieldsAreFilled(): Boolean {
         if (new_subject_name_value.text.isNotEmpty()
             && new_subject_teacher_value.text.isNotEmpty()
@@ -186,7 +204,11 @@ class AddEditSubjectFragment : Fragment() {
         return false
     }
 
-    private fun showPopup(view: View) {
+    /**
+     * This function allows the user to choose a color from a pop up menu,
+     * if a new subject is created.
+     */
+    private fun showColorsPopUp(view: View) {
         val popupMenu = PopupMenu(activity!!, view)
         val inflater = popupMenu.menuInflater
         inflater.inflate(R.menu.color_menu, popupMenu.menu)
@@ -266,6 +288,13 @@ class AddEditSubjectFragment : Fragment() {
         }
     }
 
+    /**
+     * This function takes in a color resource id as a parameter
+     * and gives back its name.
+     *
+     * @param colorId Color resource id
+     * @return The color's name
+     */
     private fun getColorName(@ColorRes colorId: Int): String {
         return when (colorId) {
             R.color.subjectColorRed -> getString(R.string.colorRedTitle)
@@ -289,17 +318,26 @@ class AddEditSubjectFragment : Fragment() {
         }
     }
 
+    /**
+     * This function creates a clone of [R.drawable.subject_indicator_circle]
+     * because we do not want to affect all of the drawable's instances.
+     */
     private fun createAndSetCloneColorIndicator() {
         val clone = selectedColor.drawable.mutatedClone()
         selectedColor.setImageDrawable(clone)
     }
 
+    /**
+     *
+     * @param colorId Color resource id
+     * @param context Context
+     * @param colorName String resource id, the name of the color
+     */
     private fun setColor(@ColorRes colorId: Int, context: Context, @StringRes colorName: Int) {
-        selectedColor.drawable.displayColor(colorId, context)
+        selectedColor.drawable.setColor(colorId, context)
         new_subject_color_btn.setText(colorName)
         selectedSubjectColor = colorId
         if (selectedColor.visibility == View.INVISIBLE) selectedColor.visibility = View.VISIBLE
     }
-
 
 }

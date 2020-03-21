@@ -1,6 +1,5 @@
 package app.milanherke.mystudiez
 
-import android.database.Cursor
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +8,30 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.subject_list_items.view.*
 
+// Each constant value represents a view type
 private const val VIEW_TYPE_NOT_EMPTY = 0
 private const val VIEW_TYPE_EMPTY = 1
 
-// The list which is being used to store the data required to make use of the day indicators
-private val lessonsFromCursor: MutableList<Lesson> = mutableListOf()
-
+/**
+ * A [RecyclerView.Adapter] subclass.
+ * This class serves as an adapter for RecyclerViews
+ * which were created to display lessons.
+ *
+ * @property subjectsList An [ArrayList] containing all [Subject] objects to display
+ * @property lessonsList An [ArrayList] containing lessons of subjects
+ * @property listener Fragments that use this class must implement [OnSubjectClickListener]
+ */
 class SubjectsRecyclerViewAdapter(
-    private var cursorSubjects: Cursor?,
-    private var cursorLessons: Cursor?,
+    private var subjectsList: ArrayList<Subject>?,
+    private var lessonsList: ArrayList<Lesson>?,
     private val listener: OnSubjectClickListener
 ) : RecyclerView.Adapter<SubjectsRecyclerViewAdapter.ViewHolder>() {
 
+    /**
+     * This interface must be implemented by activities/fragments that contain
+     * this RecyclerViewAdapter to allow an interaction in this class to be
+     * communicated to the activity/fragment.
+     */
     interface OnSubjectClickListener {
         fun onSubjectClick(subject: Subject)
     }
@@ -42,34 +53,21 @@ class SubjectsRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val cursor = cursorSubjects
+        val list = subjectsList
+        val lessonsList = lessonsList
         when (getItemViewType(position)) {
             VIEW_TYPE_EMPTY -> {
                 // We are not putting any data into the empty view, therefore we do not need to do anything here
             }
             VIEW_TYPE_NOT_EMPTY -> {
-                if (cursor != null) {
-                    if (!cursor.moveToPosition(position)) {
-                        throw IllegalStateException("Couldn't move cursor to position $position")
-                    }
-
-                    // Create Subject from the data in the cursor
-                    val subject = Subject(
-                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_NAME)),
-                        cursor.getString(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_TEACHER)),
-                        cursor.getInt(cursor.getColumnIndex(SubjectsContract.Columns.SUBJECT_COLORCODE))
-                    )
-                    // Id is not set in the instructor
-                    subject.subjectId =
-                        cursor.getLong(cursor.getColumnIndex(SubjectsContract.Columns.ID))
-
+                if (list != null && lessonsList != null) {
+                    val subject = list[position]
                     val days = arrayListOf<Int>()
-                    for (lesson in lessonsFromCursor) {
-                        if (lesson.subjectId == subject.subjectId) {
+                    for (lesson in lessonsList) {
+                        if (lesson.subjectId == subject.id) {
                             days.add(lesson.day)
                         }
                     }
-
                     holder.bind(subject, days, listener)
                 }
             }
@@ -77,89 +75,59 @@ class SubjectsRecyclerViewAdapter(
     }
 
     override fun getItemCount(): Int {
-        val cursor = cursorSubjects
-        return if (cursor == null || cursor.count == 0) 1 else cursor.count
+        val list = subjectsList
+        return if (list == null || list.size == 0) 1 else list.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        val cursor = cursorSubjects
-        return if (cursor == null || cursor.count == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+        val list = subjectsList
+        return if (list == null || list.size == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
     }
 
     /**
-     * Swap in a new Cursor, returning the old Cursor.
-     * The returned old Cursor is *not* closed.
+     * Swap in a new [ArrayList], containing [Subject] objects
      *
-     * @param newCursor The new cursor to be used
-     * @return Returns the previously set Cursor, or null if there wasn't one
-     * If the given new Cursor is the same instance as the previously set Cursor, null is also returned
+     * @param newList New list containing subjects
+     * @return Returns the previously used list, or null if there wasn't one
      */
-    fun swapSubjectsCursor(newCursor: Cursor?): Cursor? {
-        if (newCursor === cursorSubjects) {
+    fun swapSubjectsList(newList: ArrayList<Subject>?): ArrayList<Subject>? {
+        if (newList === subjectsList) {
             return null
         }
         val numItems = itemCount
-        val oldCursor = cursorSubjects
-        cursorSubjects = newCursor
-        if (newCursor != null) {
-            //notify the observers about the new cursor
+        val oldList = subjectsList
+        subjectsList = newList
+        if (newList != null) {
+            //notify the observers
             notifyDataSetChanged()
         } else {
             //notify the observers about the lack of a data set
             notifyItemRangeRemoved(0, numItems)
         }
-        return oldCursor
+        return oldList
     }
 
     /**
-     * Swap in a new Cursor, returning the old Cursor.
-     * We're loading the lessons into a MutableList which will be used later to display lesson days next to subjects (in the indicators).
-     * If the number of the oldCursor's row is not equal to the newCursor's, we're deleting the content of the MutableList since it means it has been changed.
-     * Note that we are not using the getItemCount() method on numItems since it is used by onBindViewHolder to retrieve the number of the subjects to display.
-     * If we were to use it, it would lead to problems such as not displaying any subjects.
-     * The returned old Cursor is *not* closed.
+     * Swap in a new [ArrayList], containing [Lesson] objects
      *
-     * @param newCursor The new cursor to be used
-     * @return Returns the previously set Cursor, or null if there wasn't one
-     * If the given new Cursor is the same instance as the previously set Cursor, null is also returned
+     * @param newList New list containing lessons
+     * @return Returns the previously set list, or null if there wasn't one
      */
-    fun swapLessonsCursor(newCursor: Cursor?): Cursor? {
-        if (newCursor === cursorLessons) {
+    fun swapLessonsList(newList: ArrayList<Lesson>?): ArrayList<Lesson>? {
+        if (newList === lessonsList) {
             return null
         }
-        val cursor = cursorLessons
-        val numItems = if (cursor == null || cursor.count == 0) 0 else cursor.count
-        val oldCursor = cursorLessons
-        cursorLessons = newCursor
-        if (newCursor != null) {
-            lessonsFromCursor.clear()
-            loadLessonsIntoList(newCursor)
+        val list = lessonsList
+        val numItems = if (list == null || list.size == 0) 0 else list.size
+        val oldList = lessonsList
+        lessonsList = newList
+        if (newList != null) {
             notifyDataSetChanged()
         } else {
             //notify the observers about the lack of a data set
             notifyItemRangeRemoved(0, numItems)
         }
-        return oldCursor
-    }
-
-
-    private fun loadLessonsIntoList(cursor: Cursor) {
-        try {
-            while (cursor.moveToNext()) {
-                val lesson = Lesson(
-                    cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.LESSON_SUBJECT)),
-                    "A",
-                    cursor.getInt(cursor.getColumnIndex(LessonsContract.Columns.LESSON_DAY)),
-                    cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_STARTS)),
-                    cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_ENDS)),
-                    cursor.getString(cursor.getColumnIndex(LessonsContract.Columns.LESSON_LOCATION))
-                )
-                lesson.lessonId = cursor.getLong(cursor.getColumnIndex(LessonsContract.Columns.ID))
-                lessonsFromCursor.add(lesson)
-            }
-        } catch (e: Exception) {
-            throw Exception("Unknown error occurred while processing lessons cursor in SubjectsRecyclerView")
-        }
+        return oldList
     }
 
     open class ViewHolder(override val containerView: View) :

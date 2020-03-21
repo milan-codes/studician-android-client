@@ -2,22 +2,28 @@ package app.milanherke.mystudiez
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to delete [Lesson] objects in the database
+ * and belongs to [LessonDetailsFragment].
+ */
 class LessonDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun deleteLesson(lessonId: Long) {
-        // Deleting a lesson on another thread
-        // There is no need for the ViewModel to wait for the delete operation to complete so we can use this approach
-
-        // Deleting lessons
+    /**
+     * Use this function to delete a [Lesson].
+     *
+     * @param lesson Lesson that the user wants to delete
+     */
+    fun deleteLesson(lesson: Lesson) {
         GlobalScope.launch {
-            getApplication<Application>().contentResolver?.delete(
-                LessonsContract.buildUriFromId(
-                    lessonId
-                ), null, null
-            )
+            val database = Firebase.database
+            database.getReference("lessons/${FirebaseUtils.getUserId()}/${lesson.subjectId}/${lesson.id}")
+                    .setValue(null)
         }
     }
 

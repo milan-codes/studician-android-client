@@ -1,61 +1,56 @@
 package app.milanherke.mystudiez
 
 import android.app.Application
-import android.database.ContentObserver
-import android.database.Cursor
-import android.net.Uri
-import android.os.Handler
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * A simple [AndroidViewModel] subclass.
+ * This ViewModel was created to get all [Exam] objects from the database
+ * and belongs to [ExamsFragment].
+ */
 class ExamsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val contentObserverExams = object : ContentObserver(Handler()) {
-        override fun onChange(selfChange: Boolean, uri: Uri?) {
-            loadExams()
-        }
-    }
+    private val examsList = MutableLiveData<ArrayList<Exam>>()
+    val examsListLiveData: LiveData<ArrayList<Exam>>
+        get() = examsList
 
-    private val databaseCursor = MutableLiveData<Cursor>()
-    val cursorExams: LiveData<Cursor>
-        get() = databaseCursor
-
-    init {
-        // Register the content observer for exams
-        getApplication<Application>().contentResolver.registerContentObserver(
-            ExamsContract.CONTENT_URI,
-            true,
-            contentObserverExams
-        )
-    }
-
-    override fun onCleared() {
-        getApplication<Application>().contentResolver.unregisterContentObserver(
-            contentObserverExams
-        )
-    }
-
+    /**
+     * Gets all exams from the database
+     * and passes the result to [examsList]
+     */
     fun loadExams() {
-        val projection = arrayOf(
-            ExamsContract.Columns.ID,
-            ExamsContract.Columns.EXAM_NAME,
-            ExamsContract.Columns.EXAM_DESCRIPTION,
-            ExamsContract.Columns.EXAM_SUBJECT,
-            ExamsContract.Columns.EXAM_DATE,
-            ExamsContract.Columns.EXAM_REMINDER
-        )
         GlobalScope.launch {
-            val cursor = getApplication<Application>().contentResolver.query(
-                ExamsContract.CONTENT_URI,
-                projection,
-                null,
-                null,
-                "${ExamsContract.Columns.ID} DESC"
-            )
-            databaseCursor.postValue(cursor)
+            val exams: ArrayList<Exam> = arrayListOf()
+            val database = Firebase.database
+            val ref = database.getReference("exams/${FirebaseUtils.getUserId()}")
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onCancelled(e: DatabaseError) {
+                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (subjectSnapshot in dataSnapshot.children) {
+                        for (examSnapshot in subjectSnapshot.children) {
+                            val exam = examSnapshot.getValue<Exam>()
+                            if (exam != null) {
+                                exams.add(exam)
+                            }
+                        }
+                    }
+                    examsList.postValue(exams)
+                }
+            })
         }
     }
+
 }

@@ -123,4 +123,15 @@
     <string name="press_again_to_exit">Nyomja meg mégegyszer a kilépéshez</string>
     <string name="did_not_change">Nem változtatott semmit.</string>
     <string name="no_subjects_to_select_from">Nincsenek tantárgyak hozzáadva</string>
+    <string name="title_activity_login">Bejelentkezés</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Jelszó</string>
+    <string name="action_sign_in">Jelentkezz be vagy regisztrálj</string>
+    <string name="action_sign_in_short">Bejelentkezés</string>
+    <string name="welcome">Hello !</string>
+    <string name="invalid_username">Érvénytelen felhasználónév</string>
+    <string name="invalid_password">A jelszónak 5 karakternél nagyobbnak kell lennie</string>
+    <string name="login_failed">Bejelentkezés sikertelen</string>
+    <string name="bottomnav_settings">Beállítások</string>
+    <string name="sign_out">Kijelentkezés</string>
 </resources>
