@@ -1,4 +1,4 @@
-# MyStudiez Contribution Guidlines
+# MyStudiez Contribution Guideline
 The main purpose of this file is to help the larger community settle on some best practices when it comes to contributing.
 Any help you give is greatly appreciated, big or small.
 We want to make contributing to this project as easy and transparent as possible, whether it's:
@@ -42,4 +42,5 @@ Before contributing, I recommend everyone to read the [Code of conduct](/CODE_OF
 **Any contributions you make will be under the same [GPL-3.0](/LICENSE) license that covers the project!**
 
 ## References
-This contribution guidline is based on [briandk's gist - CONTRIBUTING](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62).
+This contribution guidline is based on [briandk's gist - CONTRIBUTING](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62)\
+and [BookOmatic's](https://github.com/KalleHallden/BookOmatic/blob/master/HowToContribute.md) guideline.
