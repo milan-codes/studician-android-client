@@ -134,4 +134,7 @@
     <string name="login_failed">Bejelentkezés sikertelen</string>
     <string name="bottomnav_settings">Beállítások</string>
     <string name="sign_out">Kijelentkezés</string>
+    <string name="firebase_error">Hiba az adatok betöltése közben</string>
+    <string name="firebase_user_logged_in">Felhasználó bejelentkezve</string>
+    <string name="firebase_user_logged_out">Jelentkezzen be</string>
 </resources>

@@ -134,4 +134,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="bottomnav_settings">Settings</string>
     <string name="sign_out">Sign out</string>
+    <string name="firebase_error">There was en error while getting data from database</string>
+    <string name="firebase_user_logged_in">User logged in</string>
+    <string name="firebase_user_logged_out">Please log in</string>
 </resources>

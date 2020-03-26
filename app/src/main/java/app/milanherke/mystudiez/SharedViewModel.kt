@@ -43,8 +43,10 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
      * must implement this interface to allow interactions
      * to be communicated between the classes.
      */
-    interface OnDataRetrieved {
+    interface RetrievingData {
+        fun onLoad()
         fun onSuccess(subjects: MutableMap<String, Subject>)
+        fun onFailure(e: DatabaseError)
     }
 
     /**
@@ -94,17 +96,18 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     /**
      * This function gets all [Subject] objects from the database.
      *
-     * @param listener Classes that use this function must implement [OnDataRetrieved]
+     * @param listener Classes that use this function must implement [RetrievingData]
      * @throws IllegalArgumentException when any of the retrieved subjects is null
      */
-    fun getAllSubjects(listener: OnDataRetrieved) {
+    fun getAllSubjects(listener: RetrievingData) {
         val subjects: MutableMap<String, Subject> = mutableMapOf()
         GlobalScope.launch {
+            listener.onLoad()
             val database = Firebase.database
             val ref = database.getReference("subjects/${FirebaseUtils.getUserId()}")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to read all subjects from database: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

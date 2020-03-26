@@ -115,7 +115,12 @@ class AddEditLessonFragment : Fragment() {
             val cal = Calendar.getInstance()
             TimePickerDialog(
                 context,
-                CalendarUtils.getTimeSetListener(activity!!, R.id.new_lesson_starts_at_btn, cal, false),
+                CalendarUtils.getTimeSetListener(
+                    activity!!,
+                    R.id.new_lesson_starts_at_btn,
+                    cal,
+                    false
+                ),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
@@ -127,7 +132,12 @@ class AddEditLessonFragment : Fragment() {
             val cal = Calendar.getInstance()
             TimePickerDialog(
                 context,
-                CalendarUtils.getTimeSetListener(activity!!, R.id.new_lesson_ends_at_btn, cal, false),
+                CalendarUtils.getTimeSetListener(
+                    activity!!,
+                    R.id.new_lesson_ends_at_btn,
+                    cal,
+                    false
+                ),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true

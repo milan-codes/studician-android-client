@@ -25,17 +25,31 @@ class ExamsViewModel(application: Application) : AndroidViewModel(application) {
         get() = examsList
 
     /**
-     * Gets all exams from the database
-     * and passes the result to [examsList]
+     * Classes that use this ViewModel's functions
+     * must implement this interface to allow interactions
+     * to be communicated between the classes.
      */
-    fun loadExams() {
+    interface DataFetching {
+        fun onLoad()
+        fun onSuccess()
+        fun onFailure(e: DatabaseError)
+    }
+
+    /**
+     * Gets all exams from the database
+     * and passes the result to [examsList].
+     *
+     * @param listener [DataFetching] interface to handle interaction events
+     */
+    fun loadExams(listener: DataFetching) {
         GlobalScope.launch {
+            listener.onLoad()
             val exams: ArrayList<Exam> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("exams/${FirebaseUtils.getUserId()}")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -48,6 +62,7 @@ class ExamsViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                     examsList.postValue(exams)
+                    listener.onSuccess()
                 }
             })
         }

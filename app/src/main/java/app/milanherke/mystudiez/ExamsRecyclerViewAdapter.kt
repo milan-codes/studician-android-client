@@ -156,12 +156,21 @@ class ExamsRecyclerViewAdapter(
                 containerView.details_list_subject_indicator.visibility = View.GONE
 
                 // Setting new constraints because subjectIndicator's visibility is set to gone
-                val params = containerView.details_list_title.layoutParams as ConstraintLayout.LayoutParams
+                val params =
+                    containerView.details_list_title.layoutParams as ConstraintLayout.LayoutParams
                 params.topToBottom = R.id.details_list_header1
                 params.leftToLeft = R.id.details_list_constraint
                 params.bottomToBottom = R.id.details_list_constraint
-                params.marginStart = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16F, containerView.context.resources.displayMetrics).toInt()
-                params.bottomMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16F, containerView.context.resources.displayMetrics).toInt()
+                params.marginStart = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16F,
+                    containerView.context.resources.displayMetrics
+                ).toInt()
+                params.bottomMargin = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16F,
+                    containerView.context.resources.displayMetrics
+                ).toInt()
                 containerView.details_list_title.layoutParams = params
             } else {
                 val listOfSubjects = listOfSubjects

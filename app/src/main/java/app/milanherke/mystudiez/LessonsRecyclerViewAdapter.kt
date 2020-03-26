@@ -6,7 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import app.milanherke.mystudiez.Fragments.*
+import app.milanherke.mystudiez.Fragments.OVERVIEW
+import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.LessonsRecyclerViewAdapter.OnLessonClickListener
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.details_list_item.view.*
@@ -160,12 +161,21 @@ class LessonsRecyclerViewAdapter(
                 containerView.details_list_subject_indicator.visibility = View.GONE
 
                 // Setting new constraints because subjectIndicator's visibility is set to gone
-                val params = containerView.details_list_title.layoutParams as ConstraintLayout.LayoutParams
+                val params =
+                    containerView.details_list_title.layoutParams as ConstraintLayout.LayoutParams
                 params.topToBottom = R.id.details_list_header1
                 params.leftToLeft = R.id.details_list_constraint
                 params.bottomToBottom = R.id.details_list_constraint
-                params.marginStart = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16F, containerView.context.resources.displayMetrics).toInt()
-                params.bottomMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16F, containerView.context.resources.displayMetrics).toInt()
+                params.marginStart = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16F,
+                    containerView.context.resources.displayMetrics
+                ).toInt()
+                params.bottomMargin = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16F,
+                    containerView.context.resources.displayMetrics
+                ).toInt()
                 containerView.details_list_title.layoutParams = params
             } else {
                 val listOfSubjects = listOfSubjects

@@ -36,11 +36,7 @@ class MainActivity : AppCompatActivity(),
     AddEditSubjectFragment.AddEditSubjectInteractions,
     AddEditLessonFragment.LessonSaved,
     AddEditTaskFragment.TaskSaved,
-    AddEditExamFragment.ExamSaved,
-    SubjectDetailsFragment.SubjectDetailsInteractions,
-    LessonDetailsFragment.LessonDetailsInteraction,
-    TaskDetailsFragment.TaskDetailsInteraction,
-    ExamDetailsFragment.ExamDetailsInteraction {
+    AddEditExamFragment.ExamSaved {
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
     private var subject: Subject? = null
@@ -74,10 +70,12 @@ class MainActivity : AppCompatActivity(),
             // Setting the home screen:
             // OverviewFragment is the first fragment seen by the user, just after the app has been opened
             replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
-            Toast.makeText(this, "User logged in", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.firebase_user_logged_in), Toast.LENGTH_SHORT)
+                .show()
         } else {
             replaceFragment(SettingsFragment.newInstance(), R.id.fragment_container)
-            Toast.makeText(this, "User is not logged in, please log in", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.firebase_user_logged_out), Toast.LENGTH_SHORT)
+                .show()
         }
 
         // Creating channel to support android O and higher (for notifications)
@@ -595,49 +593,27 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-
     /**
-     * Interaction interface(s) from [SubjectDetailsFragment]
+     * Registers the necessary observers
+     * to provide [MainActivity] with the latest
+     * [Subject], [Lesson], [Task] and [Exam].
      */
-
-    override fun subjectIsLoaded(subject: Subject) {
-        this.subject = subject
-    }
-
-    /**
-     * Interaction interface(s) from [SubjectDetailsFragment]
-     */
-
-    override fun swapLesson(lesson: Lesson) {
-        this.lesson = lesson
-    }
-
-
-    /**
-     * Interaction interface(s) from [TaskDetailsFragment]
-     */
-
-    override fun taskIsLoaded(task: Task) {
-        this.task = task
-    }
-
-
-    /**
-     * Interaction interface(s) from [ExamDetailsFragment]
-     */
-
-    override fun swapExam(exam: Exam) {
-        this.exam = exam
-    }
-
-    override fun swapSubject(subject: Subject) {
-        this.subject = subject
-    }
-
     private fun registerObservers() {
         sharedViewModel.subjectLiveData.observe(
             this,
             Observer { subject -> this.subject = subject }
+        )
+        sharedViewModel.lessonLiveData.observe(
+            this,
+            Observer { lesson -> this.lesson = lesson }
+        )
+        sharedViewModel.taskLiveData.observe(
+            this,
+            Observer { task -> this.task = task }
+        )
+        sharedViewModel.examLiveData.observe(
+            this,
+            Observer { exam -> this.exam = exam }
         )
     }
 }

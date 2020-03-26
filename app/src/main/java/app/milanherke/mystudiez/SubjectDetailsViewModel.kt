@@ -34,29 +34,45 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
         get() = selectedExamsList
 
     /**
+     * Classes that use this ViewModel's functions
+     * must implement this interface to allow interactions
+     * to be communicated between the classes.
+     */
+    interface DataFetching {
+        fun onLoad()
+        fun onSuccess()
+        fun onFailure(e: DatabaseError)
+    }
+
+    /**
      * Calls the necessary functions
      * to load all lessons, tasks and exams
      * of a subject.
      */
-    fun loadAllDetails(subjectId: String) {
-        loadSelectedLessons(subjectId)
-        loadSelectedTasks(subjectId)
-        loadSelectedExams(subjectId)
+    fun loadAllDetails(subjectId: String, listener: DataFetching) {
+        loadSelectedLessons(subjectId, listener)
+        loadSelectedTasks(subjectId, listener)
+        loadSelectedExams(subjectId, listener)
     }
 
     /**
-     * This function gets a selected subject's lessons.
+     * Gets a selected subject's lessons.
      *
      * @param subjectId Selected subject
+     * @param listener [DataFetching] interface to handle interaction events
      */
-    private fun loadSelectedLessons(subjectId: String) {
+    private fun loadSelectedLessons(
+        subjectId: String,
+        listener: DataFetching
+    ) {
         GlobalScope.launch {
+            listener.onLoad()
             val lessons: ArrayList<Lesson> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("lessons/${FirebaseUtils.getUserId()}/$subjectId")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to load all lessons for subject $subjectId: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -67,24 +83,30 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                         }
                     }
                     selectedLessonsList.postValue(lessons)
+                    listener.onSuccess()
                 }
             })
         }
     }
 
     /**
-     * This function gets a selected subject's tasks.
+     * Gets a selected subject's tasks.
      *
      * @param subjectId Selected subject
+     * @param listener [DataFetching] interface to handle interaction events
      */
-    private fun loadSelectedTasks(subjectId: String) {
+    private fun loadSelectedTasks(
+        subjectId: String,
+        listener: DataFetching
+    ) {
         GlobalScope.launch {
+            listener.onLoad()
             val tasks: ArrayList<Task> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}/$subjectId")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -95,6 +117,7 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                         }
                     }
                     selectedTasksList.postValue(tasks)
+                    listener.onSuccess()
                 }
             })
         }
@@ -104,15 +127,20 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
      * This function gets a selected subject's exam.
      *
      * @param subjectId Selected subject
+     * @param listener [DataFetching] interface to handle interaction events
      */
-    private fun loadSelectedExams(subjectId: String) {
+    private fun loadSelectedExams(
+        subjectId: String,
+        listener: DataFetching
+    ) {
         GlobalScope.launch {
+            listener.onLoad()
             val exams: ArrayList<Exam> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("exams/${FirebaseUtils.getUserId()}/$subjectId")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -123,6 +151,7 @@ class SubjectDetailsViewModel(application: Application) : AndroidViewModel(appli
                         }
                     }
                     selectedExamsList.postValue(exams)
+                    listener.onSuccess()
                 }
             })
         }

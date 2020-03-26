@@ -23,7 +23,7 @@ class LessonDetailsViewModel(application: Application) : AndroidViewModel(applic
         GlobalScope.launch {
             val database = Firebase.database
             database.getReference("lessons/${FirebaseUtils.getUserId()}/${lesson.subjectId}/${lesson.id}")
-                    .setValue(null)
+                .setValue(null)
         }
     }
 

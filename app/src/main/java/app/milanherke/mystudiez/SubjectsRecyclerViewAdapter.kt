@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import app.milanherke.mystudiez.SubjectsRecyclerViewAdapter.OnSubjectClickListener
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.subject_list_items.view.*
 
