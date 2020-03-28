@@ -6,12 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.Fragments.TASKS
+import app.milanherke.mystudiez.TasksViewModel.DataFetching
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
 
@@ -35,6 +38,7 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     private val tasksAdapter = TasksRecyclerViewAdapter(null, this, TASKS)
     private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: TasksInteractions? = null
+    private var progressBarHandler: ProgressBarHandler? = null
 
     /**
      * This interface must be implemented by activities that contain this
@@ -76,10 +80,26 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         // Getting all subjects from the database,
         // tasksAdapter must have a map of subjects in order to display
         // details about a task's subject
-        sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
+        sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+            override fun onLoad() {
+                val activity = activity
+                if (activity != null) {
+                    progressBarHandler = ProgressBarHandler(activity)
+                    progressBarHandler!!.showProgressBar()
+                }
+            }
+
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
                 tasksAdapter.swapSubjectsMap(subjects)
                 subjectsList = subjects
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
@@ -99,9 +119,27 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.VISIBLE
 
+        // Showing a progress bar while data is being fetched
+        progressBarHandler = ProgressBarHandler(activity!!)
+        val dataFetchingListener: DataFetching = object : DataFetching {
+            override fun onLoad() {
+                progressBarHandler!!.showProgressBar()
+            }
+
+            override fun onSuccess() {
+                progressBarHandler!!.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         // Registering observer
-        // Swapping the tasks list in TasksRecyclerViewAdapter
-        // and running layout animation
         viewModel.tasksListLiveData.observe(
             this,
             Observer { list ->
@@ -109,7 +147,7 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
                 if (task_list != null && list.size != 0) Animations.runLayoutAnimation(task_list)
             }
         )
-        viewModel.loadTasks()
+        viewModel.loadTasks(dataFetchingListener)
     }
 
     override fun onDetach() {

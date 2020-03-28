@@ -25,17 +25,31 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
         get() = tasksList
 
     /**
+     * Classes that use this ViewModel's functions
+     * must implement this interface to allow interactions
+     * to be communicated between the classes.
+     */
+    interface DataFetching {
+        fun onLoad()
+        fun onSuccess()
+        fun onFailure(e: DatabaseError)
+    }
+
+    /**
      * Gets all tasks from the database
      * and passes the result to [tasksList]
+     *
+     * @param listener [DataFetching] interface to handle interaction events
      */
-    fun loadTasks() {
+    fun loadTasks(listener: DataFetching) {
         GlobalScope.launch {
+            listener.onLoad()
             val tasks: ArrayList<Task> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -48,6 +62,7 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                     tasksList.postValue(tasks)
+                    listener.onSuccess()
                 }
             })
         }

@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +20,6 @@ private const val ARG_SUBJECT = "subject"
  * The purpose if this fragment is to display the details of an [Exam].
  * The user can delete an exam from this fragment
  * or launch a new fragment ([AddEditExamFragment]) to edit it.
- * Activities that contain this fragment must implement the
- * [ExamDetailsFragment.ExamDetailsInteraction] interface
- * to handle interaction events.
  * Use the [ExamDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -31,7 +27,6 @@ class ExamDetailsFragment : Fragment() {
 
     private var exam: Exam? = null
     private var subject: Subject? = null
-    private var listener: ExamDetailsInteraction? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(ExamDetailsViewModel::class.java)
     }
@@ -39,30 +34,14 @@ class ExamDetailsFragment : Fragment() {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface ExamDetailsInteraction {
-        fun swapExam(exam: Exam)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is ExamDetailsInteraction) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement ExamDetailsInteraction")
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         exam = arguments?.getParcelable(ARG_EXAM)
         subject = arguments?.getParcelable(ARG_SUBJECT)
-        listener?.swapExam(exam!!)
+        val exam = exam
+        if (exam != null) {
+            sharedViewModel.swapExam(exam)
+        }
     }
 
     override fun onCreateView(
@@ -120,7 +99,6 @@ class ExamDetailsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
         FragmentBackStack.getInstance(context!!).push(Fragments.EXAM_DETAILS)
     }
 

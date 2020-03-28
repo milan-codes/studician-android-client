@@ -74,7 +74,10 @@ class CalendarUtils {
 
                 if (dateBefore) {
                     button.text =
-                        "${button.text} ${SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)}"
+                        "${button.text} ${SimpleDateFormat(
+                            "HH:mm",
+                            Locale.ENGLISH
+                        ).format(cal.time)}"
                 } else {
                     button.text = SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)
                 }

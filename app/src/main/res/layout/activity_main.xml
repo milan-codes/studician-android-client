@@ -48,4 +48,19 @@
         android:src="@drawable/baseline_add_24"
         app:layout_anchor="@id/bar" />
 
+    <View
+        android:id="@+id/progressBar_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#88A6A6A6"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

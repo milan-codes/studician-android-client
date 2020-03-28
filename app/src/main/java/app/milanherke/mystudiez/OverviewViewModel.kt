@@ -2,7 +2,6 @@ package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -36,8 +35,15 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     val examsListLiveData: LiveData<ArrayList<Exam>>
         get() = examsList
 
-    init {
-        loadAllDetails(Date())
+    /**
+     * Classes that use this ViewModel's functions
+     * must implement this interface to allow interactions
+     * to be communicated between the classes.
+     */
+    interface DataFetching {
+        fun onLoad()
+        fun onSuccess()
+        fun onFailure(e: DatabaseError)
     }
 
     /**
@@ -45,21 +51,26 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
      * to load all details.
      * (All lessons, tasks, exams)
      */
-    fun loadAllDetails(date: Date) {
-        loadLessons(date)
-        loadTasks(date)
-        loadExams(date)
+    fun loadAllDetails(date: Date, listener: DataFetching) {
+        loadLessons(date, listener)
+        loadTasks(date, listener)
+        loadExams(date, listener)
     }
 
     /**
-     * This function gets all lessons from the database
+     * Gets all lessons from the database
      * and passes the result to [lessonsList].
      *
      * @param date Specified date
+     * @param listener [DataFetching] interface to handle interaction events
      */
     @SuppressLint("SimpleDateFormat")
-    private fun loadLessons(date: Date) {
+    private fun loadLessons(
+        date: Date,
+        listener: DataFetching
+    ) {
         GlobalScope.launch {
+            listener.onLoad()
             val cal = Calendar.getInstance()
             cal.time = date
             val numOfDay = cal.get(Calendar.DAY_OF_WEEK)
@@ -68,7 +79,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
             val ref = database.getReference("lessons/${FirebaseUtils.getUserId()}")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
-                    throw IllegalStateException("There was an error while trying to load all lessons: $e")
+                    listener.onFailure(e)
                 }
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -85,6 +96,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                         }
                     }
                     lessonsList.postValue(lessons)
+                    listener.onSuccess()
                 }
             })
         }
@@ -95,10 +107,15 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
      * and passes the result to [tasksList]
      *
      * @param date Specified date
+     * @param listener [DataFetching] interface to handle interaction events
      */
     @SuppressLint("SimpleDateFormat")
-    private fun loadTasks(date: Date) {
+    private fun loadTasks(
+        date: Date,
+        listener: DataFetching
+    ) {
         GlobalScope.launch {
+            listener.onLoad()
             val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
             val tasks: ArrayList<Task> = arrayListOf()
             val database = Firebase.database
@@ -113,7 +130,6 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                         for (taskSnapshot in subjectSnapshot.children) {
                             if (taskSnapshot != null) {
                                 val task = taskSnapshot.getValue<Task>()
-                                Log.e("dddd", "task to string  ${task}")
                                 if (task != null) {
                                     if (task.dueDate == currentDate) {
                                         tasks.add(task)
@@ -123,6 +139,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                         }
                     }
                     tasksList.postValue(tasks)
+                    listener.onSuccess()
                 }
             })
         }
@@ -133,10 +150,15 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
      * and passes the result to [examsList]
      *
      * @param date Specified date
+     * @param listener [DataFetching] interface to handle interaction events
      */
     @SuppressLint("SimpleDateFormat")
-    private fun loadExams(date: Date) {
+    private fun loadExams(
+        date: Date,
+        listener: DataFetching
+    ) {
         GlobalScope.launch {
+            listener.onLoad()
             val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
             val exams: ArrayList<Exam> = arrayListOf()
             val database = Firebase.database
@@ -158,6 +180,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
                         }
                     }
                     examsList.postValue(exams)
+                    listener.onSuccess()
                 }
             })
         }

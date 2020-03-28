@@ -6,12 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.ExamsViewModel.DataFetching
 import app.milanherke.mystudiez.Fragments.EXAMS
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exams.*
 
@@ -35,6 +38,7 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
     private val examsAdapter = ExamsRecyclerViewAdapter(null, this, EXAMS)
     private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: ExamsInteractions? = null
+    private var progressBarHandler: ProgressBarHandler? = null
 
     /**
      * This interface must be implemented by activities that contain this
@@ -78,12 +82,30 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         // Getting all subjects from the database,
         // examsAdapter must have a map of subjects in order to display
         // details about an exam's subject
-        sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
+        sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+            override fun onLoad() {
+                val activity = activity
+                if (activity != null) {
+                    progressBarHandler = ProgressBarHandler(activity)
+                    progressBarHandler!!.showProgressBar()
+                }
+            }
+
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
                 exam_list.layoutManager = LinearLayoutManager(context)
                 exam_list.adapter = examsAdapter
                 examsAdapter.swapSubjectsMap(subjects)
                 subjectsList = subjects
+
+                progressBarHandler!!.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
@@ -100,6 +122,26 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.VISIBLE
 
+        // Showing a progress bar while data is being fetched
+        progressBarHandler = ProgressBarHandler(activity!!)
+        val dataFetchingListener: DataFetching = object : DataFetching {
+            override fun onLoad() {
+                progressBarHandler!!.showProgressBar()
+            }
+
+            override fun onSuccess() {
+                progressBarHandler!!.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         // Registering observer
         // Swapping the exams list in ExamsRecyclerViewAdapter
         // and running layout animation
@@ -110,7 +152,7 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
                 if (exam_list != null && list.size != 0) Animations.runLayoutAnimation(exam_list)
             }
         )
-        viewModel.loadExams()
+        viewModel.loadExams(dataFetchingListener)
     }
 
     override fun onDetach() {

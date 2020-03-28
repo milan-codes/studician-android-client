@@ -3,6 +3,9 @@ package app.milanherke.mystudiez
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.recyclerview.widget.RecyclerView
+import app.milanherke.mystudiez.Animations.Companion.DEFAULT_SHARED_ELEMENT_TRANSITION_TIME
+import app.milanherke.mystudiez.Animations.Companion.DEFAULT_TRANSITION_TIME
+import app.milanherke.mystudiez.Animations.Companion.runLayoutAnimation
 
 /**
  * Simple class that holds the following in a companion object:

@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.SharedViewModel.RetrievingData
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_exam.*
 import java.util.*
@@ -73,14 +75,6 @@ class AddEditExamFragment : Fragment() {
         super.onCreate(savedInstanceState)
         exam = arguments?.getParcelable(ARG_EXAM)
         subject = arguments?.getParcelable(ARG_SUBJECT)
-
-        if (FragmentBackStack.getInstance(activity!!).peek() != Fragments.EXAM_DETAILS) {
-            sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
-                override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                    listOfSubjects = subjects
-                }
-            })
-        }
     }
 
     override fun onCreateView(
@@ -152,6 +146,31 @@ class AddEditExamFragment : Fragment() {
 
         if (activity is AppCompatActivity) {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+
+        // If the last fragment in the backStack is not TaskDetails
+        // then we need to fetch all of the subjects to let the users choose one
+        // for the exam they are about to create
+        if (FragmentBackStack.getInstance(context!!).peek() != Fragments.EXAM_DETAILS) {
+            val progressBar = ProgressBarHandler(activity!!)
+            sharedViewModel.getAllSubjects(object : RetrievingData {
+                override fun onLoad() {
+                    progressBar.showProgressBar()
+                }
+
+                override fun onSuccess(subjects: MutableMap<String, Subject>) {
+                    listOfSubjects = subjects
+                    progressBar.hideProgressBar()
+                }
+
+                override fun onFailure(e: DatabaseError) {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.firebase_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
         }
 
         // Hiding bottom navigation bar and fab button

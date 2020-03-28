@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +20,6 @@ private const val ARG_SUBJECT = "subject"
  * This fragment was created to list the details of a [Task].
  * The user can delete a task from this fragment
  * or launch a new fragment ([AddEditTaskFragment]) to edit it.
- * Activities that contain this fragment must implement the
- * [TaskDetailsFragment.TaskDetailsInteraction] interface
- * to handle interaction events.
  * Use the [TaskDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -31,7 +27,6 @@ class TaskDetailsFragment : Fragment() {
 
     private var task: Task? = null
     private var subject: Subject? = null
-    private var listener: TaskDetailsInteraction? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(TaskDetailsViewModel::class.java)
     }
@@ -39,31 +34,14 @@ class TaskDetailsFragment : Fragment() {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface TaskDetailsInteraction {
-        fun taskIsLoaded(task: Task)
-        fun swapSubject(subject: Subject)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is TaskDetailsInteraction) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement TaskDetailsInteraction")
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         task = arguments?.getParcelable(ARG_TASK)
         subject = arguments?.getParcelable(ARG_SUBJECT)
-        listener?.taskIsLoaded(task!!)
+        val task = task
+        if (task != null) {
+            sharedViewModel.swapTask(task)
+        }
     }
 
     override fun onCreateView(
@@ -123,7 +101,6 @@ class TaskDetailsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
         FragmentBackStack.getInstance(context!!).push(Fragments.TASK_DETAILS)
     }
 

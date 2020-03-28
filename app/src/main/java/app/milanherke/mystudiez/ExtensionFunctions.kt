@@ -69,8 +69,7 @@ fun FragmentActivity.replaceFragmentWithTransition(
     fragment.enterTransition = enterTransition
 
     fragmentTransaction.addSharedElement(this.toolbar, this.toolbar.transitionName)
-    fragmentTransaction.replace(frameId, fragment)
-    fragmentTransaction.commitAllowingStateLoss()
+    supportFragmentManager.inTransaction { replace(frameId, fragment) }
 }
 
 /**

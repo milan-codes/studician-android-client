@@ -1,11 +1,6 @@
 package app.milanherke.mystudiez
 
-import android.content.Context
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 /**
  * Simple class that holds frequently used functions in a companion object

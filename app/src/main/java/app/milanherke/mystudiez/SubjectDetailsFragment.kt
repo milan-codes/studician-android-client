@@ -1,17 +1,19 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
+import app.milanherke.mystudiez.SubjectDetailsViewModel.DataFetching
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subject_details.*
 
@@ -23,9 +25,6 @@ private const val ARG_SUBJECT = "subject"
  * The purpose of this fragment is to display the details of a [Subject]
  * The user can delete a subject from this fragment
  * or launch a new fragment ([AddEditSubjectFragment]) to edit it.
- * Activities that contain this fragment must implement the
- * [SubjectDetailsFragment.SubjectDetailsInteractions] interface
- * to handle interaction events.
  * Use the [SubjectDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -35,7 +34,6 @@ class SubjectDetailsFragment : Fragment(),
     ExamsRecyclerViewAdapter.OnExamClickListener {
 
     private var subject: Subject? = null
-    private var listener: SubjectDetailsInteractions? = null
     private val lessonsAdapter = LessonsRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
     private val tasksAdapter = TasksRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
     private val examsAdapter = ExamsRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
@@ -46,29 +44,13 @@ class SubjectDetailsFragment : Fragment(),
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface SubjectDetailsInteractions {
-        fun subjectIsLoaded(subject: Subject)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is SubjectDetailsInteractions) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement SubjectDetailsInteractions")
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         subject = arguments?.getParcelable(ARG_SUBJECT)
-        listener?.subjectIsLoaded(subject!!)
+        val subject = subject
+        if (subject != null) {
+            sharedViewModel.swapSubject(subject)
+        }
     }
 
     override fun onCreateView(
@@ -162,6 +144,26 @@ class SubjectDetailsFragment : Fragment(),
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
 
+        // Showing a progress bar while data is being fetched
+        val progressBar = ProgressBarHandler(activity!!)
+        val dataFetchingListener: DataFetching = object : DataFetching {
+            override fun onLoad() {
+                progressBar.showProgressBar()
+            }
+
+            override fun onSuccess() {
+                progressBar.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         // Passing the subject
         // MainActivity always needs to have the currently used subject
         val subject = subject
@@ -172,19 +174,21 @@ class SubjectDetailsFragment : Fragment(),
         // Registering observers
         viewModel.selectedLessonsLiveData.observe(
             this,
-            Observer { list -> lessonsAdapter.swapLessonsList(list) })
+            Observer { list -> lessonsAdapter.swapLessonsList(list) }
+        )
         viewModel.selectedTasksLiveData.observe(
             this,
-            Observer { list -> tasksAdapter.swapTasksList(list) })
+            Observer { list -> tasksAdapter.swapTasksList(list) }
+        )
         viewModel.selectedExamsLiveData.observe(
             this,
-            Observer { list -> examsAdapter.swapExamsList(list) })
-        viewModel.loadAllDetails(subject!!.id)
+            Observer { list -> examsAdapter.swapExamsList(list) }
+        )
+        viewModel.loadAllDetails(subject!!.id, dataFetchingListener)
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
         FragmentBackStack.getInstance(context!!).push(SUBJECT_DETAILS)
     }
 

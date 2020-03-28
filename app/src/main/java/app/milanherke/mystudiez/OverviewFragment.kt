@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +15,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.CalendarUtils.Companion.DateSet
 import app.milanherke.mystudiez.Fragments.OVERVIEW
+import app.milanherke.mystudiez.OverviewViewModel.DataFetching
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_overview.*
 import java.text.SimpleDateFormat
@@ -44,6 +47,7 @@ class OverviewFragment : Fragment(),
     private val examsAdapter = ExamsRecyclerViewAdapter(null, this, OVERVIEW)
     private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: OverviewInteractions? = null
+    private var progressBarHandler: ProgressBarHandler? = null
 
     /**
      * This interface must be implemented by activities that contain this
@@ -83,14 +87,31 @@ class OverviewFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.overview_title)
-
         // Getting all subjects from the database
-        sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
+        sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+            override fun onLoad() {
+                val activity = activity
+                if (activity != null) {
+                    progressBarHandler = ProgressBarHandler(activity)
+                    progressBarHandler!!.showProgressBar()
+                }
+            }
+
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
                 lessonsAdapter.swapSubjectMap(subjects)
                 tasksAdapter.swapSubjectsMap(subjects)
                 examsAdapter.swapSubjectsMap(subjects)
                 subjectsList = subjects
+
+                progressBarHandler!!.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
 
@@ -117,9 +138,27 @@ class OverviewFragment : Fragment(),
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.GONE
 
+        // Showing a progress bar while data is being fetched
+        progressBarHandler = ProgressBarHandler(activity!!)
+        val dataFetchingListener: DataFetching = object : DataFetching {
+            override fun onLoad() {
+                progressBarHandler!!.showProgressBar()
+            }
+
+            override fun onSuccess() {
+                progressBarHandler!!.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         //Registering observers
-        // Swapping subject list in RecyclerViewAdapters
-        // and running layout animations
         viewModel.lessonsListLiveData.observe(
             this,
             Observer { list ->
@@ -147,7 +186,7 @@ class OverviewFragment : Fragment(),
                 )
             }
         )
-        viewModel.loadAllDetails(Date())
+        viewModel.loadAllDetails(Date(), dataFetchingListener)
 
         // Setting the default date
         overview_date_button.text =
@@ -156,10 +195,13 @@ class OverviewFragment : Fragment(),
 
         overview_date_button.setOnClickListener {
             val cal = Calendar.getInstance()
-            val listener =
-                CalendarUtils.getDateSetListener(activity!!, R.id.overview_date_button, cal, object : DateSet {
+            val listener = CalendarUtils.getDateSetListener(
+                activity!!,
+                R.id.overview_date_button,
+                cal,
+                object : DateSet {
                     override fun onSuccess(date: Date) {
-                        viewModel.loadAllDetails(date)
+                        viewModel.loadAllDetails(date, dataFetchingListener)
                     }
                 })
             DatePickerDialog(

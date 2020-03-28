@@ -6,11 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.SubjectsViewModel.DataFetching
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subjects.*
 
@@ -85,6 +88,26 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         activity!!.bar.visibility = View.VISIBLE
         activity!!.fab.visibility = View.VISIBLE
 
+        // Showing a progress bar while data is being fetched
+        val progressBar = ProgressBarHandler(activity!!)
+        val dataFetchingListener: DataFetching = object : DataFetching {
+            override fun onLoad() {
+                progressBar.showProgressBar()
+            }
+
+            override fun onSuccess() {
+                progressBar.hideProgressBar()
+            }
+
+            override fun onFailure(e: DatabaseError) {
+                Toast.makeText(
+                    context,
+                    getString(R.string.firebase_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
         // Registering observers
         viewModel.subjectsListLiveData.observe(
             this,
@@ -102,8 +125,8 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
                     subject_list
                 )
             })
-        viewModel.loadSubjects()
-        viewModel.loadLessonsForSubjects()
+        viewModel.loadSubjects(dataFetchingListener)
+        viewModel.loadLessonsForSubjects(dataFetchingListener)
     }
 
     override fun onDetach() {

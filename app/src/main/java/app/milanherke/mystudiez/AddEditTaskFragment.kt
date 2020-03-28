@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.Fragments.TASK_DETAILS
+import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_add_edit_task.*
 import java.util.*
@@ -43,6 +45,7 @@ class AddEditTaskFragment : Fragment() {
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
+    private var progressBarHandler: ProgressBarHandler? = null
 
     /**
      * This interface must be implemented by activities that contain this
@@ -73,14 +76,6 @@ class AddEditTaskFragment : Fragment() {
         super.onCreate(savedInstanceState)
         task = arguments?.getParcelable(ARG_TASK)
         subject = arguments?.getParcelable(ARG_SUBJECT)
-
-        if (FragmentBackStack.getInstance(activity!!).peek() != Fragments.TASK_DETAILS) {
-            sharedViewModel.getAllSubjects(object : SharedViewModel.OnDataRetrieved {
-                override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                    listOfSubjects = subjects
-                }
-            })
-        }
     }
 
     override fun onCreateView(
@@ -161,6 +156,34 @@ class AddEditTaskFragment : Fragment() {
         activity!!.bar.visibility = View.GONE
         activity!!.fab.visibility = View.GONE
 
+        // If the last fragment in the backStack is not TaskDetails
+        // then we need to fetch all of the subjects to let the users choose one
+        // for the exam they are about to create
+        if (FragmentBackStack.getInstance(activity!!).peek() != TASK_DETAILS) {
+            sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+                override fun onLoad() {
+                    val activity = activity
+                    if (activity != null) {
+                        progressBarHandler = ProgressBarHandler(activity)
+                        progressBarHandler!!.showProgressBar()
+                    }
+                }
+
+                override fun onSuccess(subjects: MutableMap<String, Subject>) {
+                    listOfSubjects = subjects
+                    progressBarHandler!!.hideProgressBar()
+                }
+
+                override fun onFailure(e: DatabaseError) {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.firebase_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            })
+        }
+
         // User must set a subject if a new task is created
         if (new_task_subject_btn.isEnabled) {
             new_task_subject_btn.setOnClickListener {
@@ -177,7 +200,8 @@ class AddEditTaskFragment : Fragment() {
         new_task_due_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
-                context!!, CalendarUtils.getDateSetListener(activity!!, R.id.new_task_due_date_btn, cal),
+                context!!,
+                CalendarUtils.getDateSetListener(activity!!, R.id.new_task_due_date_btn, cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -195,7 +219,8 @@ class AddEditTaskFragment : Fragment() {
                 true
             ).show()
             DatePickerDialog(
-                context!!, CalendarUtils.getDateSetListener(activity!!, R.id.new_task_reminder_btn, cal),
+                context!!,
+                CalendarUtils.getDateSetListener(activity!!, R.id.new_task_reminder_btn, cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)

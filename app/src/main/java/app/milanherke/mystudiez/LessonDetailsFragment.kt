@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +20,6 @@ private const val ARG_SUBJECT = "subject"
  * The purpose of this fragment is to display the details of a [Lesson].
  * The user can delete a lesson from this fragment
  * or launch a new fragment ([AddEditLessonFragment]) to edit it.
- * Activities that contain this fragment must implement the
- * [LessonDetailsFragment.LessonDetailsInteraction] interface
- * to handle interaction events.
  * Use the [LessonDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -31,7 +27,6 @@ class LessonDetailsFragment : Fragment() {
 
     private var lesson: Lesson? = null
     private var subject: Subject? = null
-    private var listener: LessonDetailsInteraction? = null
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(LessonDetailsViewModel::class.java)
     }
@@ -39,30 +34,14 @@ class LessonDetailsFragment : Fragment() {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface LessonDetailsInteraction {
-        fun swapLesson(lesson: Lesson)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is LessonDetailsInteraction) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement LessonDetailsInteraction")
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lesson = arguments?.getParcelable(ARG_LESSON)
         subject = arguments?.getParcelable(ARG_SUBJECT)
-        listener?.swapLesson(lesson!!)
+        val lesson = lesson
+        if (lesson != null) {
+            sharedViewModel.swapLesson(lesson)
+        }
     }
 
     override fun onCreateView(
@@ -125,7 +104,6 @@ class LessonDetailsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
         FragmentBackStack.getInstance(context!!).push(Fragments.LESSON_DETAILS)
     }
 
