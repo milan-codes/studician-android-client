@@ -16,15 +16,14 @@ Great bug reports tend to have:
   - It is helpful to include the logcat message you're getting.
 - What you expected would happen
 
-Make sure that you choose the `bug` label when you create the issue!
+Label, Milestone, and Project fields are going to be set by admins.
 
 ### Feature requests
 Great feature requests tend to have:
 - A short, meaningful title
 - A great description of why it is needed
 
-Make sure that you choose the `enhancement` label when you create the issue!\
-Leave the Milestone and Project field empty! It will be set by maintainers.
+Label, Milestone, and Project fields are going to be set by admins.
 
 ## Contribution
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
