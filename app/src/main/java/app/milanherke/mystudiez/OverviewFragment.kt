@@ -162,7 +162,8 @@ class OverviewFragment : Fragment(),
         viewModel.lessonsListLiveData.observe(
             this,
             Observer { list ->
-                lessonsAdapter.swapLessonsList(list)
+                val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::starts)))
+                lessonsAdapter.swapLessonsList(sortedList)
                 if (overview_schedule_list != null && list.size != 0) Animations.runLayoutAnimation(
                     overview_schedule_list
                 )
@@ -171,7 +172,8 @@ class OverviewFragment : Fragment(),
         viewModel.tasksListLiveData.observe(
             this,
             Observer { list ->
-                tasksAdapter.swapTasksList(list)
+                val sortedList = ArrayList(list.sortedWith(compareBy(Task::name)))
+                tasksAdapter.swapTasksList(sortedList)
                 if (overview_task_list != null && list.size != 0) Animations.runLayoutAnimation(
                     overview_task_list
                 )
@@ -180,7 +182,8 @@ class OverviewFragment : Fragment(),
         viewModel.examsListLiveData.observe(
             this,
             Observer { list ->
-                examsAdapter.swapExamsList(list)
+                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::name)))
+                examsAdapter.swapExamsList(sortedList)
                 if (overview_exam_list != null && list.size != 0) Animations.runLayoutAnimation(
                     overview_exam_list
                 )
