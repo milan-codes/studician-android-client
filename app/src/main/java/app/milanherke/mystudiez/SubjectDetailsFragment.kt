@@ -175,13 +175,13 @@ class SubjectDetailsFragment : Fragment(),
         viewModel.selectedLessonsLiveData.observe(
             this,
             Observer { list ->
-                val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::day)))
+                val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::day, Lesson::starts)))
                 lessonsAdapter.swapLessonsList(sortedList) }
         )
         viewModel.selectedTasksLiveData.observe(
             this,
             Observer { list ->
-                val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate)))
+                val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
                 tasksAdapter.swapTasksList(sortedList) }
         )
         viewModel.selectedExamsLiveData.observe(

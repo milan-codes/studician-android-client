@@ -143,7 +143,7 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
         viewModel.tasksListLiveData.observe(
             this,
             Observer { list ->
-                val sortedList = ArrayList(list.sortedWith(compareBy(Task::name)))
+                val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
                 tasksAdapter.swapTasksList(sortedList)
                 if (task_list != null && list.size != 0) Animations.runLayoutAnimation(task_list)
             }
