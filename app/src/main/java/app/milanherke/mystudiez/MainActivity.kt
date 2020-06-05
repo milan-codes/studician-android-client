@@ -532,13 +532,10 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onSaveTaskClickListener(task: Task, subject: Subject) {
-        if (task.reminder.isNotEmpty()) {
+        val reminder = task.reminder
+        if (reminder != null) {
             val notification =
                 createNotification(getString(R.string.notification_task_reminder_title), task.name)
-            val reminder = SimpleDateFormat(
-                "dd/MM/yyyy hh:mm:ss",
-                Locale.getDefault()
-            ).parse(task.reminder + ":00")
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, task, null)
         }

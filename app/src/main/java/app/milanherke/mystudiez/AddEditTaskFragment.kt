@@ -1,10 +1,11 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
-import android.app.DatePickerDialog
+            import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.Fragments.TASK_DETAILS
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
@@ -35,6 +37,8 @@ private const val ARG_SUBJECT = "subject"
 class AddEditTaskFragment : Fragment() {
     private var task: Task? = null
     private var subject: Subject? = null
+    private var dueDate: Date? = null
+    private var reminder: Date? = null
     private var listener: TaskSaved? = null
     private var listOfSubjects: MutableMap<String, Subject>? = null
     private var selectedSubjectId: String? = null
@@ -75,6 +79,14 @@ class AddEditTaskFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         task = arguments?.getParcelable(ARG_TASK)
+
+        // Avoiding problems with smart-cast
+        val task = task
+        if (task != null) {
+            dueDate = task.dueDate
+            reminder = task.reminder
+        }
+
         subject = arguments?.getParcelable(ARG_SUBJECT)
     }
 
@@ -91,6 +103,7 @@ class AddEditTaskFragment : Fragment() {
 
         // Avoiding problems with smart cast
         val task = task
+        val taskReminder = task?.reminder
         val subject = subject
         val listOfSubjects = listOfSubjects
 
@@ -128,9 +141,8 @@ class AddEditTaskFragment : Fragment() {
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_task_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
             new_task_subject_btn.isEnabled = false
-            new_task_due_date_btn.text = task.dueDate
-            new_task_reminder_btn.text =
-                if (task.reminder.isEmpty()) getString(R.string.add_edit_lesson_btn) else task.reminder
+            new_task_due_date_btn.text = CalendarUtils.dateToString(task.dueDate, true)
+            new_task_reminder_btn.text = if (taskReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(taskReminder, true)
 
         } else if (task == null && subject != null) {
             // Fragment called from SubjectDetailsFragment
@@ -196,12 +208,22 @@ class AddEditTaskFragment : Fragment() {
             showTaskTypesPopUp(it)
         }
 
+        val calendarListener: CalendarInteractions = object: CalendarInteractions {
+            override fun onDateSet(date: Date) {
+                dueDate = date
+            }
+
+            override fun onTimeSet(date: Date) {
+                reminder = date
+            }
+        }
+
         // User must set the due date
         new_task_due_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
                 context!!,
-                CalendarUtils.getDateSetListener(activity!!, R.id.new_task_due_date_btn, cal),
+                CalendarUtils.getDateSetListener(activity!!, R.id.new_task_due_date_btn, cal, calendarListener),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -213,7 +235,7 @@ class AddEditTaskFragment : Fragment() {
             val cal = Calendar.getInstance()
             TimePickerDialog(
                 context,
-                CalendarUtils.getTimeSetListener(activity!!, R.id.new_task_reminder_btn, cal, true),
+                CalendarUtils.getTimeSetListener(activity!!, R.id.new_task_reminder_btn, cal, true, calendarListener),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
@@ -298,8 +320,8 @@ class AddEditTaskFragment : Fragment() {
             new_task_desc.text.toString(),
             if (taskType == 1 || taskType == 2) taskType else throw IllegalArgumentException("Parameter taskType ($taskType) must be one or two"),
             selectedSubjectId ?: (subject?.id ?: ""),
-            new_task_due_date_btn.text.toString(),
-            if (new_task_reminder_btn.text.toString() != getString(R.string.add_edit_lesson_btn)) new_task_reminder_btn.text.toString() else ""
+            dueDate!!,
+            reminder
         )
         task.id = this.task?.id ?: ""
         return task

@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.milanherke.mystudiez.CalendarUtils.Companion.DateSet
+import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.OverviewViewModel.DataFetching
 import com.google.firebase.database.DatabaseError
@@ -202,10 +202,12 @@ class OverviewFragment : Fragment(),
                 activity!!,
                 R.id.overview_date_button,
                 cal,
-                object : DateSet {
-                    override fun onSuccess(date: Date) {
+                object : CalendarInteractions {
+                    override fun onDateSet(date: Date) {
                         viewModel.loadAllDetails(date, dataFetchingListener)
                     }
+
+                    override fun onTimeSet(date: Date) {}
                 })
             DatePickerDialog(
                 context!!, listener,

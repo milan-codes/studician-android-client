@@ -116,7 +116,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     ) {
         GlobalScope.launch {
             listener.onLoad()
-            val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
+            val currentDate = Date(CalendarUtils.roundToMidnight(date.time))
             val tasks: ArrayList<Task> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}")
