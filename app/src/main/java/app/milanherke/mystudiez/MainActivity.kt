@@ -563,13 +563,10 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onSaveExamClickListener(exam: Exam, subject: Subject) {
-        if (exam.reminder.isNotEmpty() && exam.reminder != getString(R.string.add_edit_lesson_btn)) {
+        val reminder = exam.reminder
+        if (reminder != null) {
             val notification =
                 createNotification(getString(R.string.notification_exam_reminder_title), exam.name)
-            val reminder = SimpleDateFormat(
-                "dd/MM/yyyy hh:mm:ss",
-                Locale.getDefault()
-            ).parse(exam.reminder + ":00")
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, null, exam)
         }

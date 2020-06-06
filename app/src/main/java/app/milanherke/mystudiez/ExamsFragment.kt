@@ -148,7 +148,7 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         viewModel.examsListLiveData.observe(
             this,
             Observer { list ->
-                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::name)))
+                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
                 examsAdapter.swapExamsList(sortedList)
                 if (exam_list != null && list.size != 0) Animations.runLayoutAnimation(exam_list)
             }

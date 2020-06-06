@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.SharedViewModel.RetrievingData
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,6 +37,8 @@ class AddEditExamFragment : Fragment() {
 
     private var exam: Exam? = null
     private var subject: Subject? = null
+    private var examDate: Date? = null
+    private var reminder: Date? = null
     private var listener: ExamSaved? = null
     private var listOfSubjects: MutableMap<String, Subject>? = null
     private var selectedSubjectId: String? = null
@@ -74,6 +77,14 @@ class AddEditExamFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         exam = arguments?.getParcelable(ARG_EXAM)
+
+        // Avoiding problems with smart-cast
+        val exam = exam
+        if (exam != null) {
+            examDate = exam.date
+            reminder = exam.reminder
+        }
+
         subject = arguments?.getParcelable(ARG_SUBJECT)
     }
 
@@ -90,6 +101,7 @@ class AddEditExamFragment : Fragment() {
 
         // Avoiding problems with smart cast
         val exam = exam
+        val examReminder = exam?.reminder
         val subject = subject
         val listOfSubjects = listOfSubjects
 
@@ -125,9 +137,8 @@ class AddEditExamFragment : Fragment() {
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_exam_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
             new_exam_subject_btn.isEnabled = false
-            new_exam_date_btn.text = exam.date
-            new_exam_reminder_btn.text = exam.reminder
-
+            new_exam_date_btn.text = CalendarUtils.dateToString(exam.date, false)
+            new_exam_reminder_btn.text = if (examReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(examReminder, true)
         } else if (exam == null && subject != null) {
             // Fragment called from SubjectDetailsFragment
             // User wants to create a new exam
@@ -184,12 +195,22 @@ class AddEditExamFragment : Fragment() {
             }
         }
 
+        val calendarListener : CalendarInteractions = object: CalendarInteractions {
+            override fun onDateSet(date: Date) {
+                examDate = date
+            }
+
+            override fun onTimeSet(date: Date) {
+                reminder = date
+            }
+        }
+
         // User must set the date for the exam
         new_exam_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
                 context!!,
-                CalendarUtils.getDateSetListener(activity!!, R.id.new_exam_date_btn, cal),
+                CalendarUtils.getDateSetListener(activity!!, R.id.new_exam_date_btn, cal, calendarListener),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -201,7 +222,7 @@ class AddEditExamFragment : Fragment() {
             val cal = Calendar.getInstance()
             TimePickerDialog(
                 context,
-                CalendarUtils.getTimeSetListener(activity!!, R.id.new_exam_reminder_btn, cal, true),
+                CalendarUtils.getTimeSetListener(activity!!, R.id.new_exam_reminder_btn, cal, true, calendarListener),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
@@ -285,8 +306,8 @@ class AddEditExamFragment : Fragment() {
             new_exam_name.text.toString(),
             new_exam_desc.text.toString(),
             selectedSubjectId ?: (subject?.id ?: ""),
-            new_exam_date_btn.text.toString(),
-            if (new_exam_reminder_btn.text.toString() != getString(R.string.add_edit_lesson_btn)) new_exam_reminder_btn.text.toString() else ""
+            examDate!!,
+            reminder
         )
         exam.id = this.exam?.id ?: ""
         return exam
@@ -299,6 +320,7 @@ class AddEditExamFragment : Fragment() {
      */
     private fun requiredFieldsAreFilled(): Boolean {
         if (new_exam_name.text.isNotEmpty()
+            && new_exam_subject_btn.text != getString(R.string.add_edit_lesson_btn)
             && new_exam_subject_btn.text.isNotEmpty()
             && new_exam_date_btn.text != getString(R.string.add_edit_lesson_btn)
             && new_exam_date_btn.text.isNotEmpty()

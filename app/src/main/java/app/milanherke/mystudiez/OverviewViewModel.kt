@@ -13,7 +13,6 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -159,7 +158,7 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     ) {
         GlobalScope.launch {
             listener.onLoad()
-            val currentDate = SimpleDateFormat("dd/MM/yyyy").format(date)
+            val currentDate = Date(CalendarUtils.roundToMidnight(date.time))
             val exams: ArrayList<Exam> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("exams/${FirebaseUtils.getUserId()}")

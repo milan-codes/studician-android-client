@@ -187,7 +187,7 @@ class SubjectDetailsFragment : Fragment(),
         viewModel.selectedExamsLiveData.observe(
             this,
             Observer { list ->
-                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date)))
+                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
                 examsAdapter.swapExamsList(sortedList) }
         )
         viewModel.loadAllDetails(subject!!.id, dataFetchingListener)
