@@ -148,6 +148,9 @@ class SubjectsRecyclerViewAdapter(
             days: ArrayList<Int>,
             listener: OnSubjectClickListener
         ) {
+
+            setViewToDefault()
+
             containerView.sli_name.text = subject.name
             for (day in days) {
                 when (day) {
@@ -220,6 +223,59 @@ class SubjectsRecyclerViewAdapter(
             containerView.sli_linearlayout.setOnClickListener {
                 listener.onSubjectClick(subject)
             }
+
+        }
+
+        private fun setViewToDefault() {
+            containerView.sli_sunday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_sunday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
+            containerView.sli_monday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_monday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
+            containerView.sli_tuesday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_tuesday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
+            containerView.sli_wednesday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_wednesday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
+            containerView.sli_thursday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_thursday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
+            containerView.sli_friday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_friday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
+            containerView.sli_saturday.setBackgroundResource(R.drawable.has_no_lesson_on_day)
+            containerView.sli_saturday.setTextColor(
+                ContextCompat.getColor(
+                    containerView.context,
+                    R.color.colorTextPrimary
+                )
+            )
         }
 
     }

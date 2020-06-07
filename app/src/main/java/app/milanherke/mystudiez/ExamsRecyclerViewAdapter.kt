@@ -151,7 +151,7 @@ class ExamsRecyclerViewAdapter(
             // Meaning we do not have to load nor display the subject details
             if (usedIn == SUBJECT_DETAILS) {
                 containerView.details_list_title.text = exam.name
-                containerView.details_list_header1.text = exam.date
+                containerView.details_list_header1.text = CalendarUtils.dateToString(exam.date, false)
                 containerView.details_list_header2.visibility = View.GONE
                 containerView.details_list_subject_indicator.visibility = View.GONE
 
@@ -184,13 +184,11 @@ class ExamsRecyclerViewAdapter(
                         } else {
                             containerView.details_list_title.text = exam.name
                             containerView.details_list_header1.text = subject.name
-                            containerView.details_list_header2.text = exam.date
+                            containerView.details_list_header2.text = CalendarUtils.dateToString(exam.date, false)
                         }
 
                         //We're creating a clone drawable because we do not want to affect other instances of the original drawable
-                        val clone =
-                            containerView.resources.getDrawable(R.drawable.placeholder_circle, null)
-                                .mutatedClone()
+                        val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
                         clone.setColor(subject.colorCode, containerView.context)
                         containerView.details_list_subject_indicator.setImageDrawable(clone)
                     }

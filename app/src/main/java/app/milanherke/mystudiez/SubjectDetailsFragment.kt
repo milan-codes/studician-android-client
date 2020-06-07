@@ -174,15 +174,21 @@ class SubjectDetailsFragment : Fragment(),
         // Registering observers
         viewModel.selectedLessonsLiveData.observe(
             this,
-            Observer { list -> lessonsAdapter.swapLessonsList(list) }
+            Observer { list ->
+                val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::day, Lesson::starts)))
+                lessonsAdapter.swapLessonsList(sortedList) }
         )
         viewModel.selectedTasksLiveData.observe(
             this,
-            Observer { list -> tasksAdapter.swapTasksList(list) }
+            Observer { list ->
+                val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
+                tasksAdapter.swapTasksList(sortedList) }
         )
         viewModel.selectedExamsLiveData.observe(
             this,
-            Observer { list -> examsAdapter.swapExamsList(list) }
+            Observer { list ->
+                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
+                examsAdapter.swapExamsList(sortedList) }
         )
         viewModel.loadAllDetails(subject!!.id, dataFetchingListener)
     }

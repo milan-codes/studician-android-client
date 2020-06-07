@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the Home/Up button, as long
         // as you specify a parent activity in AndroidManifest.xml.
         val fragment = findFragmentById(R.id.fragment_container)
         when (item.itemId) {
@@ -532,13 +532,10 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onSaveTaskClickListener(task: Task, subject: Subject) {
-        if (task.reminder.isNotEmpty()) {
+        val reminder = task.reminder
+        if (reminder != null) {
             val notification =
                 createNotification(getString(R.string.notification_task_reminder_title), task.name)
-            val reminder = SimpleDateFormat(
-                "dd/MM/yyyy hh:mm:ss",
-                Locale.getDefault()
-            ).parse(task.reminder + ":00")
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, task, null)
         }
@@ -566,13 +563,10 @@ class MainActivity : AppCompatActivity(),
      */
 
     override fun onSaveExamClickListener(exam: Exam, subject: Subject) {
-        if (exam.reminder.isNotEmpty() && exam.reminder != getString(R.string.add_edit_lesson_btn)) {
+        val reminder = exam.reminder
+        if (reminder != null) {
             val notification =
                 createNotification(getString(R.string.notification_exam_reminder_title), exam.name)
-            val reminder = SimpleDateFormat(
-                "dd/MM/yyyy hh:mm:ss",
-                Locale.getDefault()
-            ).parse(exam.reminder + ":00")
             val delay = reminder.time.minus(System.currentTimeMillis())
             scheduleNotification(notification, delay, null, exam)
         }

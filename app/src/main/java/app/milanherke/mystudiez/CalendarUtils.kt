@@ -18,8 +18,9 @@ class CalendarUtils {
 
     companion object {
 
-        interface DateSet {
-            fun onSuccess(date: Date)
+        interface CalendarInteractions {
+            fun onDateSet(date: Date)
+            fun onTimeSet(date: Date)
         }
 
         /**
@@ -36,7 +37,7 @@ class CalendarUtils {
             parentActivity: Activity,
             @IdRes buttonId: Int,
             cal: Calendar,
-            listener: DateSet? = null
+            listener: CalendarInteractions? = null
         ): DatePickerDialog.OnDateSetListener {
             val button = parentActivity.findViewById<Button>(buttonId)
 
@@ -44,10 +45,10 @@ class CalendarUtils {
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                val timeInMillis = roundToMidnight(cal.timeInMillis)
                 button.text =
-                    SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(cal.time)
-
-                listener?.onSuccess(cal.time)
+                    SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(Date(timeInMillis))
+                listener?.onDateSet(Date(timeInMillis))
             }
         }
 
@@ -57,6 +58,7 @@ class CalendarUtils {
          * @param parentActivity Host activity of the fragment in which the function is used
          * @param buttonId The selected time will be displayed on this button
          * @param cal The calendar on which the time is set
+         * @param dateBefore Boolean - True if a [DatePickerDialog] is used before, otherwise false
          * @return An OnTimeSetListener
          */
         @SuppressLint("SetTextI18n")
@@ -64,22 +66,24 @@ class CalendarUtils {
             parentActivity: Activity,
             @IdRes buttonId: Int,
             cal: Calendar,
-            dateBefore: Boolean
+            dateBefore: Boolean,
+            listener: CalendarInteractions? = null
         ): TimePickerDialog.OnTimeSetListener {
             val button = parentActivity.findViewById<Button>(buttonId)
 
             return TimePickerDialog.OnTimeSetListener { _, hour, minute ->
                 cal.set(Calendar.HOUR_OF_DAY, hour)
                 cal.set(Calendar.MINUTE, minute)
-
                 if (dateBefore) {
                     button.text =
                         "${button.text} ${SimpleDateFormat(
                             "HH:mm",
                             Locale.ENGLISH
                         ).format(cal.time)}"
+                    listener?.onTimeSet(cal.time)
                 } else {
                     button.text = SimpleDateFormat("HH:mm", Locale.ENGLISH).format(cal.time)
+                    listener?.onTimeSet(cal.time)
                 }
             }
         }
@@ -102,6 +106,33 @@ class CalendarUtils {
                 6 -> context.resources.getString(R.string.dayOptionFriday)
                 7 -> context.resources.getString(R.string.dayOptionSaturday)
                 else -> throw IllegalArgumentException("Parameter num $num must be between one and seven")
+            }
+        }
+
+        /**
+         * A simple function that takes in a unix timestamp and rounds it down to the previous midnight.
+         *
+         * @param time millisecond offset from the Epoch
+         * @return Date rounded down to midnight as a long value (milliseconds)
+         */
+        fun roundToMidnight(time: Long): Long {
+            var timeStamp = time
+            timeStamp -= timeStamp % (24 * 60 * 60 * 1000) //subtract amount of time since midnight
+            return timeStamp
+        }
+
+        /**
+         * A simple function that formats a date object to dd/MM/yyyy
+         *
+         * @param date Date to be formatted
+         * @param includeTime Boolean - True if time (hours and minutes) should be included, otherwise false
+         * @return Formatted date
+         */
+        fun dateToString(date: Date, includeTime: Boolean): String {
+            return if (includeTime) {
+                SimpleDateFormat("dd'/'MM'/'yyyy HH:mm", Locale.getDefault()).format(date)
+            } else {
+                SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(date)
             }
         }
     }

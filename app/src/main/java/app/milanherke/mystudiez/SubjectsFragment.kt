@@ -3,6 +3,7 @@ package app.milanherke.mystudiez
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +64,6 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_subjects, container, false)
     }
@@ -71,7 +71,6 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.subjects_title)
-
         subject_list.layoutManager = LinearLayoutManager(context)
         subject_list.adapter = subjectsAdapter
     }
@@ -79,7 +78,6 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     @SuppressLint("RestrictedApi")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         if (activity is AppCompatActivity) {
             (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         }
@@ -112,7 +110,8 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
         viewModel.subjectsListLiveData.observe(
             this,
             Observer { list ->
-                subjectsAdapter.swapSubjectsList(list)
+                val sortedList = ArrayList(list.sortedWith(compareBy(Subject::name, Subject::teacher)))
+                subjectsAdapter.swapSubjectsList(sortedList)
                 if (subject_list != null && list.size != 0) Animations.runLayoutAnimation(
                     subject_list
                 )

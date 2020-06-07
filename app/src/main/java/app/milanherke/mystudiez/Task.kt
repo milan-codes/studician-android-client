@@ -2,6 +2,7 @@ package app.milanherke.mystudiez
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 /**
  * Data [Parcelable] subclass.
@@ -21,9 +22,9 @@ data class Task(
     var description: String,
     var type: Int,
     var subjectId: String,
-    var dueDate: String,
-    var reminder: String,
+    var dueDate: Date,
+    var reminder: Date? = null,
     var id: String = ""
 ) : Parcelable {
-    constructor() : this("", "", -1, "", "", "", "")
+    constructor() : this("", "", -1, "", Date(), null, "")
 }

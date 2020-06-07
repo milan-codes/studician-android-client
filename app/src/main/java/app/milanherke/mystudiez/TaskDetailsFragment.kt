@@ -57,6 +57,7 @@ class TaskDetailsFragment : Fragment() {
 
         // Avoiding problems with smart-cast
         val task = task
+        val taskReminder = task?.reminder
         val subject = subject
 
         if (task != null && subject != null) {
@@ -65,8 +66,8 @@ class TaskDetailsFragment : Fragment() {
             task_details_desc_value.text = task.description
             task_details_type_value.text = TaskUtils.getTaskType(task.type, context!!)
             task_details_subject_value.text = subject.name
-            task_details_due_date_value.text = task.dueDate
-            task_details_reminder_value.text = task.reminder
+            task_details_due_date_value.text = CalendarUtils.dateToString(task.dueDate, false)
+            task_details_reminder_value.text = if (taskReminder != null) CalendarUtils.dateToString(taskReminder, true) else getString(R.string.add_edit_lesson_btn)
         }
     }
 

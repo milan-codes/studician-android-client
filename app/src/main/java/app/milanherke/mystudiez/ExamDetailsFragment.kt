@@ -57,6 +57,7 @@ class ExamDetailsFragment : Fragment() {
 
         // Avoiding problems with smart-cast
         val exam = exam
+        val examReminder = exam?.reminder
         val subject = subject
 
         if (exam != null && subject != null) {
@@ -64,8 +65,8 @@ class ExamDetailsFragment : Fragment() {
             exam_details_name_value.text = exam.name
             exam_details_desc_value.text = exam.description
             exam_details_subject_value.text = subject.name
-            exam_details_date_value.text = exam.date
-            exam_details_reminder_value.text = exam.reminder
+            exam_details_date_value.text = CalendarUtils.dateToString(exam.date, false)
+            exam_details_reminder_value.text = if (examReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(examReminder, true)
         }
     }
 

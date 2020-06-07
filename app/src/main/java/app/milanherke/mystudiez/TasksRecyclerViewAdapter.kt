@@ -152,7 +152,7 @@ class TasksRecyclerViewAdapter(
             // Meaning we do not have to load nor display the subject details
             if (usedIn == SUBJECT_DETAILS) {
                 containerView.details_list_title.text = task.name
-                containerView.details_list_header1.text = task.dueDate
+                containerView.details_list_header1.text = CalendarUtils.dateToString(task.dueDate, false)
                 containerView.details_list_header2.text =
                     TaskUtils.getTaskType(task.type, containerView.context)
                 containerView.details_list_subject_indicator.visibility = View.GONE
@@ -191,7 +191,7 @@ class TasksRecyclerViewAdapter(
                                     subject.name,
                                     TaskUtils.getTaskType(task.type, containerView.context)
                                 )
-                            containerView.details_list_header2.text = task.dueDate
+                            containerView.details_list_header2.text = CalendarUtils.dateToString(task.dueDate, false)
                         }
 
                         //Creating a clone drawable because we do not want to affect other instances of the original drawable
