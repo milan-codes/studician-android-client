@@ -137,4 +137,7 @@
     <string name="firebase_error">There was en error while getting data from database</string>
     <string name="firebase_user_logged_in">User logged in</string>
     <string name="firebase_user_logged_out">Please log in</string>
+    <string name="changes_dialog_title">You have unsaved changes. Do you want to continue?</string>
+    <string name="changes_dialog_continue">Continue</string>
+    <string name="changes_dialog_back">Back</string>
 </resources>
