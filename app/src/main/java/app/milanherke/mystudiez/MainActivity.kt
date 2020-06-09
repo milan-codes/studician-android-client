@@ -10,7 +10,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -21,10 +20,7 @@ import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.NotificationUtils.Companion.CHANNEL_ID
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.SimpleDateFormat
-import java.util.*
 
-private const val TAG = "MainActivity"
 private const val TASK_NOTIFICATION_PRE_CODE = 100
 private const val EXAM_NOTIFICATION_PRE_CODE = 200
 
@@ -33,7 +29,6 @@ class MainActivity : AppCompatActivity(),
     SubjectsFragment.SubjectsInteractions,
     TasksFragment.TasksInteractions,
     ExamsFragment.ExamsInteractions,
-    AddEditSubjectFragment.AddEditSubjectInteractions,
     AddEditLessonFragment.LessonSaved,
     AddEditTaskFragment.TaskSaved,
     AddEditExamFragment.ExamSaved {
@@ -59,24 +54,44 @@ class MainActivity : AppCompatActivity(),
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         toolbar.setTitle(R.string.overview_title)
         setSupportActionBar(toolbar)
 
-        // First we check if there's internet connection, then we check if the user is logged in
-        if (FirebaseUtils.userIsLoggedIn()) {
-            // Setting the home screen:
-            // OverviewFragment is the first fragment seen by the user, just after the app has been opened
-            replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
-            Toast.makeText(this, getString(R.string.firebase_user_logged_in), Toast.LENGTH_SHORT)
-                .show()
+        // Getting intent if there was any
+        val intent = intent
+        if (intent.hasExtra("ACTIVITY_NAME_BUNDLE_ID")) {
+            when (intent.getStringExtra("FragmentToLoad")) {
+                SubjectsFragment.TAG -> {
+                    replaceFragment(
+                        SubjectsFragment.newInstance(),
+                        R.id.fragment_container
+                    )
+                }
+                SubjectDetailsFragment.TAG -> {
+                    val subject = intent.getParcelableExtra<Subject>("Subject")
+                    replaceFragment(
+                        SubjectDetailsFragment.newInstance(subject),
+                        R.id.fragment_container
+                    )
+                }
+            }
         } else {
-            replaceFragment(SettingsFragment.newInstance(), R.id.fragment_container)
-            Toast.makeText(this, getString(R.string.firebase_user_logged_out), Toast.LENGTH_SHORT)
-                .show()
+            // First we check if there's internet connection, then we check if the user is logged in
+            if (FirebaseUtils.userIsLoggedIn()) {
+                // Setting the home screen:
+                // OverviewFragment is the first fragment seen by the user, just after the app has been opened
+                replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
+                Toast.makeText(this, getString(R.string.firebase_user_logged_in), Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                replaceFragment(SettingsFragment.newInstance(), R.id.fragment_container)
+                Toast.makeText(this, getString(R.string.firebase_user_logged_out), Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
+
 
         // Creating channel to support android O and higher (for notifications)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -122,7 +137,6 @@ class MainActivity : AppCompatActivity(),
                     is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
                     is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
                     is ExamDetailsFragment -> upBtnInExamDetailsFragment()
-                    is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
                     is AddEditLessonFragment -> upInAddEditLessonFragment()
                     is AddEditTaskFragment -> upInAddEditTaskFragment()
                     is AddEditExamFragment -> upInAddEditExamFragment()
@@ -141,7 +155,6 @@ class MainActivity : AppCompatActivity(),
             is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
             is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
             is ExamDetailsFragment -> upBtnInExamDetailsFragment()
-            is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
             is AddEditLessonFragment -> upInAddEditLessonFragment()
             is AddEditTaskFragment -> upInAddEditTaskFragment()
             is AddEditExamFragment -> upInAddEditExamFragment()
@@ -210,11 +223,13 @@ class MainActivity : AppCompatActivity(),
     // These functions are used to determine what should be done when the fab button is pressed in specific fragments
 
     /**
-     * When the FAB button is pressed in [SubjectsFragment], it should launch [AddEditSubjectFragment]
+     * When the FAB button is pressed in [SubjectsFragment], it should launch [AddEditSubjectActivity]
      * Because the user wants to add a new [Subject]
      */
     private fun fabBtnInSubjectsFragment() {
-        replaceFragmentWithTransition(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
+        FragmentBackStack.getInstance(this).push(Fragments.SUBJECTS)
+        val intent = Intent(this, AddEditSubjectActivity::class.java)
+        startActivity(intent)
     }
 
     /**
@@ -328,31 +343,6 @@ class MainActivity : AppCompatActivity(),
                 )
             }
             else -> throw IllegalStateException("ExamDetailsFragment was called by unrecognised fragment $fragmentCalledFrom")
-        }
-    }
-
-    /**
-     * [AddEditSubjectFragment] can return only to [SubjectsFragment] and [SubjectDetailsFragment].
-     * It can be called only by the following fragments: [SubjectsFragment] (when adding new) and [SubjectDetailsFragment] (when editing an existing one).
-     */
-    private fun upBtnInAddEditSubjectFragment() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECTS -> {
-                replaceFragmentWithTransition(
-                    SubjectsFragment.newInstance(),
-                    R.id.fragment_container
-                )
-            }
-            Fragments.SUBJECT_DETAILS -> {
-                // We can use the subject variable because the fragment was called from SubjectDetails, therefore an object has already been assigned to it.
-                replaceFragmentWithTransition(
-                    SubjectDetailsFragment.newInstance(subject!!),
-                    R.id.fragment_container
-                )
-            }
-            else -> {
-                throw IllegalStateException("AddEditSubjectFragment was called by unrecognised fragment $fragmentCalledFrom")
-            }
         }
     }
 
@@ -486,25 +476,6 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onCreateCalled() {
         setDoubleBackToFalse()
-    }
-
-
-    /**
-     * Interaction interface(s) from [AddEditSubjectFragment]
-     */
-
-    override fun onSaveSubjectClick(subject: Subject) {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject),
-                R.id.fragment_container
-            )
-            Fragments.SUBJECTS -> replaceFragmentWithTransition(
-                SubjectsFragment.newInstance(),
-                R.id.fragment_container
-            )
-            else -> throw IllegalStateException("onSaveSubjectClicked tries to load unrecognised fragment $fragmentCalledFrom")
-        }
     }
 
 

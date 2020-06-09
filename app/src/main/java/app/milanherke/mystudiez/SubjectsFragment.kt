@@ -3,7 +3,6 @@ package app.milanherke.mystudiez
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -134,6 +133,9 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     }
 
     companion object {
+
+        const val TAG = "Subjects"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
