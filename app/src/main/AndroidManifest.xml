@@ -25,6 +25,11 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
+            android:name=".AddEditLessonActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".AddEditTaskActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">

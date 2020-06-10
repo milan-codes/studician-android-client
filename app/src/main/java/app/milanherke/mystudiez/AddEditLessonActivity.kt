@@ -1,109 +1,63 @@
 package app.milanherke.mystudiez
 
-import android.annotation.SuppressLint
 import android.app.TimePickerDialog
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_add_edit_lesson.*
+import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import kotlinx.android.synthetic.main.activity_add_edit_lesson.*
+import kotlinx.android.synthetic.main.content_add_edit_lesson.*
 import java.util.*
 
-// Fragment initialization parameters
-private const val ARG_LESSON = "lesson"
-private const val ARG_SUBJECT = "subject"
-
 /**
- * A simple [Fragment] subclass.
- * This fragment was created to add or edit lessons.
- * Activities that contain this fragment must implement the
- * [AddEditLessonFragment.LessonSaved] interface
- * to handle interaction events.
- * Use the [AddEditLessonFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * A simple [AppCompatActivity] subclass.
+ * The purpose of this activity is to add or edit lessons.
  */
-class AddEditLessonFragment : Fragment() {
+class AddEditLessonActivity : AppCompatActivity() {
 
     private var lesson: Lesson? = null
     private var subject: Subject? = null
     private var selectedDay: Int = 0
-    private var listener: LessonSaved? = null
     private val viewModel by lazy {
-        ViewModelProviders.of(activity!!).get(AddEditLessonViewModel::class.java)
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface LessonSaved {
-        fun onSaveLessonClickListener(lesson: Lesson, subject: Subject)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is LessonSaved) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement LessonSaved")
-        }
+        ViewModelProviders.of(this).get(AddEditLessonViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lesson = arguments?.getParcelable(ARG_LESSON)
-        subject = arguments?.getParcelable(ARG_SUBJECT)
-    }
+        setContentView(R.layout.activity_add_edit_lesson)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_edit_lesson, container, false)
-    }
+        val intent = intent
+        lesson = intent.getParcelableExtra<Lesson>(LESSON_PARAM_BUNDLE_ID)
+        subject = intent.getParcelableExtra<Subject>(SUBJECT_PARAM_BUNDLE_ID)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        //Avoiding problems with smart cast
+        // Avoiding problems with smart-cast
         val lesson = lesson
+        val subject = subject
 
         if (lesson == null) {
             // User wants to create a new lesson
-            activity!!.toolbar.setTitle(R.string.add_new_lesson_title)
+            activity_lesson_toolbar.setTitle(R.string.add_new_lesson_title)
+            setSupportActionBar(activity_lesson_toolbar)
         } else {
             // User wants to edit an existing lesson
-            activity!!.toolbar.title =
-                resources.getString(R.string.edit_lesson_title, subject!!.name)
-            new_lesson_day_btn.text = CalendarUtils.getDayFromNumberOfDay(lesson.day, context!!)
+            activity_lesson_toolbar.title = resources.getString(R.string.edit_lesson_title, subject!!.name)
+            setSupportActionBar(activity_lesson_toolbar)
+            new_lesson_day_btn.text = CalendarUtils.getDayFromNumberOfDay(lesson.day, this)
             selectedDay = lesson.day
             new_lesson_starts_at_btn.text = lesson.starts
             new_lesson_ends_at_btn.text = lesson.ends
             new_lesson_location.setText(lesson.location)
         }
-    }
 
-    @SuppressLint("RestrictedApi")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        if (activity is AppCompatActivity) {
-            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
-
-        // Hiding bottom navigation bar and fab button
-        activity!!.bar.visibility = View.GONE
-        activity!!.fab.visibility = View.GONE
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // User must select the day of the lesson
         new_lesson_day_btn.setOnClickListener {
@@ -114,9 +68,9 @@ class AddEditLessonFragment : Fragment() {
         new_lesson_starts_at_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             TimePickerDialog(
-                context,
+                this,
                 CalendarUtils.getTimeSetListener(
-                    activity!!,
+                    this,
                     R.id.new_lesson_starts_at_btn,
                     cal,
                     false
@@ -131,9 +85,9 @@ class AddEditLessonFragment : Fragment() {
         new_lesson_ends_at_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             TimePickerDialog(
-                context,
+                this,
                 CalendarUtils.getTimeSetListener(
-                    activity!!,
+                    this,
                     R.id.new_lesson_ends_at_btn,
                     cal,
                     false
@@ -149,29 +103,75 @@ class AddEditLessonFragment : Fragment() {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-        FragmentBackStack.getInstance(context!!).pop()
+    override fun onStop() {
+        super.onStop()
+        FragmentBackStack.getInstance(this).pop()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onUpBtnPressed()
+            } else -> super.onOptionsItemSelected(item)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        onUpBtnPressed()
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param lesson Lesson to be edited/created.
-         * @param subject Subject of the lesson. Can't be null since we're launching this fragment from [SubjectDetailsFragment].
-         * @return A new instance of fragment AddEditLessonFragment.
-         */
-        @JvmStatic
-        fun newInstance(lesson: Lesson? = null, subject: Subject) =
-            AddEditLessonFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_LESSON, lesson)
-                    putParcelable(ARG_SUBJECT, subject)
-                }
+        const val TAG = "AddEditLesson"
+    }
+
+    /**
+     * [AddEditLessonActivity] can return only to [SubjectDetailsFragment] and [LessonDetailsFragment].
+     * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [LessonDetailsFragment] (when editing an existing one).
+     */
+    private fun onUpBtnPressed() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
             }
+            Fragments.LESSON_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, LessonDetailsFragment.TAG)
+                intent.putExtra(LESSON_PARAM_BUNDLE_ID, lesson)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            else -> {
+                throw IllegalStateException("AddEditLessonActivity was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
+    private fun onSaveBtnPressed() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            Fragments.LESSON_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, LessonDetailsFragment.TAG)
+                intent.putExtra(LESSON_PARAM_BUNDLE_ID, lesson)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            else -> throw IllegalStateException("onSaveLessonClick tries to load unrecognised fragment $fragmentCalledFrom")
+        }
     }
 
     /**
@@ -183,17 +183,17 @@ class AddEditLessonFragment : Fragment() {
             val newLesson = lessonFromUi()
             if (newLesson != lesson) {
                 lesson = viewModel.saveLesson(newLesson)
-                listener?.onSaveLessonClickListener(lesson!!, subject!!)
+                onSaveBtnPressed()
             } else {
                 Toast.makeText(
-                    context!!,
+                    this,
                     getString(R.string.did_not_change),
                     Toast.LENGTH_LONG
                 ).show()
             }
         } else {
             Toast.makeText(
-                context!!,
+                this,
                 getString(R.string.required_fields_are_not_filled),
                 Toast.LENGTH_LONG
             ).show()
@@ -244,7 +244,7 @@ class AddEditLessonFragment : Fragment() {
      * This way they can be displayed in different languages.
      */
     private fun showDaysPopUp(view: View) {
-        val popupMenu = PopupMenu(activity!!, view)
+        val popupMenu = PopupMenu(this, view)
         val inflater = popupMenu.menuInflater
         inflater.inflate(R.menu.day_menu, popupMenu.menu)
         popupMenu.show()

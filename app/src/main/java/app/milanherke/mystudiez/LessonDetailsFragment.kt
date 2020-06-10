@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * The purpose of this fragment is to display the details of a [Lesson].
  * The user can delete a lesson from this fragment
- * or launch a new fragment ([AddEditLessonFragment]) to edit it.
+ * or launch a new fragment ([AddEditLessonActivity]) to edit it.
  * Use the [LessonDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -95,10 +96,11 @@ class LessonDetailsFragment : Fragment() {
         }
 
         lesson_details_edit_subject_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditLessonFragment.newInstance(lesson, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(Fragments.LESSON_DETAILS)
+            val intent = Intent(activity, AddEditLessonActivity::class.java)
+            intent.putExtra(ActivityUtils.LESSON_PARAM_BUNDLE_ID, lesson)
+            intent.putExtra(ActivityUtils.SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
     }
 
@@ -108,6 +110,9 @@ class LessonDetailsFragment : Fragment() {
     }
 
     companion object {
+
+        const val TAG = "LessonDetails"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

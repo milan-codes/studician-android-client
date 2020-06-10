@@ -107,12 +107,12 @@ class SubjectDetailsFragment : Fragment(),
         }
 
         // If users want to add a new lesson to the subject
-        // the application takes them to AddEditLessonFragment
+        // the application takes them to AddEditLessonActivity
         subject_details_add_new_lesson_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditLessonFragment.newInstance(null, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditLessonActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
 
         // If users want to add a new task to the subject

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -13,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.createNotification
@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity(),
     SubjectsFragment.SubjectsInteractions,
     TasksFragment.TasksInteractions,
     ExamsFragment.ExamsInteractions,
-    AddEditLessonFragment.LessonSaved,
     AddEditExamFragment.ExamSaved {
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
@@ -71,6 +70,14 @@ class MainActivity : AppCompatActivity(),
                     val subject = intent.getParcelableExtra<Subject>(SUBJECT_PARAM_BUNDLE_ID)
                     replaceFragment(
                         SubjectDetailsFragment.newInstance(subject),
+                        R.id.fragment_container
+                    )
+                }
+                LessonDetailsFragment.TAG -> {
+                    val lesson = intent.getParcelableExtra<Lesson>(LESSON_PARAM_BUNDLE_ID)
+                    val subject = intent.getParcelableExtra<Subject>(SUBJECT_PARAM_BUNDLE_ID)
+                    replaceFragment(
+                        LessonDetailsFragment.newInstance(lesson, subject),
                         R.id.fragment_container
                     )
                 }
@@ -146,7 +153,6 @@ class MainActivity : AppCompatActivity(),
                     is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
                     is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
                     is ExamDetailsFragment -> upBtnInExamDetailsFragment()
-                    is AddEditLessonFragment -> upInAddEditLessonFragment()
                     is AddEditExamFragment -> upInAddEditExamFragment()
                     else -> throw IllegalArgumentException("Up button used by unrecognised fragment $fragment")
                 }
@@ -163,7 +169,6 @@ class MainActivity : AppCompatActivity(),
             is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
             is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
             is ExamDetailsFragment -> upBtnInExamDetailsFragment()
-            is AddEditLessonFragment -> upInAddEditLessonFragment()
             is AddEditExamFragment -> upInAddEditExamFragment()
             is OverviewFragment, is SubjectsFragment, is TasksFragment, is ExamsFragment -> {
                 if (doubleBackToExit) {
@@ -307,30 +312,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    /**
-     * [AddEditLessonFragment] can return only to [SubjectDetailsFragment] and [LessonDetailsFragment].
-     * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [LessonDetailsFragment] (when editing an existing one).
-     */
-    private fun upInAddEditLessonFragment() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> {
-                replaceFragmentWithTransition(
-                    SubjectDetailsFragment.newInstance(subject!!),
-                    R.id.fragment_container
-                )
-            }
-            Fragments.LESSON_DETAILS -> {
-                replaceFragmentWithTransition(
-                    LessonDetailsFragment.newInstance(lesson!!, subject!!),
-                    R.id.fragment_container
-                )
-            }
-            else -> {
-                throw IllegalStateException("AddEditLessonFragment was called by unrecognised fragment $fragmentCalledFrom")
-            }
-        }
-    }
-
 
     /**
      * [AddEditExamFragment] can return only to [ExamsFragment] [SubjectDetailsFragment] and [ExamDetailsFragment].
@@ -406,25 +387,6 @@ class MainActivity : AppCompatActivity(),
      */
     override fun onCreateCalled() {
         setDoubleBackToFalse()
-    }
-
-
-    /**
-     * Interaction interface(s) from [AddEditLessonFragment]
-     */
-
-    override fun onSaveLessonClickListener(lesson: Lesson, subject: Subject) {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject),
-                R.id.fragment_container
-            )
-            Fragments.LESSON_DETAILS -> replaceFragmentWithTransition(
-                LessonDetailsFragment.newInstance(lesson, subject),
-                R.id.fragment_container
-            )
-            else -> throw IllegalStateException("onSaveLessonClick tries to load unrecognised fragment $fragmentCalledFrom")
-        }
     }
 
     /**
