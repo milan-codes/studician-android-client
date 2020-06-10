@@ -3,6 +3,7 @@ package app.milanherke.mystudiez
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -11,6 +12,9 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import kotlinx.android.synthetic.main.activity_add_edit_subject.*
 import kotlinx.android.synthetic.main.content_add_edit_subject.*
 
@@ -33,7 +37,7 @@ class AddEditSubjectActivity : AppCompatActivity() {
 
         // Getting intent and extras
         val intent = intent
-        subject = intent.getParcelableExtra("Subject")
+        subject = intent.getParcelableExtra(SUBJECT_PARAM_BUNDLE_ID)
 
         // Creating a clone of the subject's color indicator circle
         // because we do not want to affect all of the drawable's instances
@@ -105,16 +109,16 @@ class AddEditSubjectActivity : AppCompatActivity() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECTS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("ACTIVITY_NAME_BUNDLE_ID", TAG)
-                intent.putExtra("FragmentToLoad", SubjectsFragment.TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectsFragment.TAG)
                 startActivity(intent)
             }
             Fragments.SUBJECT_DETAILS -> {
                 // We can use the subject variable because the fragment was called from SubjectDetails, therefore an object has already been assigned to it.
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("ACTIVITY_NAME_BUNDLE_ID", TAG)
-                intent.putExtra("FragmentToLoad", SubjectDetailsFragment.TAG)
-                intent.putExtra("Subject", subject)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
                 startActivity(intent)
             }
             else -> {
@@ -127,15 +131,15 @@ class AddEditSubjectActivity : AppCompatActivity() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECTS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("ACTIVITY_NAME_BUNDLE_ID", TAG)
-                intent.putExtra("FragmentToLoad", SubjectsFragment.TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectsFragment.TAG)
                 startActivity(intent)
             }
             Fragments.SUBJECT_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("ACTIVITY_NAME_BUNDLE_ID", TAG)
-                intent.putExtra("FragmentToLoad", SubjectDetailsFragment.TAG)
-                intent.putExtra("Subject", subject)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
                 startActivity(intent)
             }
             else -> throw IllegalStateException("onSaveSubjectClicked tries to load unrecognised fragment $fragmentCalledFrom")

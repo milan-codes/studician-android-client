@@ -23,7 +23,11 @@
             android:name=".AddEditSubjectActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-
+        </activity>
+        <activity
+            android:name=".AddEditTaskActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <receiver android:name=".NotificationPublisher" />

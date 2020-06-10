@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.SubjectDetailsViewModel.DataFetching
 import com.google.firebase.database.DatabaseError
@@ -91,7 +92,7 @@ class SubjectDetailsFragment : Fragment(),
         button.setOnClickListener {
             FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
             val intent = Intent(activity, AddEditSubjectActivity::class.java)
-            intent.putExtra("Subject", subject)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
             startActivity(intent)
         }
 
@@ -115,12 +116,12 @@ class SubjectDetailsFragment : Fragment(),
         }
 
         // If users want to add a new task to the subject
-        // the application takes them to AddEditTaskFragment
+        // the application takes them to AddEditTaskActivity
         subject_details_add_new_task_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditTaskFragment.newInstance(null, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditTaskActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
 
         // If users want to add a new exam to the subject

@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_task_details.*
 
@@ -19,7 +22,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * This fragment was created to list the details of a [Task].
  * The user can delete a task from this fragment
- * or launch a new fragment ([AddEditTaskFragment]) to edit it.
+ * or launch a new fragment ([AddEditTaskActivity]) to edit it.
  * Use the [TaskDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -106,6 +109,9 @@ class TaskDetailsFragment : Fragment() {
     }
 
     companion object {
+
+        const val TAG = "TaskDetails"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -129,7 +135,6 @@ class TaskDetailsFragment : Fragment() {
      * and then it opens a new fragment based on [FragmentBackStack]
      */
     private fun deleteTask() {
-        // Deleting task
         viewModel.deleteTask(task!!)
 
         // Opening previous fragment
@@ -156,12 +161,13 @@ class TaskDetailsFragment : Fragment() {
 
     /**
      * Allows the user to edit a [Task] object
-     * by opening [AddEditTaskFragment].
+     * by opening [AddEditTaskActivity].
      */
     private fun editTask() {
-        activity!!.replaceFragmentWithTransition(
-            AddEditTaskFragment.newInstance(task!!, subject!!),
-            R.id.fragment_container
-        )
+        FragmentBackStack.getInstance(activity!!).push(Fragments.TASK_DETAILS)
+        val intent = Intent(activity, AddEditTaskActivity::class.java)
+        intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
+        intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+        startActivity(intent)
     }
 }

@@ -158,6 +158,9 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     }
 
     companion object {
+
+        const val TAG = "Tasks"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

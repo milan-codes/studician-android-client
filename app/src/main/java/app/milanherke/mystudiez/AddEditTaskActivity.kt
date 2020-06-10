@@ -1,74 +1,47 @@
 package app.milanherke.mystudiez
 
-import android.annotation.SuppressLint
-            import android.app.DatePickerDialog
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.createNotification
+import app.milanherke.mystudiez.ActivityUtils.Companion.scheduleNotification
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
-import app.milanherke.mystudiez.Fragments.TASK_DETAILS
+import app.milanherke.mystudiez.Fragments.*
 import com.google.firebase.database.DatabaseError
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_add_edit_task.*
+import kotlinx.android.synthetic.main.activity_add_edit_task.*
+import kotlinx.android.synthetic.main.content_add_edit_task.*
 import java.util.*
 
-// Fragment initialization parameters
-private const val ARG_TASK = "task"
-private const val ARG_SUBJECT = "subject"
-
 /**
- * A simple [Fragment] subclass.
- * This fragment was created to add or edit tasks.
- * Activities that contain this fragment must implement the
- * [AddEditTaskFragment.TaskSaved] interface
- * to handle interaction events.
- * Use the [AddEditTaskFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * A simple [AppCompatActivity] subclass.
+ * The purpose of this activity is to add or edit tasks.
  */
-class AddEditTaskFragment : Fragment() {
+class AddEditTaskActivity : AppCompatActivity() {
     private var task: Task? = null
     private var subject: Subject? = null
     private var dueDate: Date? = null
     private var reminder: Date? = null
-    private var listener: TaskSaved? = null
     private var listOfSubjects: MutableMap<String, Subject>? = null
     private var selectedSubjectId: String? = null
     private var taskType: Int = 0
     private val viewModel by lazy {
-        ViewModelProviders.of(activity!!).get(AddEditTaskViewModel::class.java)
+        ViewModelProviders.of(this).get(AddEditTaskViewModel::class.java)
     }
     private val sharedViewModel by lazy {
-        ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
+        ViewModelProviders.of(this).get(SharedViewModel::class.java)
     }
     private var progressBarHandler: ProgressBarHandler? = null
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface TaskSaved {
-        fun onSaveTaskClickListener(task: Task, subject: Subject)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is TaskSaved) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement TaskSaved")
-        }
-    }
 
     /**
      * If a new [Task] is created, we need to get all [Subject] objects
@@ -78,7 +51,11 @@ class AddEditTaskFragment : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        task = arguments?.getParcelable(ARG_TASK)
+        setContentView(R.layout.activity_add_edit_task)
+
+        val intent = intent
+        task = intent.getParcelableExtra(TASK_PARAM_BUNDLE_ID)
+        subject = intent.getParcelableExtra(SUBJECT_PARAM_BUNDLE_ID)
 
         // Avoiding problems with smart-cast
         val task = task
@@ -87,22 +64,7 @@ class AddEditTaskFragment : Fragment() {
             reminder = task.reminder
         }
 
-        subject = arguments?.getParcelable(ARG_SUBJECT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_edit_task, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         // Avoiding problems with smart cast
-        val task = task
         val taskReminder = task?.reminder
         val subject = subject
         val listOfSubjects = listOfSubjects
@@ -110,7 +72,8 @@ class AddEditTaskFragment : Fragment() {
         if (task == null && subject == null) {
             // Fragment was called from TasksFragment
             // User wants to create a new task
-            activity!!.toolbar.setTitle(R.string.add_new_task_title)
+            activity_task_toolbar.setTitle(R.string.add_new_task_title)
+            setSupportActionBar(activity_task_toolbar)
             if (listOfSubjects != null) {
                 // We need to disable the subject btn if listOfSubjects is empty
                 // Because the user could not choose from any subjects
@@ -130,11 +93,11 @@ class AddEditTaskFragment : Fragment() {
         } else if (task != null && subject != null) {
             // Fragment called from TaskDetailsFragment
             // User wants to edit an existing task
-            activity!!.toolbar.title =
-                resources.getString(R.string.edit_subject_title, subject.name)
+            activity_task_toolbar.title = resources.getString(R.string.edit_subject_title, subject.name)
+            setSupportActionBar(activity_task_toolbar)
             new_task_name.setText(task.name)
             new_task_desc.setText(task.description)
-            new_task_type_btn.text = TaskUtils.getTaskType(task.type, context!!)
+            new_task_type_btn.text = TaskUtils.getTaskType(task.type, this)
             taskType = task.type
             new_task_subject_btn.text = subject.name
             new_task_subject_btn.background =
@@ -147,48 +110,35 @@ class AddEditTaskFragment : Fragment() {
         } else if (task == null && subject != null) {
             // Fragment called from SubjectDetailsFragment
             // User wants to create a new task
-            activity!!.toolbar.setTitle(R.string.add_new_task_title)
+            activity_task_toolbar.title = resources.getString(R.string.add_new_task_title)
+            setSupportActionBar(activity_task_toolbar)
             new_task_subject_btn.text = subject.name
             new_task_subject_btn.isEnabled = false
             new_task_subject_btn.background =
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_task_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
         }
-    }
 
-    @SuppressLint("RestrictedApi")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        if (activity is AppCompatActivity) {
-            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
-
-        // Hiding bottom navigation bar and fab button
-        activity!!.bar.visibility = View.GONE
-        activity!!.fab.visibility = View.GONE
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // If the last fragment in the backStack is not TaskDetails
         // then we need to fetch all of the subjects to let the users choose one
         // for the exam they are about to create
-        if (FragmentBackStack.getInstance(activity!!).peek() != TASK_DETAILS) {
+        if (FragmentBackStack.getInstance(this).peek() != TASK_DETAILS) {
             sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
                 override fun onLoad() {
-                    val activity = activity
-                    if (activity != null) {
-                        progressBarHandler = ProgressBarHandler(activity)
+                        progressBarHandler = ProgressBarHandler(this@AddEditTaskActivity)
                         progressBarHandler!!.showProgressBar()
-                    }
                 }
 
                 override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                    listOfSubjects = subjects
+                    this@AddEditTaskActivity.listOfSubjects = subjects
                     progressBarHandler!!.hideProgressBar()
                 }
 
                 override fun onFailure(e: DatabaseError) {
                     Toast.makeText(
-                        context,
+                        this@AddEditTaskActivity,
                         getString(R.string.firebase_error),
                         Toast.LENGTH_SHORT
                     ).show()
@@ -222,8 +172,8 @@ class AddEditTaskFragment : Fragment() {
         new_task_due_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
-                context!!,
-                CalendarUtils.getDateSetListener(activity!!, R.id.new_task_due_date_btn, cal, calendarListener),
+               this,
+                CalendarUtils.getDateSetListener(this, R.id.new_task_due_date_btn, cal, calendarListener),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -234,15 +184,15 @@ class AddEditTaskFragment : Fragment() {
         new_task_reminder_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             TimePickerDialog(
-                context,
-                CalendarUtils.getTimeSetListener(activity!!, R.id.new_task_reminder_btn, cal, true, calendarListener),
+             this,
+                CalendarUtils.getTimeSetListener(this, R.id.new_task_reminder_btn, cal, true, calendarListener),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
             ).show()
             DatePickerDialog(
-                context!!,
-                CalendarUtils.getDateSetListener(activity!!, R.id.new_task_reminder_btn, cal),
+               this,
+                CalendarUtils.getDateSetListener(this, R.id.new_task_reminder_btn, cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -254,30 +204,98 @@ class AddEditTaskFragment : Fragment() {
         }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-        FragmentBackStack.getInstance(context!!).pop()
+    override fun onStop() {
+        super.onStop()
+        FragmentBackStack.getInstance(this).pop()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onUpBtnPressed()
+            } else -> super.onOptionsItemSelected(item)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        onUpBtnPressed()
+    }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param task The task to be edited, or null when creating a new one.
-         * @param subject Subject associated with the task. Null if fragment was called from [TasksFragment]
-         * @return A new instance of fragment AddEditTaskFragment.
-         */
-        @JvmStatic
-        fun newInstance(task: Task? = null, subject: Subject? = null) =
-            AddEditTaskFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_TASK, task)
-                    putParcelable(ARG_SUBJECT, subject)
-                }
+        const val TAG = "AddEditTask"
+    }
+
+    /**
+     * [AddEditTaskActivity] can return only to [TasksFragment] [SubjectDetailsFragment] and [TaskDetailsFragment].
+     * It can be called only by the following fragments:
+     *  [TasksFragment]: When pressing the FAB button and creating a new one
+     *  [SubjectDetailsFragment]: When adding a new one from [SubjectDetailsFragment]
+     *  [TaskDetailsFragment]: When editing an existing one
+     */
+    private fun onUpBtnPressed() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            TASKS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TasksFragment.TAG)
+                startActivity(intent)
             }
+            SUBJECT_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            TASK_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TaskDetailsFragment.TAG)
+                intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            else -> {
+                throw IllegalStateException("AddEditTaskActivity was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
+    private fun onSaveBtnPressed(task: Task, subject: Subject) {
+        val reminder = task.reminder
+        if (reminder != null) {
+            val notification =
+                createNotification(this, getString(R.string.notification_task_reminder_title), task.name)
+            val delay = reminder.time.minus(System.currentTimeMillis())
+            scheduleNotification(this, notification, delay, task, null)
+        }
+
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            TASKS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TasksFragment.TAG)
+                startActivity(intent)
+            }
+            SUBJECT_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            TASK_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TaskDetailsFragment.TAG)
+                intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            else -> throw IllegalStateException("onSaveTaskClicked tries to load unrecognised fragment $fragmentCalledFrom")
+        }
     }
 
     /**
@@ -289,17 +307,17 @@ class AddEditTaskFragment : Fragment() {
             val newTask = taskFromUi()
             if (newTask != task) {
                 task = viewModel.saveTask(newTask)
-                listener?.onSaveTaskClickListener(task!!, subject!!)
+                onSaveBtnPressed(task!!, subject!!)
             } else {
                 Toast.makeText(
-                    context!!,
+                    this,
                     getString(R.string.did_not_change),
                     Toast.LENGTH_LONG
                 ).show()
             }
         } else {
             Toast.makeText(
-                context!!,
+                this,
                 getString(R.string.required_fields_are_not_filled),
                 Toast.LENGTH_LONG
             ).show()
@@ -351,7 +369,7 @@ class AddEditTaskFragment : Fragment() {
      * The type can be either Assignment or Revision.
      */
     private fun showTaskTypesPopUp(view: View) {
-        val popupMenu = PopupMenu(activity!!, view)
+        val popupMenu = PopupMenu(this, view)
         val inflater = popupMenu.menuInflater
         inflater.inflate(R.menu.task_type_menu, popupMenu.menu)
         popupMenu.show()
@@ -379,7 +397,7 @@ class AddEditTaskFragment : Fragment() {
         // Avoiding problems with smart cast
         val listOfSubjects = listOfSubjects
         if (listOfSubjects != null) {
-            val popupMenu = PopupMenu(activity!!, view)
+            val popupMenu = PopupMenu(this, view)
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.empty_menu, popupMenu.menu)
 
