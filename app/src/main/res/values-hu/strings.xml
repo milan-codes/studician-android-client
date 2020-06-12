@@ -137,7 +137,7 @@
     <string name="firebase_error">Hiba az adatok betöltése közben</string>
     <string name="firebase_user_logged_in">Felhasználó bejelentkezve</string>
     <string name="firebase_user_logged_out">Jelentkezzen be</string>
-    <string name="changes_dialog_title">Nem mentette el a módosításaid. Folytatni akarod?</string>
+    <string name="changes_dialog_title">Nem mentette el a módosításait.\nFolytatni akarja?</string>
     <string name="changes_dialog_continue">Folytatás</string>
     <string name="changes_dialog_back">Vissza</string>
 </resources>

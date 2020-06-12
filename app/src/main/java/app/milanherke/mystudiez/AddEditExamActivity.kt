@@ -27,7 +27,7 @@ import java.util.*
  * A simple [Fragment] subclass.
  * The purpose of this activity is to add or edit exams.
  */
-class AddEditExamActivity : AppCompatActivity() {
+class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.DialogInteractions {
 
     private var exam: Exam? = null
     private var subject: Subject? = null
@@ -211,6 +211,14 @@ class AddEditExamActivity : AppCompatActivity() {
         onUpBtnPressed()
     }
 
+    override fun onPositiveBtnPressed() {
+        openActivity()
+    }
+
+    override fun onNegativeBtnPressed() {
+        // Dialog automatically gets dismissed in UnsavedChangesDialogFragment
+    }
+
     companion object {
         const val TAG = "AddEditExam"
     }
@@ -223,32 +231,15 @@ class AddEditExamActivity : AppCompatActivity() {
      *  [ExamDetailsFragment]: When editing an existing one
      */
     private fun onUpBtnPressed() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            EXAMS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamsFragment.TAG)
-                startActivity(intent)
-            }
-            SUBJECT_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            EXAM_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamDetailsFragment.TAG)
-                intent.putExtra(EXAM_PARAM_BUNDLE_ID, exam)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            else -> {
-                throw IllegalStateException("AddEditExamActivity was called by unrecognised fragment $fragmentCalledFrom")
-            }
-        }
+        val dialog = UnsavedChangesDialogFragment(this)
+
+        // If [exam] is not null, the user is editing an existing one
+        if (exam != null) {
+            if (requiredFieldsAreFilled()) {
+                val newExam = examFromUi()
+                if (newExam != exam) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+            } else openActivity()
+        } else openActivity()
     }
 
     private fun onSaveBtnPressed(exam: Exam, subject: Subject) {
@@ -263,6 +254,11 @@ class AddEditExamActivity : AppCompatActivity() {
             val delay = reminder.time.minus(System.currentTimeMillis())
             ActivityUtils.scheduleNotification(this, notification, delay, null, exam)
         }
+
+        openActivity()
+    }
+
+    private fun openActivity() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             EXAMS -> {
                 val intent = Intent(this, MainActivity::class.java)

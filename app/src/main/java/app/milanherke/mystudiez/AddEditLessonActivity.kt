@@ -21,7 +21,7 @@ import java.util.*
  * A simple [AppCompatActivity] subclass.
  * The purpose of this activity is to add or edit lessons.
  */
-class AddEditLessonActivity : AppCompatActivity() {
+class AddEditLessonActivity : AppCompatActivity(), UnsavedChangesDialogFragment.DialogInteractions {
 
     private var lesson: Lesson? = null
     private var subject: Subject? = null
@@ -122,6 +122,14 @@ class AddEditLessonActivity : AppCompatActivity() {
         onUpBtnPressed()
     }
 
+    override fun onPositiveBtnPressed() {
+        openActivity()
+    }
+
+    override fun onNegativeBtnPressed() {
+        // Dialog automatically gets dismissed in UnsavedChangesDialogFragment
+    }
+
     companion object {
         const val TAG = "AddEditLesson"
     }
@@ -131,6 +139,22 @@ class AddEditLessonActivity : AppCompatActivity() {
      * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [LessonDetailsFragment] (when editing an existing one).
      */
     private fun onUpBtnPressed() {
+        val dialog = UnsavedChangesDialogFragment(this)
+
+        // If [lesson] is not null, the user is editing an existing one
+        if (lesson != null) {
+            if (requiredFieldsAreFilled()) {
+                val newLesson = lessonFromUi()
+                if (newLesson != lesson) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+            } else openActivity()
+        } else openActivity()
+    }
+
+    private fun onSaveBtnPressed() {
+        openActivity()
+    }
+
+    private fun openActivity() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
@@ -150,27 +174,6 @@ class AddEditLessonActivity : AppCompatActivity() {
             else -> {
                 throw IllegalStateException("AddEditLessonActivity was called by unrecognised fragment $fragmentCalledFrom")
             }
-        }
-    }
-
-    private fun onSaveBtnPressed() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECT_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            Fragments.LESSON_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, LessonDetailsFragment.TAG)
-                intent.putExtra(LESSON_PARAM_BUNDLE_ID, lesson)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            else -> throw IllegalStateException("onSaveLessonClick tries to load unrecognised fragment $fragmentCalledFrom")
         }
     }
 

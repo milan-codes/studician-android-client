@@ -27,7 +27,7 @@ import java.util.*
  * A simple [AppCompatActivity] subclass.
  * The purpose of this activity is to add or edit tasks.
  */
-class AddEditTaskActivity : AppCompatActivity() {
+class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.DialogInteractions {
     private var task: Task? = null
     private var subject: Subject? = null
     private var dueDate: Date? = null
@@ -223,6 +223,14 @@ class AddEditTaskActivity : AppCompatActivity() {
         onUpBtnPressed()
     }
 
+    override fun onPositiveBtnPressed() {
+        openActivity()
+    }
+
+    override fun onNegativeBtnPressed() {
+        // Dialog automatically gets dismissed in UnsavedChangesDialogFragment
+    }
+
     companion object {
         const val TAG = "AddEditTask"
     }
@@ -235,32 +243,16 @@ class AddEditTaskActivity : AppCompatActivity() {
      *  [TaskDetailsFragment]: When editing an existing one
      */
     private fun onUpBtnPressed() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            TASKS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TasksFragment.TAG)
-                startActivity(intent)
-            }
-            SUBJECT_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            TASK_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TaskDetailsFragment.TAG)
-                intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            else -> {
-                throw IllegalStateException("AddEditTaskActivity was called by unrecognised fragment $fragmentCalledFrom")
-            }
-        }
+        val dialog = UnsavedChangesDialogFragment(this)
+
+        // If [task] is not null, the user is editing an existing one
+        if (task != null) {
+            if (requiredFieldsAreFilled()) {
+                val newTask = taskFromUi()
+                if (newTask != task) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+            } else openActivity()
+        } else openActivity()
+
     }
 
     private fun onSaveBtnPressed(task: Task, subject: Subject) {
@@ -272,6 +264,10 @@ class AddEditTaskActivity : AppCompatActivity() {
             scheduleNotification(this, notification, delay, task, null)
         }
 
+        openActivity()
+    }
+
+    private fun openActivity() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             TASKS -> {
                 val intent = Intent(this, MainActivity::class.java)

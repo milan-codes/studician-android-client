@@ -3,7 +3,6 @@ package app.milanherke.mystudiez
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -22,7 +21,7 @@ import kotlinx.android.synthetic.main.content_add_edit_subject.*
  * A simple [AppCompatActivity] subclass.
  * The purpose of this activity is to add or edit subjects.
  */
-class AddEditSubjectActivity : AppCompatActivity() {
+class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment.DialogInteractions {
 
     private var subject: Subject? = null
     private var selectedSubjectColor: Int = -1
@@ -97,8 +96,20 @@ class AddEditSubjectActivity : AppCompatActivity() {
         pressedUpBtn()
     }
 
+    override fun onPositiveBtnPressed() {
+        openActivity()
+    }
+
+    override fun onNegativeBtnPressed() {
+        // Dialog automatically gets dismissed in UnsavedChangesDialogFragment
+    }
+
     companion object {
         const val TAG = "AddEditSubject"
+    }
+
+    private fun onSavePressed() {
+        openActivity()
     }
 
     /**
@@ -106,28 +117,19 @@ class AddEditSubjectActivity : AppCompatActivity() {
      * It can be called only by the following fragments: [SubjectsFragment] (when adding new) and [SubjectDetailsFragment] (when editing an existing one).
      */
     private fun pressedUpBtn() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECTS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectsFragment.TAG)
-                startActivity(intent)
-            }
-            Fragments.SUBJECT_DETAILS -> {
-                // We can use the subject variable because the fragment was called from SubjectDetails, therefore an object has already been assigned to it.
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            else -> {
-                throw IllegalStateException("AddEditSubjectActivity was called by unrecognised fragment $fragmentCalledFrom")
-            }
-        }
+        val dialog = UnsavedChangesDialogFragment(this)
+
+        // If [subject] is not null, the user is editing an existing one
+        if (subject != null) {
+            if (requiredFieldsAreFilled()) {
+                val newSubject = subjectFromUi()
+                if (newSubject != subject) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+            } else openActivity()
+        } else openActivity()
     }
 
-    private fun onSavePressed(subject: Subject) {
+
+    private fun openActivity() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECTS -> {
                 val intent = Intent(this, MainActivity::class.java)
@@ -155,7 +157,7 @@ class AddEditSubjectActivity : AppCompatActivity() {
             val newSubject = subjectFromUi()
             if (newSubject != subject) {
                 subject = viewModel.saveSubject(newSubject)
-                onSavePressed(subject!!)
+                onSavePressed()
             } else {
                 Toast.makeText(
                     this,

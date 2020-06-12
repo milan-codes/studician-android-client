@@ -22,6 +22,7 @@ class UnsavedChangesDialogFragment(private val listener: DialogInteractions) : D
                 }
                 .setNegativeButton(R.string.changes_dialog_back) {_, _ ->
                     listener.onNegativeBtnPressed()
+                    dismiss()
                 }
 
             builder.create()
