@@ -1,71 +1,45 @@
 package app.milanherke.mystudiez
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.EXAM_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
+import app.milanherke.mystudiez.Fragments.*
 import app.milanherke.mystudiez.SharedViewModel.RetrievingData
 import com.google.firebase.database.DatabaseError
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_add_edit_exam.*
+import kotlinx.android.synthetic.main.activity_add_edit_exam.*
+import kotlinx.android.synthetic.main.content_add_edit_exam.*
 import java.util.*
-
-// Fragment initialization parameters
-private const val ARG_EXAM = "exam"
-private const val ARG_SUBJECT = "subject"
 
 /**
  * A simple [Fragment] subclass.
- * This fragment was created to add or edit exams.
- * Activities that contain this fragment must implement the
- * [AddEditExamFragment.ExamSaved] interface
- * to handle interaction events.
- * Use the [AddEditExamFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * The purpose of this activity is to add or edit exams.
  */
-class AddEditExamFragment : Fragment() {
+class AddEditExamActivity : AppCompatActivity() {
 
     private var exam: Exam? = null
     private var subject: Subject? = null
     private var examDate: Date? = null
     private var reminder: Date? = null
-    private var listener: ExamSaved? = null
     private var listOfSubjects: MutableMap<String, Subject>? = null
     private var selectedSubjectId: String? = null
     private val viewModel by lazy {
-        ViewModelProviders.of(activity!!).get(AddEditExamViewModel::class.java)
+        ViewModelProviders.of(this).get(AddEditExamViewModel::class.java)
     }
     private val sharedViewModel by lazy {
-        ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     */
-    interface ExamSaved {
-        fun onSaveExamClickListener(exam: Exam, subject: Subject)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is ExamSaved) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement ExamSaved")
-        }
+        ViewModelProviders.of(this).get(SharedViewModel::class.java)
     }
 
     /**
@@ -76,7 +50,11 @@ class AddEditExamFragment : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        exam = arguments?.getParcelable(ARG_EXAM)
+        setContentView(R.layout.activity_add_edit_exam)
+
+        val intent = intent
+        exam = intent.getParcelableExtra(EXAM_PARAM_BUNDLE_ID)
+        subject = intent.getParcelableExtra(SUBJECT_PARAM_BUNDLE_ID)
 
         // Avoiding problems with smart-cast
         val exam = exam
@@ -84,23 +62,6 @@ class AddEditExamFragment : Fragment() {
             examDate = exam.date
             reminder = exam.reminder
         }
-
-        subject = arguments?.getParcelable(ARG_SUBJECT)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_edit_exam, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // Avoiding problems with smart cast
-        val exam = exam
         val examReminder = exam?.reminder
         val subject = subject
         val listOfSubjects = listOfSubjects
@@ -108,7 +69,8 @@ class AddEditExamFragment : Fragment() {
         if (exam == null && subject == null) {
             // Fragment called from ExamsFragment
             // User wants to create a new exam
-            activity!!.toolbar.setTitle(R.string.add_new_exam_title)
+            activity_exam_toolbar.setTitle(R.string.add_new_exam_title)
+            setSupportActionBar(activity_exam_toolbar)
             if (listOfSubjects != null) {
                 // We need to disable the subject btn if listOfSubjects is empty
                 // Because the user could not choose from any subjects
@@ -128,8 +90,8 @@ class AddEditExamFragment : Fragment() {
         } else if (exam != null && subject != null) {
             // Fragment called from ExamDetailsFragment
             // User wants to edit an existing exam
-            activity!!.toolbar.title =
-                resources.getString(R.string.edit_subject_title, exam.name)
+            activity_exam_toolbar.title =resources.getString(R.string.edit_subject_title, exam.name)
+            setSupportActionBar(activity_exam_toolbar)
             new_exam_name.setText(exam.name)
             new_exam_desc.setText(exam.description)
             new_exam_subject_btn.text = subject.name
@@ -142,51 +104,41 @@ class AddEditExamFragment : Fragment() {
         } else if (exam == null && subject != null) {
             // Fragment called from SubjectDetailsFragment
             // User wants to create a new exam
-            activity!!.toolbar.setTitle(R.string.add_new_exam_title)
+            activity_exam_toolbar.setTitle(R.string.add_new_exam_title)
+            setSupportActionBar(activity_exam_toolbar)
             new_exam_subject_btn.text = subject.name
             new_exam_subject_btn.background =
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_exam_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
             new_exam_subject_btn.isEnabled = false
         }
-    }
 
-    @SuppressLint("RestrictedApi")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        if (activity is AppCompatActivity) {
-            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        }
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // If the last fragment in the backStack is not TaskDetails
         // then we need to fetch all of the subjects to let the users choose one
         // for the exam they are about to create
-        if (FragmentBackStack.getInstance(context!!).peek() != Fragments.EXAM_DETAILS) {
-            val progressBar = ProgressBarHandler(activity!!)
+        if (FragmentBackStack.getInstance(this).peek() != EXAM_DETAILS) {
+            val progressBar = ProgressBarHandler(this)
             sharedViewModel.getAllSubjects(object : RetrievingData {
                 override fun onLoad() {
                     progressBar.showProgressBar()
                 }
 
                 override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                    listOfSubjects = subjects
+                    this@AddEditExamActivity.listOfSubjects = subjects
                     progressBar.hideProgressBar()
                 }
 
                 override fun onFailure(e: DatabaseError) {
                     Toast.makeText(
-                        context,
+                        this@AddEditExamActivity,
                         getString(R.string.firebase_error),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             })
         }
-
-        // Hiding bottom navigation bar and fab button
-        activity!!.bar.visibility = View.GONE
-        activity!!.fab.visibility = View.GONE
 
         // User must set a subject if a new exam is created
         if (new_exam_subject_btn.isEnabled) {
@@ -209,8 +161,8 @@ class AddEditExamFragment : Fragment() {
         new_exam_date_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             DatePickerDialog(
-                context!!,
-                CalendarUtils.getDateSetListener(activity!!, R.id.new_exam_date_btn, cal, calendarListener),
+               this,
+                CalendarUtils.getDateSetListener(this, R.id.new_exam_date_btn, cal, calendarListener),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -221,15 +173,15 @@ class AddEditExamFragment : Fragment() {
         new_exam_reminder_btn.setOnClickListener {
             val cal = Calendar.getInstance()
             TimePickerDialog(
-                context,
-                CalendarUtils.getTimeSetListener(activity!!, R.id.new_exam_reminder_btn, cal, true, calendarListener),
+             this,
+                CalendarUtils.getTimeSetListener(this, R.id.new_exam_reminder_btn, cal, true, calendarListener),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
             ).show()
             DatePickerDialog(
-                context!!,
-                CalendarUtils.getDateSetListener(activity!!, R.id.new_exam_reminder_btn, cal),
+               this,
+                CalendarUtils.getDateSetListener(this, R.id.new_exam_reminder_btn, cal),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -240,31 +192,101 @@ class AddEditExamFragment : Fragment() {
             saveExam()
         }
     }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-        FragmentBackStack.getInstance(context!!).pop()
+    override fun onStop() {
+        super.onStop()
+        FragmentBackStack.getInstance(this).pop()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onUpBtnPressed()
+            } else -> super.onOptionsItemSelected(item)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        onUpBtnPressed()
+    }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param exam The exam to be edited, or null when creating a new one.
-         * @param subject Subject associated with the exam. Null if fragment was called from [ExamsFragment]
-         * @return A new instance of fragment AddEditExamFragment.
-         */
-        @JvmStatic
-        fun newInstance(exam: Exam? = null, subject: Subject? = null) =
-            AddEditExamFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(ARG_EXAM, exam)
-                    putParcelable(ARG_SUBJECT, subject)
-                }
+        const val TAG = "AddEditExam"
+    }
+
+    /**
+     * [AddEditExamActivity] can return only to [ExamsFragment] [SubjectDetailsFragment] and [ExamDetailsFragment].
+     * It can be called only by the following fragments:
+     *  [ExamsFragment]: When pressing the FAB button and creating a new one
+     *  [SubjectDetailsFragment]: When adding new
+     *  [ExamDetailsFragment]: When editing an existing one
+     */
+    private fun onUpBtnPressed() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            EXAMS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamsFragment.TAG)
+                startActivity(intent)
             }
+            SUBJECT_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            EXAM_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamDetailsFragment.TAG)
+                intent.putExtra(EXAM_PARAM_BUNDLE_ID, exam)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            else -> {
+                throw IllegalStateException("AddEditExamActivity was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
+    private fun onSaveBtnPressed(exam: Exam, subject: Subject) {
+        val reminder = exam.reminder
+        if (reminder != null) {
+            val notification =
+                ActivityUtils.createNotification(
+                    this,
+                    getString(R.string.notification_exam_reminder_title),
+                    exam.name
+                )
+            val delay = reminder.time.minus(System.currentTimeMillis())
+            ActivityUtils.scheduleNotification(this, notification, delay, null, exam)
+        }
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            EXAMS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamsFragment.TAG)
+                startActivity(intent)
+            }
+            SUBJECT_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            EXAM_DETAILS -> {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamDetailsFragment.TAG)
+                intent.putExtra(EXAM_PARAM_BUNDLE_ID, exam)
+                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+                startActivity(intent)
+            }
+            else -> throw IllegalStateException("onSaveExamClicked tries to load unrecognised fragment $fragmentCalledFrom")
+        }
     }
 
     /**
@@ -276,17 +298,17 @@ class AddEditExamFragment : Fragment() {
             val newExam = examFromUi()
             if (newExam != exam) {
                 exam = viewModel.saveExam(newExam)
-                listener?.onSaveExamClickListener(exam!!, subject!!)
+                onSaveBtnPressed(exam!!, subject!!)
             } else {
                 Toast.makeText(
-                    context!!,
+                    this,
                     getString(R.string.did_not_change),
                     Toast.LENGTH_LONG
                 ).show()
             }
         } else {
             Toast.makeText(
-                context!!,
+                this,
                 getString(R.string.required_fields_are_not_filled),
                 Toast.LENGTH_LONG
             ).show()
@@ -338,7 +360,7 @@ class AddEditExamFragment : Fragment() {
         // Avoiding problems with smart cast
         val listOfSubjects = listOfSubjects
         if (listOfSubjects != null) {
-            val popupMenu = PopupMenu(activity!!, view)
+            val popupMenu = PopupMenu(this, view)
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.empty_menu, popupMenu.menu)
 

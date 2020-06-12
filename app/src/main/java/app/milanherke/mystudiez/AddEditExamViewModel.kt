@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 /**
  * A simple [AndroidViewModel] subclass.
  * This ViewModel was created to save/update [Exam] objects in the database
- * and belongs to [AddEditExamFragment].
+ * and belongs to [AddEditExamActivity].
  */
 class AddEditExamViewModel(application: Application) : AndroidViewModel(application) {
 

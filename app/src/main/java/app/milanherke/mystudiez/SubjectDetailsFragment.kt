@@ -125,12 +125,12 @@ class SubjectDetailsFragment : Fragment(),
         }
 
         // If users want to add a new exam to the subject
-        // the application takes them to AddEditExamFragment
+        // the application takes them to AddEditExamActivity
         subject_details_add_new_exam_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditExamFragment.newInstance(null, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditExamActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
     }
 
