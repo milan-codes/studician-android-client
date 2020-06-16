@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.SubjectDetailsViewModel.DataFetching
 import com.google.firebase.database.DatabaseError
@@ -24,7 +26,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * The purpose of this fragment is to display the details of a [Subject]
  * The user can delete a subject from this fragment
- * or launch a new fragment ([AddEditSubjectFragment]) to edit it.
+ * or launch a new fragment ([AddEditSubjectActivity]) to edit it.
  * Use the [SubjectDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -88,10 +90,10 @@ class SubjectDetailsFragment : Fragment(),
         subject_details_exams_recycler.adapter = examsAdapter
 
         button.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditSubjectFragment.newInstance(subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditSubjectActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
 
         // After deleting a subject
@@ -105,30 +107,30 @@ class SubjectDetailsFragment : Fragment(),
         }
 
         // If users want to add a new lesson to the subject
-        // the application takes them to AddEditLessonFragment
+        // the application takes them to AddEditLessonActivity
         subject_details_add_new_lesson_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditLessonFragment.newInstance(null, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditLessonActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
 
         // If users want to add a new task to the subject
-        // the application takes them to AddEditTaskFragment
+        // the application takes them to AddEditTaskActivity
         subject_details_add_new_task_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditTaskFragment.newInstance(null, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditTaskActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
 
         // If users want to add a new exam to the subject
-        // the application takes them to AddEditExamFragment
+        // the application takes them to AddEditExamActivity
         subject_details_add_new_exam_btn.setOnClickListener {
-            activity!!.replaceFragmentWithTransition(
-                AddEditExamFragment.newInstance(null, subject!!),
-                R.id.fragment_container
-            )
+            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
+            val intent = Intent(activity, AddEditExamActivity::class.java)
+            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
+            startActivity(intent)
         }
     }
 
@@ -199,6 +201,9 @@ class SubjectDetailsFragment : Fragment(),
     }
 
     companion object {
+
+        const val TAG = "SubjectDetails"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

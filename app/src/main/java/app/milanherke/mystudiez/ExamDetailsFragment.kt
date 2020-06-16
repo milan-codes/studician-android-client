@@ -1,6 +1,7 @@
 package app.milanherke.mystudiez
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * The purpose if this fragment is to display the details of an [Exam].
  * The user can delete an exam from this fragment
- * or launch a new fragment ([AddEditExamFragment]) to edit it.
+ * or launch a new fragment ([AddEditExamActivity]) to edit it.
  * Use the [ExamDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -105,6 +106,9 @@ class ExamDetailsFragment : Fragment() {
 
 
     companion object {
+
+        const val TAG = "ExamDetails"
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -155,12 +159,13 @@ class ExamDetailsFragment : Fragment() {
 
     /**
      * Allows the user to edit an [Exam] object
-     * by opening [AddEditExamFragment].
+     * by opening [AddEditExamActivity].
      */
     private fun editExam() {
-        activity!!.replaceFragmentWithTransition(
-            AddEditExamFragment.newInstance(exam!!, subject!!),
-            R.id.fragment_container
-        )
+        FragmentBackStack.getInstance(activity!!).push(Fragments.EXAM_DETAILS)
+        val intent = Intent(activity, AddEditExamActivity::class.java)
+        intent.putExtra(ActivityUtils.EXAM_PARAM_BUNDLE_ID, exam)
+        intent.putExtra(ActivityUtils.SUBJECT_PARAM_BUNDLE_ID, subject)
+        startActivity(intent)
     }
 }

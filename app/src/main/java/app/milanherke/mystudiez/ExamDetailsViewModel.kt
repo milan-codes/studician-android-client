@@ -22,7 +22,7 @@ class ExamDetailsViewModel(application: Application) : AndroidViewModel(applicat
     fun deleteExam(exam: Exam) {
         GlobalScope.launch {
             val database = Firebase.database
-            database.getReference("subjects/${FirebaseUtils.getUserId()}/${exam.subjectId}/${exam.id}")
+            database.getReference("exams/${FirebaseUtils.getUserId()}/${exam.subjectId}/${exam.id}")
                 .setValue(null)
         }
     }

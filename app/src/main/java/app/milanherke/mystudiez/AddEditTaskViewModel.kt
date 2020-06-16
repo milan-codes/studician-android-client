@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 /**
  * A simple [AndroidViewModel] subclass.
  * This ViewModel was created to save/update [Task] objects in the database
- * and belongs to [AddEditTaskFragment].
+ * and belongs to [AddEditTaskActivity].
  */
 class AddEditTaskViewModel(application: Application) : AndroidViewModel(application) {
 
