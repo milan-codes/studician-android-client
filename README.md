@@ -1,10 +1,10 @@
-# MyStudiez - Android
+# Studician - Android client
 **_Productivity and time management tool for students🚀_**
-![logo](https://i.imgur.com/A7RwbgO.png)
+![logo](https://i.imgur.com/B5IyNV5.png)
 
 ## For students, by students.🎓
-MyStudiez is a free, open-source android app developed to make students life easier.\
-Students (and teachers too!) can easily digitalize their timetable. Users can add their classes, tasks and exams to the app. Furthermore, MyStudiez supports Google Sign-in, so users can synchronize their data across their devices.
+Studician is a free, open-source android app developed to make students life easier.\
+Students (and teachers too!) can easily digitalize their timetable. Users can add their classes, tasks and exams to the app. Furthermore, Studician supports Google Sign-in, so users can synchronize their data across their devices.
 
 ## Tech used⚙
 The entire application is written in Kotlin. Documentation can be found [here](https://kotlinlang.org/docs/reference/basic-syntax.html).\
@@ -24,5 +24,5 @@ Contributors need to have a physical android device (In this case: Turn on `Deve
 ### Firebase
 In order to run this application you must have a Firebase project set up.\
 If you are logged in to your Google account, you can easily add a new project in [Firebase Console](https://firebase.google.com/).
-Once you've done that, you have to download **`google-services.json`** (In Firebase Console: Project Settings -> General -> Download latest config file) and put it under `MyStudiez\app\` (project-level dictionary), so the path to the file would look like this: `MyStudiez\app\google-services.json`.
+Once you've done that, you have to download **`google-services.json`** (In Firebase Console: Project Settings -> General -> Download latest config file) and put it under `Studician\app\` (project-level dictionary), so the path to the file would look like this: `Studician\app\google-services.json`.
 After that, you're ready to develop!

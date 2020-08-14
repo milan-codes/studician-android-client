@@ -1,5 +1,5 @@
-# MyStudiez Code of Conduct
-This Code of Conduct outlines our expectations for participants within the MyStudiez community.
+# Studician Code of Conduct
+This Code of Conduct outlines our expectations for participants within the Studician community.
 Our goal is to make explicit what we expect from participants in this community as well as its leaders.
 Open Source projects thrive on diverse perspectives.
 If one smart developer could code the whole project, we’d just hire that developer to write all the code.
