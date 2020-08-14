@@ -1,4 +1,4 @@
-# MyStudiez Contribution Guideline
+# Studician Contribution Guideline
 The main purpose of this file is to help the larger community settle on some best practices when it comes to contributing.
 Any help you give is greatly appreciated, big or small.
 We want to make contributing to this project as easy and transparent as possible, whether it's:
@@ -23,7 +23,7 @@ Great feature requests tend to have:
 - A short, meaningful title
 - A great description of why it is needed
 
-Label, Milestone, and Project fields are going to be set by admins.
+Label, Milestone, and Project fields are set by admins.
 
 ## Contribution
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
