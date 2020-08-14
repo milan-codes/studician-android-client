@@ -1,6 +1,6 @@
 # Studician - Android client
 **_Productivity and time management tool for students🚀_**
-![logo](https://imgur.com/B5IyNV5)
+![logo](https://i.imgur.com/B5IyNV5.png)
 
 ## For students, by students.🎓
 Studician is a free, open-source android app developed to make students life easier.\
