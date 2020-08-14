@@ -1,9 +1,9 @@
-# MyStudiez - Android
+# Studician - Android client
 **_Productivity and time management tool for students🚀_**
-![logo](https://i.imgur.com/A7RwbgO.png)
+![logo](https://imgur.com/B5IyNV5)
 
 ## For students, by students.🎓
-MyStudiez is a free, open-source android app developed to make students life easier.\
+Studician is a free, open-source android app developed to make students life easier.\
 Students (and teachers too!) can easily digitalize their timetable. Users can add their classes, tasks and exams to the app. Furthermore, MyStudiez supports Google Sign-in, so users can synchronize their data across their devices.
 
 ## Tech used⚙
