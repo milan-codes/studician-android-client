@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_overview.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -42,10 +43,10 @@ class OverviewFragment : Fragment(),
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, this, OVERVIEW)
+    private var subjects: MutableMap<String, Subject>? = null
+    private val lessonsAdapter = LessonsRecyclerViewAdapter(OVERVIEW, this)
     private val tasksAdapter = TasksRecyclerViewAdapter(null, this, OVERVIEW)
     private val examsAdapter = ExamsRecyclerViewAdapter(null, this, OVERVIEW)
-    private var subjectsList: MutableMap<String, Subject>? = null
     private var listener: OverviewInteractions? = null
     private var progressBarHandler: ProgressBarHandler? = null
 
@@ -98,10 +99,10 @@ class OverviewFragment : Fragment(),
             }
 
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                lessonsAdapter.swapSubjectMap(subjects)
+                lessonsAdapter.swapSubjects(subjects)
                 tasksAdapter.swapSubjectsMap(subjects)
                 examsAdapter.swapSubjectsMap(subjects)
-                subjectsList = subjects
+                this@OverviewFragment.subjects = subjects
 
                 progressBarHandler!!.hideProgressBar()
             }
@@ -163,10 +164,12 @@ class OverviewFragment : Fragment(),
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::starts)))
-                lessonsAdapter.swapLessonsList(sortedList)
-                if (overview_schedule_list != null && list.size != 0) Animations.runLayoutAnimation(
-                    overview_schedule_list
-                )
+                lessonsAdapter.swapLessons(sortedList)
+
+                // Running layout animation
+                if (overview_schedule_list != null && list.size != 0) {
+                    Animations.runLayoutAnimation(overview_schedule_list)
+                }
             }
         )
         viewModel.tasksListLiveData.observe(
@@ -174,9 +177,11 @@ class OverviewFragment : Fragment(),
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Task::name)))
                 tasksAdapter.swapTasksList(sortedList)
-                if (overview_task_list != null && list.size != 0) Animations.runLayoutAnimation(
-                    overview_task_list
-                )
+
+                // Running layout animation
+                if (overview_task_list != null && list.size != 0) {
+                    Animations.runLayoutAnimation(overview_task_list)
+                }
             }
         )
         viewModel.examsListLiveData.observe(
@@ -184,9 +189,11 @@ class OverviewFragment : Fragment(),
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Exam::name)))
                 examsAdapter.swapExamsList(sortedList)
-                if (overview_exam_list != null && list.size != 0) Animations.runLayoutAnimation(
-                    overview_exam_list
-                )
+
+                // Running layout animation
+                if (overview_exam_list != null && list.size != 0) {
+                    Animations.runLayoutAnimation(overview_exam_list)
+                }
             }
         )
         viewModel.loadAllDetails(Date(), dataFetchingListener)
@@ -238,7 +245,7 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onLessonClick(lesson: Lesson) {
-        val subjects = subjectsList
+        val subjects = subjects
         if (subjects != null) {
             activity!!.replaceFragmentWithTransition(
                 LessonDetailsFragment.newInstance(lesson, subjects[lesson.subjectId]),
@@ -248,7 +255,7 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onTaskClickListener(task: Task) {
-        val subjects = subjectsList
+        val subjects = subjects
         if (subjects != null) {
             activity!!.replaceFragmentWithTransition(
                 TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
@@ -258,7 +265,7 @@ class OverviewFragment : Fragment(),
     }
 
     override fun onExamClickListener(exam: Exam) {
-        val subjects = subjectsList
+        val subjects = subjects
         if (subjects != null) {
             activity!!.replaceFragmentWithTransition(
                 ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
