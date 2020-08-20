@@ -9,7 +9,7 @@ abstract class BaseAdapter<T>(
 
     abstract fun setViewHolder(parent: ViewGroup): BaseViewHolder<T>
 
-    fun swapDataList(dataList: ArrayList<T>) {
+    protected fun swapDataList(dataList: ArrayList<T>) {
         this.dataList = dataList
         notifyDataSetChanged()
     }
