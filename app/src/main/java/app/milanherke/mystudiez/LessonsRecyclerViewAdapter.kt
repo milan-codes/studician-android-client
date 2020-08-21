@@ -45,7 +45,7 @@ class LessonsRecyclerViewAdapter(
      * Changes the data set. Calls [BaseAdapter.swapDataList].
      * Swaps in a new [ArrayList] that contains [Lesson] objects.
      *
-     * @param lessons [ArrayList] that contains [Lesson] objects
+     * @param lessons An [ArrayList] that contains [Lesson] objects
      */
     fun swapLessons(lessons: ArrayList<Lesson>) {
         super.swapDataList(lessons)
@@ -55,27 +55,29 @@ class LessonsRecyclerViewAdapter(
      * Swaps in a new [MutableMap], that contains [Subject] objects,
      * which are needed in [LessonsViewHolder].
      *
-     * @param subjects New map containing subjects
+     * @param subjects A new map that contains subjects
      */
     fun swapSubjects(subjects: MutableMap<String, Subject>) {
+        // Secondary data list, which contains no useful information for the BaseAdapter, it is only when binding a lesson
         this.subjects = subjects
+        notifyDataSetChanged()
     }
 
     private inner class LessonsViewHolder(override val containerView: View) :
         BaseViewHolder<Lesson>(containerView) {
 
-        override fun bind(lesson: Lesson) {
+        override fun bind(data: Lesson) {
             when (usedIn) {
                 SUBJECT_DETAILS -> {
                     // If adapter is used in SubjectDetailsFragment, we do not need to display information about the subject
                     containerView.details_list_title.text =
-                        CalendarUtils.getDayFromNumberOfDay(lesson.day, containerView.context)
+                        CalendarUtils.getDayFromNumberOfDay(data.day, containerView.context)
                     containerView.details_list_header1.text = containerView.resources.getString(
                         R.string.details_subject_item_time,
-                        lesson.starts,
-                        lesson.ends
+                        data.starts,
+                        data.ends
                     )
-                    containerView.details_list_header2.text = lesson.location
+                    containerView.details_list_header2.text = data.location
                     containerView.details_list_subject_indicator.visibility = View.GONE
 
                     // Setting new constraints because subjectIndicator's visibility is set to gone
@@ -90,15 +92,15 @@ class LessonsRecyclerViewAdapter(
                 }
                 else -> {
                     // If adapter is used anywhere else, we need to display subject details
-                    val subject: Subject? = subjects[lesson.subjectId]
+                    val subject: Subject? = subjects[data.subjectId]
                     if (subject != null) {
                         containerView.details_list_title.text = subject.name
                         containerView.details_list_header1.text = containerView.resources.getString(
                             R.string.details_subject_item_time,
-                            lesson.starts,
-                            lesson.ends
+                            data.starts,
+                            data.ends
                         )
-                        containerView.details_list_header2.text = lesson.location
+                        containerView.details_list_header2.text = data.location
 
                         //Creating a clone drawable to avoid affecting other instances of the original drawable
                         val clone =
@@ -112,7 +114,7 @@ class LessonsRecyclerViewAdapter(
                 }
             }
             containerView.details_list_container.setOnClickListener {
-                listener.onLessonClick(lesson)
+                listener.onLessonClick(data)
             }
         }
     }
