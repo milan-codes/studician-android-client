@@ -35,8 +35,8 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, this, TASKS)
-    private var subjectsList: MutableMap<String, Subject>? = null
+    private val tasksAdapter = TasksRecyclerViewAdapter(TASKS, this)
+    private var subjects: MutableMap<String, Subject> = mutableMapOf()
     private var listener: TasksInteractions? = null
     private var progressBarHandler: ProgressBarHandler? = null
 
@@ -90,8 +90,8 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
             }
 
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                tasksAdapter.swapSubjectsMap(subjects)
-                subjectsList = subjects
+                tasksAdapter.swapSubjects(subjects)
+                this@TasksFragment.subjects = subjects
             }
 
             override fun onFailure(e: DatabaseError) {
@@ -144,7 +144,7 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
-                tasksAdapter.swapTasksList(sortedList)
+                tasksAdapter.swapTasks(sortedList)
                 if (task_list != null && list.size != 0) Animations.runLayoutAnimation(task_list)
             }
         )
@@ -175,12 +175,10 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
     }
 
     override fun onTaskClickListener(task: Task) {
-        val subjects = subjectsList
-        if (subjects != null) {
+        val subjects = subjects
             activity!!.replaceFragmentWithTransition(
                 TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
                 R.id.fragment_container
             )
-        }
     }
 }

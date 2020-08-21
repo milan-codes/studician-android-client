@@ -43,9 +43,9 @@ class OverviewFragment : Fragment(),
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private var subjects: MutableMap<String, Subject>? = null
+    private var subjects: MutableMap<String, Subject> = mutableMapOf()
     private val lessonsAdapter = LessonsRecyclerViewAdapter(OVERVIEW, this)
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, this, OVERVIEW)
+    private val tasksAdapter = TasksRecyclerViewAdapter(OVERVIEW, this)
     private val examsAdapter = ExamsRecyclerViewAdapter(null, this, OVERVIEW)
     private var listener: OverviewInteractions? = null
     private var progressBarHandler: ProgressBarHandler? = null
@@ -100,7 +100,7 @@ class OverviewFragment : Fragment(),
 
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
                 lessonsAdapter.swapSubjects(subjects)
-                tasksAdapter.swapSubjectsMap(subjects)
+                tasksAdapter.swapSubjects(subjects)
                 examsAdapter.swapSubjectsMap(subjects)
                 this@OverviewFragment.subjects = subjects
 
@@ -176,7 +176,7 @@ class OverviewFragment : Fragment(),
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Task::name)))
-                tasksAdapter.swapTasksList(sortedList)
+                tasksAdapter.swapTasks(sortedList)
 
                 // Running layout animation
                 if (overview_task_list != null && list.size != 0) {
@@ -246,31 +246,25 @@ class OverviewFragment : Fragment(),
 
     override fun onLessonClick(lesson: Lesson) {
         val subjects = subjects
-        if (subjects != null) {
             activity!!.replaceFragmentWithTransition(
                 LessonDetailsFragment.newInstance(lesson, subjects[lesson.subjectId]),
                 R.id.fragment_container
             )
-        }
     }
 
     override fun onTaskClickListener(task: Task) {
         val subjects = subjects
-        if (subjects != null) {
             activity!!.replaceFragmentWithTransition(
                 TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
                 R.id.fragment_container
             )
-        }
     }
 
     override fun onExamClickListener(exam: Exam) {
         val subjects = subjects
-        if (subjects != null) {
             activity!!.replaceFragmentWithTransition(
                 ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
                 R.id.fragment_container
             )
-        }
     }
 }
