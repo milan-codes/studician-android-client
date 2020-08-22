@@ -43,10 +43,10 @@ class OverviewFragment : Fragment(),
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private var subjects: MutableMap<String, Subject> = mutableMapOf()
     private val lessonsAdapter = LessonsRecyclerViewAdapter(OVERVIEW, this)
     private val tasksAdapter = TasksRecyclerViewAdapter(OVERVIEW, this)
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, this, OVERVIEW)
+    private val examsAdapter = ExamsRecyclerViewAdapter(OVERVIEW, this)
+    private var subjects: MutableMap<String, Subject> = mutableMapOf()
     private var listener: OverviewInteractions? = null
     private var progressBarHandler: ProgressBarHandler? = null
 
@@ -101,7 +101,7 @@ class OverviewFragment : Fragment(),
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
                 lessonsAdapter.swapSubjects(subjects)
                 tasksAdapter.swapSubjects(subjects)
-                examsAdapter.swapSubjectsMap(subjects)
+                examsAdapter.swapSubjects(subjects)
                 this@OverviewFragment.subjects = subjects
 
                 progressBarHandler!!.hideProgressBar()
@@ -188,7 +188,7 @@ class OverviewFragment : Fragment(),
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Exam::name)))
-                examsAdapter.swapExamsList(sortedList)
+                examsAdapter.swapExams(sortedList)
 
                 // Running layout animation
                 if (overview_exam_list != null && list.size != 0) {
