@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -12,7 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.SubjectDetailsViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
@@ -231,7 +233,10 @@ class SubjectDetailsFragment : Fragment(),
         val subject = subject
         if (subject != null) {
             activity!!.replaceFragmentWithTransition(
-                LessonDetailsFragment.newInstance(lesson, subject),
+                LessonDetailsFragment.newInstance(
+                    lesson,
+                    subject
+                ),
                 R.id.fragment_container
             )
         }
@@ -241,7 +246,10 @@ class SubjectDetailsFragment : Fragment(),
         val subject = subject
         if (subject != null) {
             activity!!.replaceFragmentWithTransition(
-                TaskDetailsFragment.newInstance(task, subject), R.id.fragment_container
+                TaskDetailsFragment.newInstance(
+                    task,
+                    subject
+                ), R.id.fragment_container
             )
         }
     }
@@ -250,7 +258,8 @@ class SubjectDetailsFragment : Fragment(),
         val subject = subject
         if (subject != null) {
             activity!!.replaceFragmentWithTransition(
-                ExamDetailsFragment.newInstance(exam, subject), R.id.fragment_container
+                ExamDetailsFragment.newInstance(exam, subject),
+                R.id.fragment_container
             )
         }
     }

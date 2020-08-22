@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.FragmentBackStack
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_task_details.*
 
@@ -67,10 +69,21 @@ class TaskDetailsFragment : Fragment() {
             activity!!.toolbar.setTitle(R.string.task_details_title)
             task_details_name_value.text = task.name
             task_details_desc_value.text = task.description
-            task_details_type_value.text = TaskUtils.getTaskType(task.type, context!!)
+            task_details_type_value.text =
+                TaskUtils.getTaskType(
+                    task.type,
+                    context!!
+                )
             task_details_subject_value.text = subject.name
-            task_details_due_date_value.text = CalendarUtils.dateToString(task.dueDate, false)
-            task_details_reminder_value.text = if (taskReminder != null) CalendarUtils.dateToString(taskReminder, true) else getString(R.string.add_edit_lesson_btn)
+            task_details_due_date_value.text =
+                CalendarUtils.dateToString(
+                    task.dueDate,
+                    false
+                )
+            task_details_reminder_value.text = if (taskReminder != null) CalendarUtils.dateToString(
+                taskReminder,
+                true
+            ) else getString(R.string.add_edit_lesson_btn)
         }
     }
 
@@ -105,7 +118,9 @@ class TaskDetailsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        FragmentBackStack.getInstance(context!!).push(Fragments.TASK_DETAILS)
+        FragmentBackStack.getInstance(context!!).push(
+            Fragments.TASK_DETAILS
+        )
     }
 
     companion object {
@@ -164,7 +179,9 @@ class TaskDetailsFragment : Fragment() {
      * by opening [AddEditTaskActivity].
      */
     private fun editTask() {
-        FragmentBackStack.getInstance(activity!!).push(Fragments.TASK_DETAILS)
+        FragmentBackStack.getInstance(activity!!).push(
+            Fragments.TASK_DETAILS
+        )
         val intent = Intent(activity, AddEditTaskActivity::class.java)
         intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
         intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)

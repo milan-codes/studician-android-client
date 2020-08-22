@@ -13,6 +13,9 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.fragments.LessonDetailsFragment
+import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
+import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
 import kotlinx.android.synthetic.main.activity_add_edit_lesson.*
 import kotlinx.android.synthetic.main.content_add_edit_lesson.*
 import java.util.*
@@ -35,8 +38,8 @@ class AddEditLessonActivity : AppCompatActivity(), UnsavedChangesDialogFragment.
         setContentView(R.layout.activity_add_edit_lesson)
 
         val intent = intent
-        lesson = intent.getParcelableExtra<Lesson>(LESSON_PARAM_BUNDLE_ID)
-        subject = intent.getParcelableExtra<Subject>(SUBJECT_PARAM_BUNDLE_ID)
+        lesson = intent.getParcelableExtra(LESSON_PARAM_BUNDLE_ID)
+        subject = intent.getParcelableExtra(SUBJECT_PARAM_BUNDLE_ID)
 
         // Avoiding problems with smart-cast
         val lesson = lesson

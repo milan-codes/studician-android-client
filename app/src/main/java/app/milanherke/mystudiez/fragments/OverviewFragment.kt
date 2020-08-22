@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -13,7 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.OverviewViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
@@ -92,11 +94,13 @@ class OverviewFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         activity!!.toolbar.setTitle(R.string.overview_title)
         // Getting all subjects from the database
-        sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+        sharedViewModel.getAllSubjects(object :
+            SharedViewModel.RetrievingData {
             override fun onLoad() {
                 val activity = activity
                 if (activity != null) {
-                    progressBarHandler = ProgressBarHandler(activity)
+                    progressBarHandler =
+                        ProgressBarHandler(activity)
                     progressBarHandler!!.showProgressBar()
                 }
             }
@@ -143,7 +147,8 @@ class OverviewFragment : Fragment(),
         activity!!.fab.visibility = View.GONE
 
         // Showing a progress bar while data is being fetched
-        progressBarHandler = ProgressBarHandler(activity!!)
+        progressBarHandler =
+            ProgressBarHandler(activity!!)
         val dataFetchingListener: DataFetching = object : DataFetching {
             override fun onLoad() {
                 progressBarHandler!!.showProgressBar()
@@ -171,7 +176,9 @@ class OverviewFragment : Fragment(),
 
                 // Running layout animation
                 if (overview_schedule_list != null && list.size != 0) {
-                    Animations.runLayoutAnimation(overview_schedule_list)
+                    Animations.runLayoutAnimation(
+                        overview_schedule_list
+                    )
                 }
             }
         )
@@ -183,7 +190,9 @@ class OverviewFragment : Fragment(),
 
                 // Running layout animation
                 if (overview_task_list != null && list.size != 0) {
-                    Animations.runLayoutAnimation(overview_task_list)
+                    Animations.runLayoutAnimation(
+                        overview_task_list
+                    )
                 }
             }
         )
@@ -195,7 +204,9 @@ class OverviewFragment : Fragment(),
 
                 // Running layout animation
                 if (overview_exam_list != null && list.size != 0) {
-                    Animations.runLayoutAnimation(overview_exam_list)
+                    Animations.runLayoutAnimation(
+                        overview_exam_list
+                    )
                 }
             }
         )
@@ -208,17 +219,18 @@ class OverviewFragment : Fragment(),
 
         overview_date_button.setOnClickListener {
             val cal = Calendar.getInstance()
-            val listener = CalendarUtils.getDateSetListener(
-                activity!!,
-                R.id.overview_date_button,
-                cal,
-                object : CalendarInteractions {
-                    override fun onDateSet(date: Date) {
-                        viewModel.loadAllDetails(date, dataFetchingListener)
-                    }
+            val listener =
+                CalendarUtils.getDateSetListener(
+                    activity!!,
+                    R.id.overview_date_button,
+                    cal,
+                    object : CalendarInteractions {
+                        override fun onDateSet(date: Date) {
+                            viewModel.loadAllDetails(date, dataFetchingListener)
+                        }
 
-                    override fun onTimeSet(date: Date) {}
-                })
+                        override fun onTimeSet(date: Date) {}
+                    })
             DatePickerDialog(
                 context!!, listener,
                 cal.get(Calendar.YEAR),
@@ -250,7 +262,10 @@ class OverviewFragment : Fragment(),
     override fun onLessonClick(lesson: Lesson) {
         val subjects = subjects
         activity!!.replaceFragmentWithTransition(
-            LessonDetailsFragment.newInstance(lesson, subjects[lesson.subjectId]),
+            LessonDetailsFragment.newInstance(
+                lesson,
+                subjects[lesson.subjectId]
+            ),
             R.id.fragment_container
         )
     }
@@ -258,7 +273,10 @@ class OverviewFragment : Fragment(),
     override fun onTaskClickListener(task: Task) {
         val subjects = subjects
         activity!!.replaceFragmentWithTransition(
-            TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
+            TaskDetailsFragment.newInstance(
+                task,
+                subjects[task.subjectId]
+            ),
             R.id.fragment_container
         )
     }

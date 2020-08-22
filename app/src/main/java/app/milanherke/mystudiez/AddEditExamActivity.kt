@@ -18,6 +18,10 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.Fragments.*
 import app.milanherke.mystudiez.SharedViewModel.RetrievingData
+import app.milanherke.mystudiez.fragments.ExamDetailsFragment
+import app.milanherke.mystudiez.fragments.ExamsFragment
+import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
+import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_add_edit_exam.*
 import kotlinx.android.synthetic.main.content_add_edit_exam.*
@@ -242,7 +246,7 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
         } else openActivity()
     }
 
-    private fun onSaveBtnPressed(exam: Exam, subject: Subject) {
+    private fun onSaveBtnPressed(exam: Exam) {
         val reminder = exam.reminder
         if (reminder != null) {
             val notification =
@@ -294,7 +298,7 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             val newExam = examFromUi()
             if (newExam != exam) {
                 exam = viewModel.saveExam(newExam)
-                onSaveBtnPressed(exam!!, subject!!)
+                onSaveBtnPressed(exam!!)
             } else {
                 Toast.makeText(
                     this,

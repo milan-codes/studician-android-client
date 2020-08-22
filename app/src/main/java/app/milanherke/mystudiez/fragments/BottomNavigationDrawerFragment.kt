@@ -1,10 +1,11 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import app.milanherke.mystudiez.*
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_bottomsheet.*
 

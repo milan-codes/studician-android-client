@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import app.milanherke.mystudiez.*
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.SubjectsViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.SubjectsRecyclerViewAdapter
 import com.google.firebase.database.DatabaseError
@@ -130,7 +132,9 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
 
     override fun onDetach() {
         super.onDetach()
-        FragmentBackStack.getInstance(context!!).push(Fragments.SUBJECTS)
+        FragmentBackStack.getInstance(context!!).push(
+            Fragments.SUBJECTS
+        )
     }
 
     companion object {

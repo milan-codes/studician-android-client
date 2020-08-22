@@ -16,13 +16,9 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_
 import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.createNotification
-import app.milanherke.mystudiez.ActivityUtils.Companion.scheduleNotification
+import app.milanherke.mystudiez.fragments.*
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
-
-private const val TASK_NOTIFICATION_PRE_CODE = 100
-private const val EXAM_NOTIFICATION_PRE_CODE = 200
 
 class MainActivity : AppCompatActivity(),
     OverviewFragment.OverviewInteractions,

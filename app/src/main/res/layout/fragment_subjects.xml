@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SubjectsFragment">
+    tools:context=".fragments.SubjectsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/subject_list"

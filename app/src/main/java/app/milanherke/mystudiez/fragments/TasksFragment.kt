@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,33 +12,35 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import app.milanherke.mystudiez.ExamsViewModel.DataFetching
-import app.milanherke.mystudiez.Fragments.EXAMS
-import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
+import app.milanherke.mystudiez.*
+import app.milanherke.mystudiez.FragmentBackStack
+import app.milanherke.mystudiez.Fragments.TASKS
+import app.milanherke.mystudiez.TasksViewModel.DataFetching
+import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_exams.*
+import kotlinx.android.synthetic.main.fragment_tasks.*
 
 /**
  * A simple [Fragment] subclass.
- * The main purpose of this fragment is to display all [Exam] objects from the database.
+ * The main purpose of this fragment is to display all [Task] objects from the database.
  * Activities that contain this fragment must implement the
- * [ExamsFragment.ExamsInteractions] interface
+ * [TasksFragment.TasksInteractions] interface
  * to handle interaction events.
- * Use the [ExamsFragment.newInstance] factory method to
+ * Use the [TasksFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
+class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
 
     private val viewModel by lazy {
-        ViewModelProviders.of(activity!!).get(ExamsViewModel::class.java)
+        ViewModelProviders.of(activity!!).get(TasksViewModel::class.java)
     }
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val examsAdapter = ExamsRecyclerViewAdapter(EXAMS, this)
+    private val tasksAdapter = TasksRecyclerViewAdapter(TASKS, this)
     private var subjects: MutableMap<String, Subject> = mutableMapOf()
-    private var listener: ExamsInteractions? = null
+    private var listener: TasksInteractions? = null
     private var progressBarHandler: ProgressBarHandler? = null
 
     /**
@@ -47,25 +49,23 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    interface ExamsInteractions {
-        fun onCreateCalled()
+    interface TasksInteractions {
+        fun tasksFragmentIsBeingCreated()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is ExamsInteractions) {
+        if (context is TasksInteractions) {
             listener = context
         } else {
-            throw RuntimeException("$context must implement ExamsInteractions")
+            throw RuntimeException("$context must implement TaskInteractions")
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Listener will never be null
-        // because the program crashes in onAttach if the interface is not implemented
-        listener!!.onCreateCalled()
+        // Listener will never be null since the program crashes in onAttach if the interface is not implemented
+        listener!!.tasksFragmentIsBeingCreated()
     }
 
     override fun onCreateView(
@@ -73,32 +73,30 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_exams, container, false)
+        return inflater.inflate(R.layout.fragment_tasks, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity!!.toolbar.setTitle(R.string.exams_title)
+        activity!!.toolbar.setTitle(R.string.tasks_title)
 
         // Getting all subjects from the database,
-        // examsAdapter must have a map of subjects in order to display
-        // details about an exam's subject
-        sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+        // tasksAdapter must have a map of subjects in order to display
+        // details about a task's subject
+        sharedViewModel.getAllSubjects(object :
+            SharedViewModel.RetrievingData {
             override fun onLoad() {
                 val activity = activity
                 if (activity != null) {
-                    progressBarHandler = ProgressBarHandler(activity)
+                    progressBarHandler =
+                        ProgressBarHandler(activity)
                     progressBarHandler!!.showProgressBar()
                 }
             }
 
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
-                exam_list.layoutManager = LinearLayoutManager(context)
-                exam_list.adapter = examsAdapter
-                examsAdapter.swapSubjects(subjects)
-                this@ExamsFragment.subjects = subjects
-
-                progressBarHandler!!.hideProgressBar()
+                tasksAdapter.swapSubjects(subjects)
+                this@TasksFragment.subjects = subjects
             }
 
             override fun onFailure(e: DatabaseError) {
@@ -109,6 +107,9 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
                 ).show()
             }
         })
+
+        task_list.layoutManager = LinearLayoutManager(context)
+        task_list.adapter = tasksAdapter
     }
 
     @SuppressLint("RestrictedApi")
@@ -124,7 +125,8 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         activity!!.fab.visibility = View.VISIBLE
 
         // Showing a progress bar while data is being fetched
-        progressBarHandler = ProgressBarHandler(activity!!)
+        progressBarHandler =
+            ProgressBarHandler(activity!!)
         val dataFetchingListener: DataFetching = object : DataFetching {
             override fun onLoad() {
                 progressBarHandler!!.showProgressBar()
@@ -144,46 +146,46 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
         }
 
         // Registering observer
-        // Swapping the exams list in ExamsRecyclerViewAdapter
-        // and running layout animation
-        viewModel.examsListLiveData.observe(
+        viewModel.tasksListLiveData.observe(
             this,
             Observer { list ->
-                val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
-                examsAdapter.swapExams(sortedList)
-                if (exam_list != null && list.size != 0) Animations.runLayoutAnimation(exam_list)
+                val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
+                tasksAdapter.swapTasks(sortedList)
+                if (task_list != null && list.size != 0) Animations.runLayoutAnimation(
+                    task_list
+                )
             }
         )
-        viewModel.loadExams(dataFetchingListener)
+        viewModel.loadTasks(dataFetchingListener)
     }
 
     override fun onDetach() {
         super.onDetach()
         listener = null
-        FragmentBackStack.getInstance(context!!).push(EXAMS)
+        FragmentBackStack.getInstance(context!!).push(TASKS)
     }
 
     companion object {
 
-        const val TAG = "Exams"
+        const val TAG = "Tasks"
 
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @return A new instance of fragment ExamsFragment.
+         * @return A new instance of fragment TasksFragment.
          */
         @JvmStatic
         fun newInstance() =
-            ExamsFragment().apply {
+            TasksFragment().apply {
                 arguments = Bundle().apply {}
             }
     }
 
-    override fun onExamClickListener(exam: Exam) {
+    override fun onTaskClickListener(task: Task) {
         val subjects = subjects
         activity!!.replaceFragmentWithTransition(
-            ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
+            TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
             R.id.fragment_container
         )
     }

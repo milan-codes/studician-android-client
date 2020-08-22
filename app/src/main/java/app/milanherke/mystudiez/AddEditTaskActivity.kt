@@ -18,6 +18,10 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.createNotification
 import app.milanherke.mystudiez.ActivityUtils.Companion.scheduleNotification
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.Fragments.*
+import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
+import app.milanherke.mystudiez.fragments.TaskDetailsFragment
+import app.milanherke.mystudiez.fragments.TasksFragment
+import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_add_edit_task.*
 import kotlinx.android.synthetic.main.content_add_edit_task.*
@@ -255,7 +259,7 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
 
     }
 
-    private fun onSaveBtnPressed(task: Task, subject: Subject) {
+    private fun onSaveBtnPressed(task: Task) {
         val reminder = task.reminder
         if (reminder != null) {
             val notification =
@@ -303,7 +307,7 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             val newTask = taskFromUi()
             if (newTask != task) {
                 task = viewModel.saveTask(newTask)
-                onSaveBtnPressed(task!!, subject!!)
+                onSaveBtnPressed(task!!)
             } else {
                 Toast.makeText(
                     this,

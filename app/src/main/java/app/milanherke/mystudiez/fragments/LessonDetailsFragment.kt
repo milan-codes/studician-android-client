@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
+import app.milanherke.mystudiez.FragmentBackStack
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_lesson_details.*
 
@@ -96,7 +98,9 @@ class LessonDetailsFragment : Fragment() {
         }
 
         lesson_details_edit_subject_btn.setOnClickListener {
-            FragmentBackStack.getInstance(activity!!).push(Fragments.LESSON_DETAILS)
+            FragmentBackStack.getInstance(activity!!).push(
+                Fragments.LESSON_DETAILS
+            )
             val intent = Intent(activity, AddEditLessonActivity::class.java)
             intent.putExtra(ActivityUtils.LESSON_PARAM_BUNDLE_ID, lesson)
             intent.putExtra(ActivityUtils.SUBJECT_PARAM_BUNDLE_ID, subject)
@@ -106,7 +110,9 @@ class LessonDetailsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        FragmentBackStack.getInstance(context!!).push(Fragments.LESSON_DETAILS)
+        FragmentBackStack.getInstance(context!!).push(
+            Fragments.LESSON_DETAILS
+        )
     }
 
     companion object {

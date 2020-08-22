@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
+import app.milanherke.mystudiez.FragmentBackStack
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exam_details.*
 
@@ -66,8 +68,17 @@ class ExamDetailsFragment : Fragment() {
             exam_details_name_value.text = exam.name
             exam_details_desc_value.text = exam.description
             exam_details_subject_value.text = subject.name
-            exam_details_date_value.text = CalendarUtils.dateToString(exam.date, false)
-            exam_details_reminder_value.text = if (examReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(examReminder, true)
+            exam_details_date_value.text =
+                CalendarUtils.dateToString(
+                    exam.date,
+                    false
+                )
+            exam_details_reminder_value.text = if (examReminder == null) getString(
+                R.string.add_edit_lesson_btn
+            ) else CalendarUtils.dateToString(
+                examReminder,
+                true
+            )
         }
     }
 
@@ -101,7 +112,9 @@ class ExamDetailsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        FragmentBackStack.getInstance(context!!).push(Fragments.EXAM_DETAILS)
+        FragmentBackStack.getInstance(context!!).push(
+            Fragments.EXAM_DETAILS
+        )
     }
 
 
@@ -138,7 +151,9 @@ class ExamDetailsFragment : Fragment() {
         // Opening the previous fragment
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(activity!!).peek()) {
             Fragments.SUBJECT_DETAILS -> activity!!.replaceFragmentWithTransition(
-                SubjectDetailsFragment.newInstance(subject!!),
+                SubjectDetailsFragment.newInstance(
+                    subject!!
+                ),
                 R.id.fragment_container
             )
             Fragments.EXAMS -> {
@@ -162,7 +177,9 @@ class ExamDetailsFragment : Fragment() {
      * by opening [AddEditExamActivity].
      */
     private fun editExam() {
-        FragmentBackStack.getInstance(activity!!).push(Fragments.EXAM_DETAILS)
+        FragmentBackStack.getInstance(activity!!).push(
+            Fragments.EXAM_DETAILS
+        )
         val intent = Intent(activity, AddEditExamActivity::class.java)
         intent.putExtra(ActivityUtils.EXAM_PARAM_BUNDLE_ID, exam)
         intent.putExtra(ActivityUtils.SUBJECT_PARAM_BUNDLE_ID, subject)
