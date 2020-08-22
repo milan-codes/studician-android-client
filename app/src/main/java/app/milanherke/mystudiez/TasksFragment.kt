@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.Fragments.TASKS
 import app.milanherke.mystudiez.TasksViewModel.DataFetching
+import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
@@ -176,9 +177,9 @@ class TasksFragment : Fragment(), TasksRecyclerViewAdapter.OnTaskClickListener {
 
     override fun onTaskClickListener(task: Task) {
         val subjects = subjects
-            activity!!.replaceFragmentWithTransition(
-                TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
-                R.id.fragment_container
-            )
+        activity!!.replaceFragmentWithTransition(
+            TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
+            R.id.fragment_container
+        )
     }
 }

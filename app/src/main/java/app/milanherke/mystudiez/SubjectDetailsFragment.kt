@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.SubjectDetailsViewModel.DataFetching
+import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
+import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter
+import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subject_details.*
@@ -179,19 +182,22 @@ class SubjectDetailsFragment : Fragment(),
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::day, Lesson::starts)))
-                lessonsAdapter.swapLessons(sortedList) }
+                lessonsAdapter.swapLessons(sortedList)
+            }
         )
         viewModel.selectedTasksLiveData.observe(
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
-                tasksAdapter.swapTasks(sortedList) }
+                tasksAdapter.swapTasks(sortedList)
+            }
         )
         viewModel.selectedExamsLiveData.observe(
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
-                examsAdapter.swapExams(sortedList) }
+                examsAdapter.swapExams(sortedList)
+            }
         )
         viewModel.loadAllDetails(subject!!.id, dataFetchingListener)
     }

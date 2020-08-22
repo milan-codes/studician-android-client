@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.ExamsViewModel.DataFetching
 import app.milanherke.mystudiez.Fragments.EXAMS
+import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exams.*

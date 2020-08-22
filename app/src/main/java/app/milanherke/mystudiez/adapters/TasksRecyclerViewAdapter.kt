@@ -1,12 +1,13 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
-import app.milanherke.mystudiez.TasksRecyclerViewAdapter.OnTaskClickListener
+import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter.OnTaskClickListener
 import kotlinx.android.synthetic.main.details_list_item.view.*
 
 /**
@@ -71,17 +72,27 @@ class TasksRecyclerViewAdapter(
             // Meaning we do not have to load nor display the subject details
             if (usedIn == SUBJECT_DETAILS) {
                 containerView.details_list_title.text = data.name
-                containerView.details_list_header1.text = CalendarUtils.dateToString(data.dueDate, false)
+                containerView.details_list_header1.text =
+                    CalendarUtils.dateToString(
+                        data.dueDate,
+                        false
+                    )
                 containerView.details_list_header2.text =
-                    TaskUtils.getTaskType(data.type, containerView.context)
+                    TaskUtils.getTaskType(
+                        data.type,
+                        containerView.context
+                    )
                 containerView.details_list_subject_indicator.visibility = View.GONE
 
                 // Setting new constraints because subjectIndicator's visibility is set to gone
                 val params =
                     containerView.details_list_title.layoutParams as ConstraintLayout.LayoutParams
-                params.topToBottom = R.id.details_list_header1
-                params.leftToLeft = R.id.details_list_constraint
-                params.bottomToBottom = R.id.details_list_constraint
+                params.topToBottom =
+                    R.id.details_list_header1
+                params.leftToLeft =
+                    R.id.details_list_constraint
+                params.bottomToBottom =
+                    R.id.details_list_constraint
                 params.marginStart = super.setMargin(16F)
                 params.bottomMargin = super.setMargin(16F)
                 containerView.details_list_title.layoutParams = params
@@ -99,9 +110,16 @@ class TasksRecyclerViewAdapter(
                             containerView.resources.getString(
                                 R.string.details_subject_item_time,
                                 subject.name,
-                                TaskUtils.getTaskType(data.type, containerView.context)
+                                TaskUtils.getTaskType(
+                                    data.type,
+                                    containerView.context
+                                )
                             )
-                        containerView.details_list_header2.text = CalendarUtils.dateToString(data.dueDate, false)
+                        containerView.details_list_header2.text =
+                            CalendarUtils.dateToString(
+                                data.dueDate,
+                                false
+                            )
                     }
 
                     //Creating a clone drawable because we do not want to affect other instances of the original drawable

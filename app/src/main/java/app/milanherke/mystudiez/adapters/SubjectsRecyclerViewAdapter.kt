@@ -1,10 +1,11 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import app.milanherke.mystudiez.SubjectsRecyclerViewAdapter.OnSubjectClickListener
+import app.milanherke.mystudiez.*
+import app.milanherke.mystudiez.adapters.SubjectsRecyclerViewAdapter.OnSubjectClickListener
 import kotlinx.android.synthetic.main.subject_list_items.view.*
 
 /**

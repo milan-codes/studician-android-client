@@ -1,13 +1,14 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import app.milanherke.mystudiez.ExamsRecyclerViewAdapter.OnExamClickListener
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
+import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter.OnExamClickListener
 import kotlinx.android.synthetic.main.details_list_item.view.*
 
 /**
@@ -72,7 +73,8 @@ class ExamsRecyclerViewAdapter(
             if (usedIn == SUBJECT_DETAILS) {
                 // If adapter is used in SubjectDetailsFragment, we do not need to display information about the subject
                 containerView.details_list_title.text = data.name
-                containerView.details_list_header1.text = CalendarUtils.dateToString(data.date, false)
+                containerView.details_list_header1.text =
+                    CalendarUtils.dateToString(data.date, false)
                 containerView.details_list_header2.visibility = View.GONE
                 containerView.details_list_subject_indicator.visibility = View.GONE
 
@@ -97,11 +99,14 @@ class ExamsRecyclerViewAdapter(
                     } else {
                         containerView.details_list_title.text = data.name
                         containerView.details_list_header1.text = subject.name
-                        containerView.details_list_header2.text = CalendarUtils.dateToString(data.date, false)
+                        containerView.details_list_header2.text =
+                            CalendarUtils.dateToString(data.date, false)
                     }
 
                     //We're creating a clone drawable because we do not want to affect other instances of the original drawable
-                    val clone = containerView.resources.getDrawable(R.drawable.placeholder_circle, null).mutatedClone()
+                    val clone =
+                        containerView.resources.getDrawable(R.drawable.placeholder_circle, null)
+                            .mutatedClone()
                     clone.setColor(subject.colorCode, containerView.context)
                     containerView.details_list_subject_indicator.setImageDrawable(clone)
                 }

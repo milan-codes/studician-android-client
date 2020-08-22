@@ -16,6 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.OverviewViewModel.DataFetching
+import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
+import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter
+import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_overview.*
@@ -246,25 +249,25 @@ class OverviewFragment : Fragment(),
 
     override fun onLessonClick(lesson: Lesson) {
         val subjects = subjects
-            activity!!.replaceFragmentWithTransition(
-                LessonDetailsFragment.newInstance(lesson, subjects[lesson.subjectId]),
-                R.id.fragment_container
-            )
+        activity!!.replaceFragmentWithTransition(
+            LessonDetailsFragment.newInstance(lesson, subjects[lesson.subjectId]),
+            R.id.fragment_container
+        )
     }
 
     override fun onTaskClickListener(task: Task) {
         val subjects = subjects
-            activity!!.replaceFragmentWithTransition(
-                TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
-                R.id.fragment_container
-            )
+        activity!!.replaceFragmentWithTransition(
+            TaskDetailsFragment.newInstance(task, subjects[task.subjectId]),
+            R.id.fragment_container
+        )
     }
 
     override fun onExamClickListener(exam: Exam) {
         val subjects = subjects
-            activity!!.replaceFragmentWithTransition(
-                ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
-                R.id.fragment_container
-            )
+        activity!!.replaceFragmentWithTransition(
+            ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
+            R.id.fragment_container
+        )
     }
 }

@@ -1,11 +1,12 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.Fragments.*
-import app.milanherke.mystudiez.LessonsRecyclerViewAdapter.OnLessonClickListener
+import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter.OnLessonClickListener
 import kotlinx.android.synthetic.main.details_list_item.view.*
 import kotlin.collections.ArrayList
 
@@ -71,7 +72,10 @@ class LessonsRecyclerViewAdapter(
                 SUBJECT_DETAILS -> {
                     // If adapter is used in SubjectDetailsFragment, we do not need to display information about the subject
                     containerView.details_list_title.text =
-                        CalendarUtils.getDayFromNumberOfDay(data.day, containerView.context)
+                        CalendarUtils.getDayFromNumberOfDay(
+                            data.day,
+                            containerView.context
+                        )
                     containerView.details_list_header1.text = containerView.resources.getString(
                         R.string.details_subject_item_time,
                         data.starts,
@@ -83,9 +87,12 @@ class LessonsRecyclerViewAdapter(
                     // Setting new constraints because subjectIndicator's visibility is set to gone
                     val params =
                         containerView.details_list_title.layoutParams as ConstraintLayout.LayoutParams
-                    params.topToBottom = R.id.details_list_header1
-                    params.leftToLeft = R.id.details_list_constraint
-                    params.bottomToBottom = R.id.details_list_constraint
+                    params.topToBottom =
+                        R.id.details_list_header1
+                    params.leftToLeft =
+                        R.id.details_list_constraint
+                    params.bottomToBottom =
+                        R.id.details_list_constraint
                     params.marginStart = super.setMargin(16F)
                     params.bottomMargin = super.setMargin(16F)
                     containerView.details_list_title.layoutParams = params
