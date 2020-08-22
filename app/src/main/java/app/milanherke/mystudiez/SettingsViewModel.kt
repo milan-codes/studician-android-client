@@ -3,6 +3,7 @@ package app.milanherke.mystudiez
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
+import app.milanherke.mystudiez.models.User
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -63,7 +64,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             val database = Firebase.database
             val ref = database.getReference("users/${user.uid}")
             try {
-                ref.setValue(User(user.displayName!!, user.email!!))
+                ref.setValue(
+                    User(
+                        user.displayName!!,
+                        user.email!!
+                    )
+                )
                 true
             } catch (e: Exception) {
                 e.printStackTrace()

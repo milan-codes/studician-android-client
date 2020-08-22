@@ -1,20 +1,17 @@
 # Studician - Android client
-**_Productivity and time management tool for students🚀_**
+Productivity and time management tool for students.
+Studician is a free, open-source android app developed to make students life easier. Students (and teachers too!) can easily digitalize their timetable. Users can add their classes, tasks and exams to the app. Furthermore, Studician supports Google Sign-in, so users can synchronize their data across their devices.
 ![logo](https://i.imgur.com/B5IyNV5.png)
 
-## For students, by students.🎓
-Studician is a free, open-source android app developed to make students life easier.\
-Students (and teachers too!) can easily digitalize their timetable. Users can add their classes, tasks and exams to the app. Furthermore, Studician supports Google Sign-in, so users can synchronize their data across their devices.
-
-## Tech used⚙
+## Tech used
 The entire application is written in Kotlin. Documentation can be found [here](https://kotlinlang.org/docs/reference/basic-syntax.html).\
 Using [Firebase Realtime Database](https://firebase.google.com/docs/database) makes it possible for users to synchronize their data across their devices.\
 Minimum API-level is set to 23, so contributors need to have either an emulator or a physical device running Android 6 or higher.
 
-## Contribution🏗
-If you want to contribute to this project, please read the [Contribution guidline](/CONTRIBUTING.md)!
+## Contribution
+If you want to contribute to this project, please read the [Contribution guideline](/CONTRIBUTING.md)!
 
-## Installation💿
+## Installation
 I recommend using **[Android Studio](https://developer.android.com/studio)** for development.\
 Fork the repository and open it in your preferred code editor!
 

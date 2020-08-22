@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.adapters.SubjectsRecyclerViewAdapter.OnSubjectClickListener
+import app.milanherke.mystudiez.models.Lesson
+import app.milanherke.mystudiez.models.Subject
 import kotlinx.android.synthetic.main.subject_list_items.view.*
 
 /**

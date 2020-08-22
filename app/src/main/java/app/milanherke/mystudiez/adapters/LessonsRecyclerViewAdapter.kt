@@ -7,6 +7,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.Fragments.*
 import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter.OnLessonClickListener
+import app.milanherke.mystudiez.models.Lesson
+import app.milanherke.mystudiez.models.Subject
 import kotlinx.android.synthetic.main.details_list_item.view.*
 import kotlin.collections.ArrayList
 

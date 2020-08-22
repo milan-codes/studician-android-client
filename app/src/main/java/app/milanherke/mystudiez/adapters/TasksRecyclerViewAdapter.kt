@@ -8,6 +8,8 @@ import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter.OnTaskClickListener
+import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.models.Task
 import kotlinx.android.synthetic.main.details_list_item.view.*
 
 /**

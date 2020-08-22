@@ -2,6 +2,7 @@ package app.milanherke.mystudiez
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import app.milanherke.mystudiez.models.Exam
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.GlobalScope

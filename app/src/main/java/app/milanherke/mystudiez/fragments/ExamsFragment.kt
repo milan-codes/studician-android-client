@@ -17,6 +17,8 @@ import app.milanherke.mystudiez.ExamsViewModel.DataFetching
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.EXAMS
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
+import app.milanherke.mystudiez.models.Exam
+import app.milanherke.mystudiez.models.Subject
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exams.*

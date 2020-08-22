@@ -20,6 +20,10 @@ import app.milanherke.mystudiez.SubjectDetailsViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
 import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter
 import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter
+import app.milanherke.mystudiez.models.Exam
+import app.milanherke.mystudiez.models.Lesson
+import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.models.Task
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subject_details.*

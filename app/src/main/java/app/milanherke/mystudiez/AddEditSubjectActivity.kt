@@ -17,6 +17,7 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.SubjectsFragment
 import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
+import app.milanherke.mystudiez.models.Subject
 import kotlinx.android.synthetic.main.activity_add_edit_subject.*
 import kotlinx.android.synthetic.main.content_add_edit_subject.*
 

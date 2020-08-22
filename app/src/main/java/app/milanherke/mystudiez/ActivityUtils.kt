@@ -10,8 +10,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
-
+import app.milanherke.mystudiez.models.Exam
+import app.milanherke.mystudiez.models.Task
 
 
 class ActivityUtils {

@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.models
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

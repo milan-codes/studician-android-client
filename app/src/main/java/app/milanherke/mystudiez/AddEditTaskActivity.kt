@@ -22,6 +22,8 @@ import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.TaskDetailsFragment
 import app.milanherke.mystudiez.fragments.TasksFragment
 import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
+import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.models.Task
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_add_edit_task.*
 import kotlinx.android.synthetic.main.content_add_edit_task.*

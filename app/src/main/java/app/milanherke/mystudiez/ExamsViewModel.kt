@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import app.milanherke.mystudiez.models.Exam
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 /**
  * A simple [AndroidViewModel] subclass.
  * This ViewModel was created to get all [Exam] objects from the database
- * and belongs to [ExamsFragment].
+ * and belongs to [app.milanherke.mystudiez.fragments.ExamsFragment].
  */
 class ExamsViewModel(application: Application) : AndroidViewModel(application) {
 

@@ -17,6 +17,10 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.fragments.*
+import app.milanherke.mystudiez.models.Exam
+import app.milanherke.mystudiez.models.Lesson
+import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.models.Task
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
 
