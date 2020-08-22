@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    tools:context=".SettingsFragment">
+    tools:context=".fragments.SettingsFragment">
 
     <Button
         android:id="@+id/google_sign_in"

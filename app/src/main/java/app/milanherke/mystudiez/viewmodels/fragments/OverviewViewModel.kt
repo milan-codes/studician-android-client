@@ -1,10 +1,12 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.viewmodels.fragments
 
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import app.milanherke.mystudiez.CalendarUtils
+import app.milanherke.mystudiez.FirebaseUtils
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Task
@@ -118,7 +120,11 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     ) {
         GlobalScope.launch {
             listener.onLoad()
-            val currentDate = Date(CalendarUtils.roundToMidnight(date.time))
+            val currentDate = Date(
+                CalendarUtils.roundToMidnight(
+                    date.time
+                )
+            )
             val tasks: ArrayList<Task> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}")
@@ -161,7 +167,11 @@ class OverviewViewModel(application: Application) : AndroidViewModel(application
     ) {
         GlobalScope.launch {
             listener.onLoad()
-            val currentDate = Date(CalendarUtils.roundToMidnight(date.time))
+            val currentDate = Date(
+                CalendarUtils.roundToMidnight(
+                    date.time
+                )
+            )
             val exams: ArrayList<Exam> = arrayListOf()
             val database = Firebase.database
             val ref = database.getReference("exams/${FirebaseUtils.getUserId()}")

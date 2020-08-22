@@ -24,6 +24,7 @@ import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.viewmodels.activities.AddEditExamViewModel
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_add_edit_exam.*
 import kotlinx.android.synthetic.main.content_add_edit_exam.*

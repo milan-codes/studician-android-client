@@ -1,10 +1,11 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.viewmodels.fragments
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import app.milanherke.mystudiez.models.Exam
+import app.milanherke.mystudiez.FirebaseUtils
+import app.milanherke.mystudiez.models.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -16,14 +17,14 @@ import kotlinx.coroutines.launch
 
 /**
  * A simple [AndroidViewModel] subclass.
- * This ViewModel was created to get all [Exam] objects from the database
- * and belongs to [app.milanherke.mystudiez.fragments.ExamsFragment].
+ * This ViewModel was created to get all [Task] objects from the database
+ * and belongs to [TasksViewModel].
  */
-class ExamsViewModel(application: Application) : AndroidViewModel(application) {
+class TasksViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val examsList = MutableLiveData<ArrayList<Exam>>()
-    val examsListLiveData: LiveData<ArrayList<Exam>>
-        get() = examsList
+    private val tasksList = MutableLiveData<ArrayList<Task>>()
+    val tasksListLiveData: LiveData<ArrayList<Task>>
+        get() = tasksList
 
     /**
      * Classes that use this ViewModel's functions
@@ -37,17 +38,17 @@ class ExamsViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Gets all exams from the database
-     * and passes the result to [examsList].
+     * Gets all tasks from the database
+     * and passes the result to [tasksList]
      *
      * @param listener [DataFetching] interface to handle interaction events
      */
-    fun loadExams(listener: DataFetching) {
+    fun loadTasks(listener: DataFetching) {
         GlobalScope.launch {
             listener.onLoad()
-            val exams: ArrayList<Exam> = arrayListOf()
+            val tasks: ArrayList<Task> = arrayListOf()
             val database = Firebase.database
-            val ref = database.getReference("exams/${FirebaseUtils.getUserId()}")
+            val ref = database.getReference("tasks/${FirebaseUtils.getUserId()}")
             ref.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(e: DatabaseError) {
                     listener.onFailure(e)
@@ -55,14 +56,14 @@ class ExamsViewModel(application: Application) : AndroidViewModel(application) {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (subjectSnapshot in dataSnapshot.children) {
-                        for (examSnapshot in subjectSnapshot.children) {
-                            val exam = examSnapshot.getValue<Exam>()
-                            if (exam != null) {
-                                exams.add(exam)
+                        for (taskSnapshot in subjectSnapshot.children) {
+                            val task = taskSnapshot.getValue<Task>()
+                            if (task != null) {
+                                tasks.add(task)
                             }
                         }
                     }
-                    examsList.postValue(exams)
+                    tasksList.postValue(tasks)
                     listener.onSuccess()
                 }
             })

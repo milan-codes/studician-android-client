@@ -1,7 +1,8 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.viewmodels.activities
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import app.milanherke.mystudiez.FirebaseUtils
 import app.milanherke.mystudiez.models.Task
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase

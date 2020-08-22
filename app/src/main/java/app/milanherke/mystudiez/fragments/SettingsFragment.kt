@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.FirebaseUtils
+import app.milanherke.mystudiez.R
+import app.milanherke.mystudiez.viewmodels.fragments.SettingsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_settings.*

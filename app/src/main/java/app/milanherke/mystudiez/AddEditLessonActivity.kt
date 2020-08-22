@@ -18,6 +18,7 @@ import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.viewmodels.activities.AddEditLessonViewModel
 import kotlinx.android.synthetic.main.activity_add_edit_lesson.*
 import kotlinx.android.synthetic.main.content_add_edit_lesson.*
 import java.util.*

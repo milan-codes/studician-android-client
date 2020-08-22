@@ -1,9 +1,10 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.viewmodels.fragments
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import app.milanherke.mystudiez.FirebaseUtils
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Task

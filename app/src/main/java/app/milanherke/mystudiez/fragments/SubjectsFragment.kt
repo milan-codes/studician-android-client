@@ -14,9 +14,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.FragmentBackStack
-import app.milanherke.mystudiez.SubjectsViewModel.DataFetching
+import app.milanherke.mystudiez.viewmodels.fragments.SubjectsViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.SubjectsRecyclerViewAdapter
 import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.viewmodels.fragments.SubjectsViewModel
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_subjects.*

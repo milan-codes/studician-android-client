@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.viewmodels.fragments
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

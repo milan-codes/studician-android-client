@@ -15,6 +15,7 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.viewmodels.fragments.TaskDetailsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_task_details.*
 

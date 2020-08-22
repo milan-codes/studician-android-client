@@ -15,10 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.TASKS
-import app.milanherke.mystudiez.TasksViewModel.DataFetching
+import app.milanherke.mystudiez.viewmodels.fragments.TasksViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.TasksRecyclerViewAdapter
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.viewmodels.fragments.TasksViewModel
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_tasks.*
