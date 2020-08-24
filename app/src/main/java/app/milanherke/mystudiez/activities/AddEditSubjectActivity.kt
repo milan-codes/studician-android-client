@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.SubjectsFragment

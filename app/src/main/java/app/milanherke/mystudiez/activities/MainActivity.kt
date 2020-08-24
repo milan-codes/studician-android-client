@@ -11,18 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.EXAM_PARAM_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
-import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.EXAM_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.fragments.*
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.utils.FirebaseUtils
+import app.milanherke.mystudiez.utils.NotificationUtils
+import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import com.google.android.material.bottomappbar.BottomAppBar
 import kotlinx.android.synthetic.main.activity_main.*
 

@@ -14,6 +14,8 @@ import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.activities.AddEditLessonActivity
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.utils.ActivityUtils
+import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import app.milanherke.mystudiez.viewmodels.fragments.LessonDetailsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_lesson_details.*

@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.activities.AddEditExamActivity
@@ -28,6 +28,7 @@ import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import app.milanherke.mystudiez.viewmodels.fragments.SubjectDetailsViewModel
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*

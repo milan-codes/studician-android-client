@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
+import app.milanherke.mystudiez.utils.CalendarUtils.Companion.CalendarInteractions
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.viewmodels.fragments.OverviewViewModel.DataFetching
@@ -25,6 +25,8 @@ import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.utils.CalendarUtils
+import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import app.milanherke.mystudiez.viewmodels.fragments.OverviewViewModel
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*

@@ -12,6 +12,8 @@ import app.milanherke.mystudiez.generic.BaseAdapter
 import app.milanherke.mystudiez.generic.BaseViewHolder
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.utils.CalendarUtils
+import app.milanherke.mystudiez.utils.TaskUtils
 import kotlinx.android.synthetic.main.details_list_item.view.*
 
 /**

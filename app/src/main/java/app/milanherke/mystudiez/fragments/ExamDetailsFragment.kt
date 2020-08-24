@@ -14,6 +14,9 @@ import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.activities.AddEditExamActivity
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.utils.ActivityUtils
+import app.milanherke.mystudiez.utils.CalendarUtils
+import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import app.milanherke.mystudiez.viewmodels.fragments.ExamDetailsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_exam_details.*

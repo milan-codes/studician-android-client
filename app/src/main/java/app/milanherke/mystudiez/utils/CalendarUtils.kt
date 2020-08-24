@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -7,6 +7,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.widget.Button
 import androidx.annotation.IdRes
+import app.milanherke.mystudiez.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,7 +46,10 @@ class CalendarUtils {
                 cal.set(Calendar.YEAR, year)
                 cal.set(Calendar.MONTH, month)
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                val timeInMillis = roundToMidnight(cal.timeInMillis)
+                val timeInMillis =
+                    roundToMidnight(
+                        cal.timeInMillis
+                    )
                 button.text =
                     SimpleDateFormat("dd'/'MM'/'yyyy", Locale.getDefault()).format(Date(timeInMillis))
                 listener?.onDateSet(Date(timeInMillis))

@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import app.milanherke.mystudiez.FirebaseUtils
+import app.milanherke.mystudiez.utils.FirebaseUtils
 import app.milanherke.mystudiez.models.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

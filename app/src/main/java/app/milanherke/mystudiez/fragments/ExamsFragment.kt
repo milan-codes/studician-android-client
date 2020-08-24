@@ -19,6 +19,7 @@ import app.milanherke.mystudiez.Fragments.EXAMS
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Subject
+import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import app.milanherke.mystudiez.viewmodels.fragments.ExamsViewModel
 import com.google.firebase.database.DatabaseError
 import kotlinx.android.synthetic.main.activity_main.*

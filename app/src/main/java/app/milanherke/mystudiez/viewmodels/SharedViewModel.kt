@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -8,6 +8,7 @@ import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.utils.FirebaseUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
 
 /**
  * A simple [AndroidViewModel] subclass.
- * This ViewModel was created to provide [MainActivity]
+ * This ViewModel was created to provide [app.milanherke.mystudiez.activities.MainActivity]
  * with the currently used subject, lesson, task or exam.
  * In Addition, this ViewModel contains a function that
  * gets all [Subject] objects from the database.
@@ -55,7 +56,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     /**
      * Updates [subject] with the passed in value.
-     * [MainActivity] will be notified about the change,
+     * [app.milanherke.mystudiez.activities.MainActivity] will be notified about the change,
      * because it's observing [subjectLiveData].
      *
      * @param newSubject New [Subject] to be used
@@ -66,7 +67,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     /**
      * Updates [lesson] with the passed in value.
-     * [MainActivity] will be notified about the change,
+     * [app.milanherke.mystudiez.activities.MainActivity] will be notified about the change,
      * because it's observing [lessonLiveData].
      *
      * @param newLesson New [Lesson] to be used
@@ -77,7 +78,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     /**
      * Updates [task] with the passed in value.
-     * [MainActivity] will be notified about the change,
+     * [app.milanherke.mystudiez.activities.MainActivity] will be notified about the change,
      * because it's observing [taskLiveData].
      *
      * @param newTask New [Task] to be used
@@ -88,7 +89,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
 
     /**
      * Updates [exam] with the passed in value.
-     * [MainActivity] will be notified about the change,
+     * [app.milanherke.mystudiez.activities.MainActivity] will be notified about the change,
      * because it's observing [examLiveData].
      *
      * @param newExam New [Exam] to be used

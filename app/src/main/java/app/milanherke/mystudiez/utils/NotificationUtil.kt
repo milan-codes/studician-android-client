@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.utils
 
 import android.app.Notification
 import android.app.NotificationChannel

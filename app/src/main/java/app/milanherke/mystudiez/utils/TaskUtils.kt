@@ -1,10 +1,11 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.utils
 
 import android.content.Context
+import app.milanherke.mystudiez.R
 
 /**
  * Simple class that holds frequently used functions
- * in a companion object regarding [Task] objects.
+ * in a companion object regarding [app.milanherke.mystudiez.models.Task] objects.
  */
 class TaskUtils {
 

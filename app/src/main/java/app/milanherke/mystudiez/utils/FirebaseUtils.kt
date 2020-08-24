@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.utils
 
 import com.google.firebase.auth.FirebaseAuth
 
@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
  * Simple class that holds frequently used functions in a companion object
  * regarding Firebase.
  */
-class FirebaseUtils() {
+class FirebaseUtils {
 
     companion object {
 

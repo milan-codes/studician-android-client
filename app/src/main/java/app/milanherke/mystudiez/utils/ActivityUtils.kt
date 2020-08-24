@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.utils
 
 import android.annotation.TargetApi
 import android.app.Activity
@@ -10,6 +10,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
+import app.milanherke.mystudiez.NotificationPublisher
+import app.milanherke.mystudiez.R
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Task
 
@@ -36,10 +38,10 @@ class ActivityUtils {
         ) {
             val requestCode = when {
                 task != null -> {
-                    Integer.parseInt("${TASK_NOTIFICATION_PRE_CODE}${task.id}".filter { it.isDigit() })
+                    Integer.parseInt("$TASK_NOTIFICATION_PRE_CODE${task.id}".filter { it.isDigit() })
                 }
                 exam != null -> {
-                    Integer.parseInt("${EXAM_NOTIFICATION_PRE_CODE}${exam.id}".filter { it.isDigit() })
+                    Integer.parseInt("$EXAM_NOTIFICATION_PRE_CODE${exam.id}".filter { it.isDigit() })
                 }
                 else -> {
                     throw IllegalStateException("Unrecognised notification type")
@@ -63,7 +65,9 @@ class ActivityUtils {
 
         @TargetApi(Build.VERSION_CODES.O)
         fun createNotification(activity: Activity, contentTitle: String, contentText: String): Notification {
-            val builder = NotificationCompat.Builder(activity, NotificationUtils.CHANNEL_ID)
+            val builder = NotificationCompat.Builder(activity,
+                NotificationUtils.CHANNEL_ID
+            )
                 .setSmallIcon(R.drawable.reminder_icon)
                 .setContentTitle(contentTitle)
                 .setContentText(contentText)

@@ -2,7 +2,7 @@ package app.milanherke.mystudiez.viewmodels.activities
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import app.milanherke.mystudiez.FirebaseUtils
+import app.milanherke.mystudiez.utils.FirebaseUtils
 import app.milanherke.mystudiez.models.Exam
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 /**
  * A simple [AndroidViewModel] subclass.
  * This ViewModel was created to save/update [Exam] objects in the database
- * and belongs to [AddEditExamActivity].
+ * and belongs to [app.milanherke.mystudiez.activities.AddEditExamActivity].
  */
 class AddEditExamViewModel(application: Application) : AndroidViewModel(application) {
 

@@ -2,7 +2,7 @@ package app.milanherke.mystudiez.viewmodels.fragments
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import app.milanherke.mystudiez.FirebaseUtils
+import app.milanherke.mystudiez.utils.FirebaseUtils
 import app.milanherke.mystudiez.models.Task
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
