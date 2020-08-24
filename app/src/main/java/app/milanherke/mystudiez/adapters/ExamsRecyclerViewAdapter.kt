@@ -9,6 +9,8 @@ import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.Fragments.OVERVIEW
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter.OnExamClickListener
+import app.milanherke.mystudiez.generic.BaseAdapter
+import app.milanherke.mystudiez.generic.BaseViewHolder
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Subject
 import kotlinx.android.synthetic.main.details_list_item.view.*

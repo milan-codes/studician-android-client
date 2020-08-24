@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.generic
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
