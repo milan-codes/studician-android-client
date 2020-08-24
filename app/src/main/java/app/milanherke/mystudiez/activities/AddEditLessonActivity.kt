@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.activities
 
 import android.app.TimePickerDialog
 import android.content.Intent
@@ -9,10 +9,12 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.fragments.LessonDetailsFragment
 import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
@@ -56,7 +58,11 @@ class AddEditLessonActivity : AppCompatActivity(), UnsavedChangesDialogFragment.
             // User wants to edit an existing lesson
             activity_lesson_toolbar.title = resources.getString(R.string.edit_lesson_title, subject!!.name)
             setSupportActionBar(activity_lesson_toolbar)
-            new_lesson_day_btn.text = CalendarUtils.getDayFromNumberOfDay(lesson.day, this)
+            new_lesson_day_btn.text =
+                CalendarUtils.getDayFromNumberOfDay(
+                    lesson.day,
+                    this
+                )
             selectedDay = lesson.day
             new_lesson_starts_at_btn.text = lesson.starts
             new_lesson_ends_at_btn.text = lesson.ends
@@ -151,7 +157,9 @@ class AddEditLessonActivity : AppCompatActivity(), UnsavedChangesDialogFragment.
         if (lesson != null) {
             if (requiredFieldsAreFilled()) {
                 val newLesson = lessonFromUi()
-                if (newLesson != lesson) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+                if (newLesson != lesson) dialog.show(this.supportFragmentManager,
+                    TAG
+                ) else openActivity()
             } else openActivity()
         } else openActivity()
     }
@@ -164,14 +172,18 @@ class AddEditLessonActivity : AppCompatActivity(), UnsavedChangesDialogFragment.
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
                 startActivity(intent)
             }
             Fragments.LESSON_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, LessonDetailsFragment.TAG)
                 intent.putExtra(LESSON_PARAM_BUNDLE_ID, lesson)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)

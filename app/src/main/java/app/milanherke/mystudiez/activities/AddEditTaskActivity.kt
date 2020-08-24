@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -10,6 +10,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
@@ -17,6 +18,7 @@ import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.createNotification
 import app.milanherke.mystudiez.ActivityUtils.Companion.scheduleNotification
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.*
 import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.TaskDetailsFragment
@@ -104,15 +106,26 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             setSupportActionBar(activity_task_toolbar)
             new_task_name.setText(task.name)
             new_task_desc.setText(task.description)
-            new_task_type_btn.text = TaskUtils.getTaskType(task.type, this)
+            new_task_type_btn.text =
+                TaskUtils.getTaskType(
+                    task.type,
+                    this
+                )
             taskType = task.type
             new_task_subject_btn.text = subject.name
             new_task_subject_btn.background =
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_task_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
             new_task_subject_btn.isEnabled = false
-            new_task_due_date_btn.text = CalendarUtils.dateToString(task.dueDate, true)
-            new_task_reminder_btn.text = if (taskReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(taskReminder, true)
+            new_task_due_date_btn.text =
+                CalendarUtils.dateToString(
+                    task.dueDate,
+                    true
+                )
+            new_task_reminder_btn.text = if (taskReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(
+                taskReminder,
+                true
+            )
 
         } else if (task == null && subject != null) {
             // Fragment called from SubjectDetailsFragment
@@ -132,9 +145,11 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
         // then we need to fetch all of the subjects to let the users choose one
         // for the exam they are about to create
         if (FragmentBackStack.getInstance(this).peek() != TASK_DETAILS) {
-            sharedViewModel.getAllSubjects(object : SharedViewModel.RetrievingData {
+            sharedViewModel.getAllSubjects(object :
+                SharedViewModel.RetrievingData {
                 override fun onLoad() {
-                        progressBarHandler = ProgressBarHandler(this@AddEditTaskActivity)
+                        progressBarHandler =
+                            ProgressBarHandler(this@AddEditTaskActivity)
                         progressBarHandler!!.showProgressBar()
                 }
 
@@ -180,7 +195,12 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             val cal = Calendar.getInstance()
             DatePickerDialog(
                this,
-                CalendarUtils.getDateSetListener(this, R.id.new_task_due_date_btn, cal, calendarListener),
+                CalendarUtils.getDateSetListener(
+                    this,
+                    R.id.new_task_due_date_btn,
+                    cal,
+                    calendarListener
+                ),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -192,14 +212,24 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             val cal = Calendar.getInstance()
             TimePickerDialog(
              this,
-                CalendarUtils.getTimeSetListener(this, R.id.new_task_reminder_btn, cal, true, calendarListener),
+                CalendarUtils.getTimeSetListener(
+                    this,
+                    R.id.new_task_reminder_btn,
+                    cal,
+                    true,
+                    calendarListener
+                ),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
             ).show()
             DatePickerDialog(
                this,
-                CalendarUtils.getDateSetListener(this, R.id.new_task_reminder_btn, cal),
+                CalendarUtils.getDateSetListener(
+                    this,
+                    R.id.new_task_reminder_btn,
+                    cal
+                ),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -256,7 +286,9 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
         if (task != null) {
             if (requiredFieldsAreFilled()) {
                 val newTask = taskFromUi()
-                if (newTask != task) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+                if (newTask != task) dialog.show(this.supportFragmentManager,
+                    TAG
+                ) else openActivity()
             } else openActivity()
         } else openActivity()
 
@@ -278,20 +310,26 @@ class AddEditTaskActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             TASKS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TasksFragment.TAG)
                 startActivity(intent)
             }
             SUBJECT_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
                 startActivity(intent)
             }
             TASK_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, TaskDetailsFragment.TAG)
                 intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)

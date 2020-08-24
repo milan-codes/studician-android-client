@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -11,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.EXAM_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.CalendarUtils.Companion.CalendarInteractions
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.*
 import app.milanherke.mystudiez.SharedViewModel.RetrievingData
 import app.milanherke.mystudiez.fragments.ExamDetailsFragment
@@ -106,8 +108,15 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
                 resources.getDrawable(R.drawable.circular_disabled_button, null)
             new_exam_subject_btn.setTextColor(resources.getColor(R.color.colorTextSecondary, null))
             new_exam_subject_btn.isEnabled = false
-            new_exam_date_btn.text = CalendarUtils.dateToString(exam.date, false)
-            new_exam_reminder_btn.text = if (examReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(examReminder, true)
+            new_exam_date_btn.text =
+                CalendarUtils.dateToString(
+                    exam.date,
+                    false
+                )
+            new_exam_reminder_btn.text = if (examReminder == null) getString(R.string.add_edit_lesson_btn) else CalendarUtils.dateToString(
+                examReminder,
+                true
+            )
         } else if (exam == null && subject != null) {
             // Fragment called from SubjectDetailsFragment
             // User wants to create a new exam
@@ -169,7 +178,12 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             val cal = Calendar.getInstance()
             DatePickerDialog(
                this,
-                CalendarUtils.getDateSetListener(this, R.id.new_exam_date_btn, cal, calendarListener),
+                CalendarUtils.getDateSetListener(
+                    this,
+                    R.id.new_exam_date_btn,
+                    cal,
+                    calendarListener
+                ),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -181,14 +195,24 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
             val cal = Calendar.getInstance()
             TimePickerDialog(
              this,
-                CalendarUtils.getTimeSetListener(this, R.id.new_exam_reminder_btn, cal, true, calendarListener),
+                CalendarUtils.getTimeSetListener(
+                    this,
+                    R.id.new_exam_reminder_btn,
+                    cal,
+                    true,
+                    calendarListener
+                ),
                 cal.get(Calendar.HOUR_OF_DAY),
                 cal.get(Calendar.MINUTE),
                 true
             ).show()
             DatePickerDialog(
                this,
-                CalendarUtils.getDateSetListener(this, R.id.new_exam_reminder_btn, cal),
+                CalendarUtils.getDateSetListener(
+                    this,
+                    R.id.new_exam_reminder_btn,
+                    cal
+                ),
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -244,7 +268,9 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
         if (exam != null) {
             if (requiredFieldsAreFilled()) {
                 val newExam = examFromUi()
-                if (newExam != exam) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+                if (newExam != exam) dialog.show(this.supportFragmentManager,
+                    TAG
+                ) else openActivity()
             } else openActivity()
         } else openActivity()
     }
@@ -259,7 +285,13 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
                     exam.name
                 )
             val delay = reminder.time.minus(System.currentTimeMillis())
-            ActivityUtils.scheduleNotification(this, notification, delay, null, exam)
+            ActivityUtils.scheduleNotification(
+                this,
+                notification,
+                delay,
+                null,
+                exam
+            )
         }
 
         openActivity()
@@ -269,20 +301,26 @@ class AddEditExamActivity : AppCompatActivity(), UnsavedChangesDialogFragment.Di
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             EXAMS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamsFragment.TAG)
                 startActivity(intent)
             }
             SUBJECT_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
                 startActivity(intent)
             }
             EXAM_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, ExamDetailsFragment.TAG)
                 intent.putExtra(EXAM_PARAM_BUNDLE_ID, exam)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)

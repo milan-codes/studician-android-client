@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.activities
 
 import android.content.Context
 import android.content.Intent
@@ -11,9 +11,11 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
 import app.milanherke.mystudiez.fragments.SubjectsFragment
 import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
@@ -128,7 +130,9 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
         if (subject != null) {
             if (requiredFieldsAreFilled()) {
                 val newSubject = subjectFromUi()
-                if (newSubject != subject) dialog.show(this.supportFragmentManager, TAG) else openActivity()
+                if (newSubject != subject) dialog.show(this.supportFragmentManager,
+                    TAG
+                ) else openActivity()
             } else openActivity()
         } else openActivity()
     }
@@ -138,13 +142,17 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECTS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectsFragment.TAG)
                 startActivity(intent)
             }
             Fragments.SUBJECT_DETAILS -> {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID, TAG)
+                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
+                    TAG
+                )
                 intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
                 intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
                 startActivity(intent)
@@ -224,13 +232,22 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.color_option_red -> {
-                    setColor(R.color.subjectColorRed, this, R.string.colorRedTitle)
+                    setColor(
+                        R.color.subjectColorRed, this,
+                        R.string.colorRedTitle
+                    )
                 }
                 R.id.color_option_pink -> {
-                    setColor(R.color.subjectColorPink, this, R.string.colorPinkTitle)
+                    setColor(
+                        R.color.subjectColorPink, this,
+                        R.string.colorPinkTitle
+                    )
                 }
                 R.id.color_option_purple -> {
-                    setColor(R.color.subjectColorPurple, this, R.string.colorPurpleTitle)
+                    setColor(
+                        R.color.subjectColorPurple, this,
+                        R.string.colorPurpleTitle
+                    )
                 }
                 R.id.color_option_deep_purple -> {
                     setColor(
@@ -240,10 +257,16 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
                     )
                 }
                 R.id.color_option_indigo -> {
-                    setColor(R.color.subjectColorIndigo, this, R.string.colorIndigoTitle)
+                    setColor(
+                        R.color.subjectColorIndigo, this,
+                        R.string.colorIndigoTitle
+                    )
                 }
                 R.id.color_option_blue -> {
-                    setColor(R.color.subjectColorBlue, this, R.string.colorBlueTitle)
+                    setColor(
+                        R.color.subjectColorBlue, this,
+                        R.string.colorBlueTitle
+                    )
                 }
                 R.id.color_option_light_blue -> {
                     setColor(
@@ -253,13 +276,22 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
                     )
                 }
                 R.id.color_option_cyan -> {
-                    setColor(R.color.subjectColorCyan, this, R.string.colorCyanTitle)
+                    setColor(
+                        R.color.subjectColorCyan, this,
+                        R.string.colorCyanTitle
+                    )
                 }
                 R.id.color_option_teal -> {
-                    setColor(R.color.subjectColorTeal, this, R.string.colorTealTitle)
+                    setColor(
+                        R.color.subjectColorTeal, this,
+                        R.string.colorTealTitle
+                    )
                 }
                 R.id.color_option_green -> {
-                    setColor(R.color.subjectColorGreen, this, R.string.colorGreenTitle)
+                    setColor(
+                        R.color.subjectColorGreen, this,
+                        R.string.colorGreenTitle
+                    )
                 }
                 R.id.color_option_light_green -> {
                     setColor(
@@ -269,16 +301,28 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
                     )
                 }
                 R.id.color_option_lime -> {
-                    setColor(R.color.subjectColorLime, this, R.string.colorLimeTitle)
+                    setColor(
+                        R.color.subjectColorLime, this,
+                        R.string.colorLimeTitle
+                    )
                 }
                 R.id.color_option_yellow -> {
-                    setColor(R.color.subjectColorYellow, this, R.string.colorYellowTitle)
+                    setColor(
+                        R.color.subjectColorYellow, this,
+                        R.string.colorYellowTitle
+                    )
                 }
                 R.id.color_option_amber -> {
-                    setColor(R.color.subjectColorAmber, this, R.string.colorAmberTitle)
+                    setColor(
+                        R.color.subjectColorAmber, this,
+                        R.string.colorAmberTitle
+                    )
                 }
                 R.id.color_option_orange -> {
-                    setColor(R.color.subjectColorOrange,this, R.string.colorOrangeTitle)
+                    setColor(
+                        R.color.subjectColorOrange,this,
+                        R.string.colorOrangeTitle
+                    )
                 }
                 R.id.color_option_deep_orange -> {
                     setColor(
@@ -288,7 +332,10 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
                     )
                 }
                 R.id.color_option_blue_gray -> {
-                    setColor(R.color.subjectColorBlueGray, this, R.string.colorBlueGrayTitle)
+                    setColor(
+                        R.color.subjectColorBlueGray, this,
+                        R.string.colorBlueGrayTitle
+                    )
                 }
             }
             true
@@ -304,23 +351,57 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
      */
     private fun getColorName(@ColorRes colorId: Int): String {
         return when (colorId) {
-            R.color.subjectColorRed -> getString(R.string.colorRedTitle)
-            R.color.subjectColorPink -> getString(R.string.colorPinkTitle)
-            R.color.subjectColorPurple -> getString(R.string.colorPurpleTitle)
-            R.color.subjectColorDeepPurple -> getString(R.string.colorDeepPurpleTitle)
-            R.color.subjectColorIndigo -> getString(R.string.colorIndigoTitle)
-            R.color.subjectColorBlue -> getString(R.string.colorBlueTitle)
-            R.color.subjectColorLightBlue -> getString(R.string.colorLightBlueTitle)
-            R.color.subjectColorCyan -> getString(R.string.colorCyanTitle)
-            R.color.subjectColorTeal -> getString(R.string.colorTealTitle)
-            R.color.subjectColorGreen -> getString(R.string.colorGreenTitle)
-            R.color.subjectColorLightGreen -> getString(R.string.colorLightGreenTitle)
-            R.color.subjectColorLime -> getString(R.string.colorLimeTitle)
-            R.color.subjectColorYellow -> getString(R.string.colorYellowTitle)
-            R.color.subjectColorAmber -> getString(R.string.colorAmberTitle)
-            R.color.subjectColorOrange -> getString(R.string.colorOrangeTitle)
-            R.color.subjectColorDeepOrange -> getString(R.string.colorDeepOrangeTitle)
-            R.color.subjectColorBlueGray -> getString(R.string.colorBlueGrayTitle)
+            R.color.subjectColorRed -> getString(
+                R.string.colorRedTitle
+            )
+            R.color.subjectColorPink -> getString(
+                R.string.colorPinkTitle
+            )
+            R.color.subjectColorPurple -> getString(
+                R.string.colorPurpleTitle
+            )
+            R.color.subjectColorDeepPurple -> getString(
+                R.string.colorDeepPurpleTitle
+            )
+            R.color.subjectColorIndigo -> getString(
+                R.string.colorIndigoTitle
+            )
+            R.color.subjectColorBlue -> getString(
+                R.string.colorBlueTitle
+            )
+            R.color.subjectColorLightBlue -> getString(
+                R.string.colorLightBlueTitle
+            )
+            R.color.subjectColorCyan -> getString(
+                R.string.colorCyanTitle
+            )
+            R.color.subjectColorTeal -> getString(
+                R.string.colorTealTitle
+            )
+            R.color.subjectColorGreen -> getString(
+                R.string.colorGreenTitle
+            )
+            R.color.subjectColorLightGreen -> getString(
+                R.string.colorLightGreenTitle
+            )
+            R.color.subjectColorLime -> getString(
+                R.string.colorLimeTitle
+            )
+            R.color.subjectColorYellow -> getString(
+                R.string.colorYellowTitle
+            )
+            R.color.subjectColorAmber -> getString(
+                R.string.colorAmberTitle
+            )
+            R.color.subjectColorOrange -> getString(
+                R.string.colorOrangeTitle
+            )
+            R.color.subjectColorDeepOrange -> getString(
+                R.string.colorDeepOrangeTitle
+            )
+            R.color.subjectColorBlueGray -> getString(
+                R.string.colorBlueGrayTitle
+            )
             else -> throw IllegalArgumentException("Subject has unrecognised color id")
         }
     }

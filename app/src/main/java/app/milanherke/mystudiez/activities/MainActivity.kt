@@ -1,4 +1,4 @@
-package app.milanherke.mystudiez
+package app.milanherke.mystudiez.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,12 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.EXAM_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.LESSON_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
+import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.fragments.*
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
@@ -82,7 +84,9 @@ class MainActivity : AppCompatActivity(),
                     )
                 }
                 TasksFragment.TAG -> {
-                    replaceFragment(TasksFragment.newInstance(), R.id.fragment_container)
+                    replaceFragment(TasksFragment.newInstance(),
+                        R.id.fragment_container
+                    )
                 }
                 TaskDetailsFragment.TAG -> {
                     val task = intent.getParcelableExtra<Task>(TASK_PARAM_BUNDLE_ID)
@@ -112,11 +116,15 @@ class MainActivity : AppCompatActivity(),
             if (FirebaseUtils.userIsLoggedIn()) {
                 // Setting the home screen:
                 // OverviewFragment is the first fragment seen by the user, just after the app has been opened
-                replaceFragment(OverviewFragment.newInstance(), R.id.fragment_container)
+                replaceFragment(OverviewFragment.newInstance(),
+                    R.id.fragment_container
+                )
                 Toast.makeText(this, getString(R.string.firebase_user_logged_in), Toast.LENGTH_SHORT)
                     .show()
             } else {
-                replaceFragment(SettingsFragment.newInstance(), R.id.fragment_container)
+                replaceFragment(SettingsFragment.newInstance(),
+                    R.id.fragment_container
+                )
                 Toast.makeText(this, getString(R.string.firebase_user_logged_out), Toast.LENGTH_SHORT)
                     .show()
             }
@@ -203,7 +211,9 @@ class MainActivity : AppCompatActivity(),
      * Because the user wants to add a new [Subject]
      */
     private fun fabBtnInSubjectsFragment() {
-        FragmentBackStack.getInstance(this).push(Fragments.SUBJECTS)
+        FragmentBackStack.getInstance(this).push(
+            Fragments.SUBJECTS
+        )
         val intent = Intent(this, AddEditSubjectActivity::class.java)
         startActivity(intent)
     }
@@ -213,7 +223,9 @@ class MainActivity : AppCompatActivity(),
      * Because the user wants to add a new [Task]
      */
     private fun fabBtnInTasksFragment() {
-        FragmentBackStack.getInstance(this).push(Fragments.TASKS)
+        FragmentBackStack.getInstance(this).push(
+            Fragments.TASKS
+        )
         val intent = Intent(this, AddEditTaskActivity::class.java)
         startActivity(intent)
     }
@@ -223,7 +235,9 @@ class MainActivity : AppCompatActivity(),
      * Because the user wants to add a new [Exam]
      */
     private fun fabBtnInExamsFragment() {
-        FragmentBackStack.getInstance(this).push(Fragments.EXAMS)
+        FragmentBackStack.getInstance(this).push(
+            Fragments.EXAMS
+        )
         val intent = Intent(this, AddEditExamActivity::class.java)
         startActivity(intent)
     }

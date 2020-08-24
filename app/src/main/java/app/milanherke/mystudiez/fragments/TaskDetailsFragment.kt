@@ -13,6 +13,7 @@ import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
+import app.milanherke.mystudiez.activities.AddEditTaskActivity
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
 import app.milanherke.mystudiez.viewmodels.fragments.TaskDetailsViewModel

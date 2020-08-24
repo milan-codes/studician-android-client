@@ -16,6 +16,10 @@ import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
+import app.milanherke.mystudiez.activities.AddEditExamActivity
+import app.milanherke.mystudiez.activities.AddEditLessonActivity
+import app.milanherke.mystudiez.activities.AddEditSubjectActivity
+import app.milanherke.mystudiez.activities.AddEditTaskActivity
 import app.milanherke.mystudiez.viewmodels.fragments.SubjectDetailsViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
 import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter
