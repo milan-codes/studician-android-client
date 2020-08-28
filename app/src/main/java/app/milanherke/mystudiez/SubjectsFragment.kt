@@ -31,7 +31,7 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(SubjectsViewModel::class.java)
     }
-    private val subjectsAdapter = SubjectsRecyclerViewAdapter(null, null, this)
+    private val subjectsAdapter = SubjectsRecyclerViewAdapter(this)
     private var listener: SubjectsInteractions? = null
 
     /**
@@ -110,7 +110,7 @@ class SubjectsFragment : Fragment(), SubjectsRecyclerViewAdapter.OnSubjectClickL
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Subject::name, Subject::teacher)))
-                subjectsAdapter.swapSubjectsList(sortedList)
+                subjectsAdapter.swapSubjects(sortedList)
                 if (subject_list != null && list.size != 0) Animations.runLayoutAnimation(
                     subject_list
                 )

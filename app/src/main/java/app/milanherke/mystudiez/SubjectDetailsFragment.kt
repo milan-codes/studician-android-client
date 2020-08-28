@@ -35,10 +35,11 @@ class SubjectDetailsFragment : Fragment(),
     TasksRecyclerViewAdapter.OnTaskClickListener,
     ExamsRecyclerViewAdapter.OnExamClickListener {
 
+    // Subject, whose details are displayed
     private var subject: Subject? = null
-    private val lessonsAdapter = LessonsRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
-    private val tasksAdapter = TasksRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, this, SUBJECT_DETAILS)
+    private val lessonsAdapter = LessonsRecyclerViewAdapter(SUBJECT_DETAILS, this)
+    private val tasksAdapter = TasksRecyclerViewAdapter(SUBJECT_DETAILS, this)
+    private val examsAdapter = ExamsRecyclerViewAdapter(SUBJECT_DETAILS, this)
     private val viewModel by lazy {
         ViewModelProviders.of(activity!!).get(SubjectDetailsViewModel::class.java)
     }
@@ -178,19 +179,19 @@ class SubjectDetailsFragment : Fragment(),
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Lesson::day, Lesson::starts)))
-                lessonsAdapter.swapLessonsList(sortedList) }
+                lessonsAdapter.swapLessons(sortedList) }
         )
         viewModel.selectedTasksLiveData.observe(
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Task::dueDate, Task::name)))
-                tasksAdapter.swapTasksList(sortedList) }
+                tasksAdapter.swapTasks(sortedList) }
         )
         viewModel.selectedExamsLiveData.observe(
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
-                examsAdapter.swapExamsList(sortedList) }
+                examsAdapter.swapExams(sortedList) }
         )
         viewModel.loadAllDetails(subject!!.id, dataFetchingListener)
     }

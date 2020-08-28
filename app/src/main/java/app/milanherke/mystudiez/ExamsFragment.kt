@@ -35,8 +35,8 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
     private val sharedViewModel by lazy {
         ViewModelProviders.of(activity!!).get(SharedViewModel::class.java)
     }
-    private val examsAdapter = ExamsRecyclerViewAdapter(null, this, EXAMS)
-    private var subjectsList: MutableMap<String, Subject>? = null
+    private val examsAdapter = ExamsRecyclerViewAdapter(EXAMS, this)
+    private var subjects: MutableMap<String, Subject> = mutableMapOf()
     private var listener: ExamsInteractions? = null
     private var progressBarHandler: ProgressBarHandler? = null
 
@@ -94,8 +94,8 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
             override fun onSuccess(subjects: MutableMap<String, Subject>) {
                 exam_list.layoutManager = LinearLayoutManager(context)
                 exam_list.adapter = examsAdapter
-                examsAdapter.swapSubjectsMap(subjects)
-                subjectsList = subjects
+                examsAdapter.swapSubjects(subjects)
+                this@ExamsFragment.subjects = subjects
 
                 progressBarHandler!!.hideProgressBar()
             }
@@ -149,7 +149,7 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
             this,
             Observer { list ->
                 val sortedList = ArrayList(list.sortedWith(compareBy(Exam::date, Exam::name)))
-                examsAdapter.swapExamsList(sortedList)
+                examsAdapter.swapExams(sortedList)
                 if (exam_list != null && list.size != 0) Animations.runLayoutAnimation(exam_list)
             }
         )
@@ -180,12 +180,10 @@ class ExamsFragment : Fragment(), ExamsRecyclerViewAdapter.OnExamClickListener {
     }
 
     override fun onExamClickListener(exam: Exam) {
-        val subjects = subjectsList
-        if (subjects != null) {
-            activity!!.replaceFragmentWithTransition(
-                ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
-                R.id.fragment_container
-            )
-        }
+        val subjects = subjects
+        activity!!.replaceFragmentWithTransition(
+            ExamDetailsFragment.newInstance(exam, subjects[exam.subjectId]),
+            R.id.fragment_container
+        )
     }
 }

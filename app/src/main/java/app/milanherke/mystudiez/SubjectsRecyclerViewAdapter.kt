@@ -4,29 +4,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import app.milanherke.mystudiez.SubjectsRecyclerViewAdapter.OnSubjectClickListener
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.subject_list_items.view.*
 
-// Each constant value represents a view type
-private const val VIEW_TYPE_NOT_EMPTY = 0
-private const val VIEW_TYPE_EMPTY = 1
-
 /**
- * A [RecyclerView.Adapter] subclass.
+ * A [BaseAdapter] subclass.
  * This class serves as an adapter for RecyclerViews
- * which were created to display lessons.
+ * which were created to display subjects.
  *
- * @property subjectsList An [ArrayList] containing all [Subject] objects to display
- * @property lessonsList An [ArrayList] containing lessons of subjects
+ * @property subjects An [ArrayList] containing all [Subject] objects to display
+ * @property lessons An [ArrayList] containing lessons of subjects
  * @property listener Fragments that use this class must implement [OnSubjectClickListener]
  */
 class SubjectsRecyclerViewAdapter(
-    private var subjectsList: ArrayList<Subject>?,
-    private var lessonsList: ArrayList<Lesson>?,
-    private val listener: OnSubjectClickListener
-) : RecyclerView.Adapter<SubjectsRecyclerViewAdapter.ViewHolder>() {
+    private val listener: OnSubjectClickListener,
+    private var subjects: ArrayList<Subject> = arrayListOf(),
+    private var lessons: ArrayList<Lesson> = arrayListOf()
+) : BaseAdapter<Subject>(subjects) {
 
     /**
      * This interface must be implemented by activities/fragments that contain
@@ -37,121 +31,52 @@ class SubjectsRecyclerViewAdapter(
         fun onSubjectClick(subject: Subject)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return when (viewType) {
-            VIEW_TYPE_EMPTY -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.no_subject_list_item, parent, false)
-                EmptySubjectViewHolder(view)
-            }
-            VIEW_TYPE_NOT_EMPTY -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.subject_list_items, parent, false)
-                SubjectViewHolder(view)
-            }
-            else -> throw IllegalStateException("Couldn't recognise the view type")
-        }
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val list = subjectsList
-        val lessonsList = lessonsList
-        when (getItemViewType(position)) {
-            VIEW_TYPE_EMPTY -> {
-                // We are not putting any data into the empty view, therefore we do not need to do anything here
-            }
-            VIEW_TYPE_NOT_EMPTY -> {
-                if (list != null && lessonsList != null) {
-                    val subject = list[position]
-                    val days = arrayListOf<Int>()
-                    for (lesson in lessonsList) {
-                        if (lesson.subjectId == subject.id) {
-                            days.add(lesson.day)
-                        }
-                    }
-                    holder.bind(subject, days, listener)
-                }
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        val list = subjectsList
-        return if (list == null || list.size == 0) 1 else list.size
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        val list = subjectsList
-        return if (list == null || list.size == 0) VIEW_TYPE_EMPTY else VIEW_TYPE_NOT_EMPTY
+    override fun setViewHolder(parent: ViewGroup): BaseViewHolder<Subject> {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.subject_list_items, parent, false)
+        return SubjectViewHolder(view)
     }
 
     /**
-     * Swap in a new [ArrayList], containing [Subject] objects
+     * Changes the data set. Calls [BaseAdapter.swapDataList].
+     * Swaps in a new [ArrayList] that contains [Subject] objects.
      *
-     * @param newList New list containing subjects
+     * @param subjects An [ArrayList] that contains subjects
      * @return Returns the previously used list, or null if there wasn't one
      */
-    fun swapSubjectsList(newList: ArrayList<Subject>?): ArrayList<Subject>? {
-        if (newList === subjectsList) {
-            return null
-        }
-        val numItems = itemCount
-        val oldList = subjectsList
-        subjectsList = newList
-        if (newList != null) {
-            //notify the observers
-            notifyDataSetChanged()
-        } else {
-            //notify the observers about the lack of a data set
-            notifyItemRangeRemoved(0, numItems)
-        }
-        return oldList
+    fun swapSubjects(subjects: ArrayList<Subject>) {
+        super.swapDataList(subjects)
     }
 
     /**
-     * Swap in a new [ArrayList], containing [Lesson] objects
+     * Swaps in a new [ArrayList], that contains [Lesson] objects,
+     * which are needed in [SubjectViewHolder].
      *
-     * @param newList New list containing lessons
+     * @param lessons New list containing lessons
      * @return Returns the previously set list, or null if there wasn't one
      */
-    fun swapLessonsList(newList: ArrayList<Lesson>?): ArrayList<Lesson>? {
-        if (newList === lessonsList) {
-            return null
-        }
-        val list = lessonsList
-        val numItems = if (list == null || list.size == 0) 0 else list.size
-        val oldList = lessonsList
-        lessonsList = newList
-        if (newList != null) {
-            notifyDataSetChanged()
-        } else {
-            //notify the observers about the lack of a data set
-            notifyItemRangeRemoved(0, numItems)
-        }
-        return oldList
+    fun swapLessonsList(lessons: ArrayList<Lesson>) {
+        // Secondary data list, which contains no useful information for the BaseAdapter, it is only needed when binding a lesson
+        this.lessons = lessons
+        notifyDataSetChanged()
     }
 
-    open class ViewHolder(override val containerView: View) :
-        RecyclerView.ViewHolder(containerView), LayoutContainer {
-        open fun bind(
-            subject: Subject,
-            days: ArrayList<Int>,
-            listener: OnSubjectClickListener
-        ) {
-        }
-    }
+    private inner class SubjectViewHolder(override val containerView: View) :
+        BaseViewHolder<Subject>(containerView) {
 
-    private class SubjectViewHolder(override val containerView: View) : ViewHolder(containerView) {
-
-        override fun bind(
-            subject: Subject,
-            days: ArrayList<Int>,
-            listener: OnSubjectClickListener
-        ) {
-
+        override fun bind(data: Subject) {
+            // Setting day-indicators back to default
             setViewToDefault()
 
-            containerView.sli_name.text = subject.name
+            // Getting binded subject's lessons
+            val days = arrayListOf<Int>()
+            for (lesson in lessons) {
+                if (lesson.subjectId == data.id) {
+                    days.add(lesson.day)
+                }
+            }
+
+            containerView.sli_name.text = data.name
             for (day in days) {
                 when (day) {
                     1 -> {
@@ -221,7 +146,7 @@ class SubjectsRecyclerViewAdapter(
             }
 
             containerView.sli_linearlayout.setOnClickListener {
-                listener.onSubjectClick(subject)
+                listener.onSubjectClick(data)
             }
 
         }
@@ -279,8 +204,4 @@ class SubjectsRecyclerViewAdapter(
         }
 
     }
-
-    // We do not need to override the bind method since we're not putting any data into the empty view
-    private class EmptySubjectViewHolder(override val containerView: View) :
-        ViewHolder(containerView)
 }
