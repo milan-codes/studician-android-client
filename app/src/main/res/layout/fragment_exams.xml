@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ExamsFragment">
+    tools:context=".fragments.ExamsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/exam_list"

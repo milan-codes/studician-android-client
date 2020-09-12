@@ -3,14 +3,13 @@
     package="app.milanherke.mystudiez">
 
     <application
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,22 +19,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddEditSubjectActivity"
+            android:name=".activities.AddEditSubjectActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AddEditLessonActivity"
+            android:name=".activities.AddEditLessonActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AddEditTaskActivity"
+            android:name=".activities.AddEditTaskActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AddEditExamActivity"
+            android:name=".activities.AddEditExamActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
