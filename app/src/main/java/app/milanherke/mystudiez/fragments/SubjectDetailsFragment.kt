@@ -16,7 +16,7 @@ import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
-import app.milanherke.mystudiez.activities.AddEditExamActivity
+import app.milanherke.mystudiez.activities.AddEditExamFragment
 import app.milanherke.mystudiez.activities.AddEditLessonActivity
 import app.milanherke.mystudiez.activities.AddEditSubjectActivity
 import app.milanherke.mystudiez.activities.AddEditTaskActivity
@@ -141,12 +141,12 @@ class SubjectDetailsFragment : Fragment(),
         }
 
         // If users want to add a new exam to the subject
-        // the application takes them to AddEditExamActivity
+        // the application takes them to AddEditExamFragment
         subject_details_add_new_exam_btn.setOnClickListener {
-            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
-            val intent = Intent(activity, AddEditExamActivity::class.java)
-            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-            startActivity(intent)
+            activity!!.replaceFragmentWithTransition(
+                AddEditExamFragment.newInstance(null, subject!!),
+                R.id.fragment_container
+            )
         }
     }
 

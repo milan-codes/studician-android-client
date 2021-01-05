@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.utils.FirebaseUtils
 import app.milanherke.mystudiez.R
+import app.milanherke.mystudiez.utils.FirebaseUtils.Companion.RC_SIGN_IN
 import app.milanherke.mystudiez.viewmodels.fragments.SettingsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
@@ -57,7 +58,7 @@ class SettingsFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == FirebaseUtils.RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {
             if (resultCode == Activity.RESULT_OK) {
                 val user = FirebaseAuth.getInstance().currentUser
                 viewModel.addUser(user)
@@ -89,7 +90,7 @@ class SettingsFragment : Fragment() {
         val logInIntent = viewModel.generateLogInIntent()
         startActivityForResult(
             logInIntent,
-            FirebaseUtils.RC_SIGN_IN
+            RC_SIGN_IN
         )
     }
 

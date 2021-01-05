@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.FragmentBackStack
-import app.milanherke.mystudiez.activities.AddEditExamActivity
+import app.milanherke.mystudiez.activities.AddEditExamFragment
 import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.utils.ActivityUtils
@@ -184,12 +184,9 @@ class ExamDetailsFragment : Fragment() {
      * by opening [AddEditExamActivity].
      */
     private fun editExam() {
-        FragmentBackStack.getInstance(activity!!).push(
-            Fragments.EXAM_DETAILS
+        activity!!.replaceFragmentWithTransition(
+            AddEditExamFragment.newInstance(exam!!, subject!!),
+            R.id.fragment_container
         )
-        val intent = Intent(activity, AddEditExamActivity::class.java)
-        intent.putExtra(ActivityUtils.EXAM_PARAM_BUNDLE_ID, exam)
-        intent.putExtra(ActivityUtils.SUBJECT_PARAM_BUNDLE_ID, subject)
-        startActivity(intent)
     }
 }

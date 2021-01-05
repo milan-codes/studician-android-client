@@ -23,6 +23,8 @@ import app.milanherke.mystudiez.models.Exam
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.createNotification
+import app.milanherke.mystudiez.utils.ActivityUtils.Companion.scheduleNotification
 import app.milanherke.mystudiez.utils.FirebaseUtils
 import app.milanherke.mystudiez.utils.NotificationUtils
 import app.milanherke.mystudiez.viewmodels.SharedViewModel
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity(),
     OverviewFragment.OverviewInteractions,
     SubjectsFragment.SubjectsInteractions,
     TasksFragment.TasksInteractions,
-    ExamsFragment.ExamsInteractions {
+    ExamsFragment.ExamsInteractions,
+    AddEditExamFragment.ExamSaved{
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
     private var subject: Subject? = null
@@ -193,6 +196,7 @@ class MainActivity : AppCompatActivity(),
             is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
             is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
             is ExamDetailsFragment -> upBtnInExamDetailsFragment()
+            is AddEditExamFragment -> upInAddEditExamFragment()
             is OverviewFragment, is SubjectsFragment, is TasksFragment, is ExamsFragment -> {
                 if (doubleBackToExit) {
                     super.onBackPressed()
@@ -234,15 +238,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * When the FAB button is pressed in [ExamsFragment], it should launch [AddEditExamActivity]
+     * When the FAB button is pressed in [ExamsFragment], it should launch [AddEditExamFragment]
      * Because the user wants to add a new [Exam]
      */
     private fun fabBtnInExamsFragment() {
-        FragmentBackStack.getInstance(this).push(
-            Fragments.EXAMS
-        )
-        val intent = Intent(this, AddEditExamActivity::class.java)
-        startActivity(intent)
+        replaceFragmentWithTransition(AddEditExamFragment.newInstance(), R.id.fragment_container)
     }
 
 
@@ -343,10 +343,67 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    /**
+     * [AddEditExamFragment] can return only to [ExamsFragment] [SubjectDetailsFragment] and [ExamDetailsFragment].
+     * It can be called only by the following fragments:
+     *  [ExamsFragment]: When pressing the FAB button and creating a new one
+     *  [SubjectDetailsFragment]: When adding new
+     *  [ExamDetailsFragment]: When editing an existing one
+     */
+    private fun upInAddEditExamFragment() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.EXAMS -> {
+                replaceFragmentWithTransition(
+                    ExamsFragment.newInstance(),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.SUBJECT_DETAILS -> {
+                replaceFragmentWithTransition(
+                    SubjectDetailsFragment.newInstance(subject!!),
+                    R.id.fragment_container
+                )
+            }
+            Fragments.EXAM_DETAILS -> replaceFragmentWithTransition(
+                ExamDetailsFragment.newInstance(
+                    exam!!, subject!!
+                ), R.id.fragment_container
+            )
+            else -> {
+                throw IllegalStateException("AddEditExamFragment was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
 
     // INTERACTION INTERFACES
     // Implementing the interfaces which are required to communicate with the fragments.
 
+
+    override fun onSaveExamClickListener(exam: Exam, subject: Subject) {
+        val reminder = exam.reminder
+        if (reminder != null) {
+            val notification =
+                createNotification(this, getString(R.string.notification_exam_reminder_title), exam.name)
+            val delay = reminder.time.minus(System.currentTimeMillis())
+            scheduleNotification(this, notification, delay, null, exam)
+        }
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.EXAMS -> replaceFragmentWithTransition(
+                ExamsFragment.newInstance(),
+                R.id.fragment_container
+            )
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
+                SubjectDetailsFragment.newInstance(subject),
+                R.id.fragment_container
+            )
+            Fragments.EXAM_DETAILS -> replaceFragmentWithTransition(
+                ExamDetailsFragment.newInstance(exam, subject),
+                R.id.fragment_container
+            )
+            else -> throw IllegalStateException("onSaveExamClicked tries to load unrecognised fragment $fragmentCalledFrom")
+        }
+    }
 
     /**
      * We need to set [doubleBackToExit]'s value to false,
@@ -387,6 +444,7 @@ class MainActivity : AppCompatActivity(),
     override fun onCreateCalled() {
         setDoubleBackToFalse()
     }
+
 
 
     /**
