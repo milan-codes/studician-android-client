@@ -16,10 +16,7 @@ import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
-import app.milanherke.mystudiez.activities.AddEditExamFragment
-import app.milanherke.mystudiez.activities.AddEditLessonActivity
-import app.milanherke.mystudiez.activities.AddEditSubjectActivity
-import app.milanherke.mystudiez.activities.AddEditTaskActivity
+import app.milanherke.mystudiez.activities.*
 import app.milanherke.mystudiez.viewmodels.fragments.SubjectDetailsViewModel.DataFetching
 import app.milanherke.mystudiez.adapters.ExamsRecyclerViewAdapter
 import app.milanherke.mystudiez.adapters.LessonsRecyclerViewAdapter
@@ -123,12 +120,12 @@ class SubjectDetailsFragment : Fragment(),
         }
 
         // If users want to add a new lesson to the subject
-        // the application takes them to AddEditLessonActivity
+        // the application takes them to AddEditLessonFragment
         subject_details_add_new_lesson_btn.setOnClickListener {
-            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
-            val intent = Intent(activity, AddEditLessonActivity::class.java)
-            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-            startActivity(intent)
+            activity!!.replaceFragmentWithTransition(
+                    AddEditLessonFragment.newInstance(null, subject!!),
+                    R.id.fragment_container
+            )
         }
 
         // If users want to add a new task to the subject

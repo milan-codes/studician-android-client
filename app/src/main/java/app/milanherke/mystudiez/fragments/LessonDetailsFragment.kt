@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.*
 import app.milanherke.mystudiez.FragmentBackStack
-import app.milanherke.mystudiez.activities.AddEditLessonActivity
+import app.milanherke.mystudiez.activities.AddEditLessonFragment
 import app.milanherke.mystudiez.models.Lesson
 import app.milanherke.mystudiez.models.Subject
-import app.milanherke.mystudiez.utils.ActivityUtils
 import app.milanherke.mystudiez.viewmodels.SharedViewModel
 import app.milanherke.mystudiez.viewmodels.fragments.LessonDetailsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,7 +26,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * The purpose of this fragment is to display the details of a [Lesson].
  * The user can delete a lesson from this fragment
- * or launch a new fragment ([AddEditLessonActivity]) to edit it.
+ * or launch a new fragment ([AddEditLessonFragment]) to edit it.
  * Use the [LessonDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -104,13 +102,10 @@ class LessonDetailsFragment : Fragment() {
         }
 
         lesson_details_edit_subject_btn.setOnClickListener {
-            FragmentBackStack.getInstance(activity!!).push(
-                Fragments.LESSON_DETAILS
+            activity!!.replaceFragmentWithTransition(
+                    AddEditLessonFragment.newInstance(lesson, subject!!),
+                    R.id.fragment_container
             )
-            val intent = Intent(activity, AddEditLessonActivity::class.java)
-            intent.putExtra(ActivityUtils.LESSON_PARAM_BUNDLE_ID, lesson)
-            intent.putExtra(ActivityUtils.SUBJECT_PARAM_BUNDLE_ID, subject)
-            startActivity(intent)
         }
     }
 
