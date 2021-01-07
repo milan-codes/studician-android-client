@@ -1,8 +1,8 @@
 package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
-import app.milanherke.mystudiez.utils.ActivityUtils.Companion.TASK_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
-import app.milanherke.mystudiez.activities.AddEditTaskActivity
+import app.milanherke.mystudiez.activities.AddEditTaskFragment
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.models.Task
 import app.milanherke.mystudiez.utils.CalendarUtils
@@ -31,7 +29,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * This fragment was created to list the details of a [Task].
  * The user can delete a task from this fragment
- * or launch a new fragment ([AddEditTaskActivity]) to edit it.
+ * or launch a new fragment ([AddEditTaskFragment]) to edit it.
  * Use the [TaskDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -183,15 +181,12 @@ class TaskDetailsFragment : Fragment() {
 
     /**
      * Allows the user to edit a [Task] object
-     * by opening [AddEditTaskActivity].
+     * by opening [AddEditTaskFragment].
      */
     private fun editTask() {
-        FragmentBackStack.getInstance(activity!!).push(
-            Fragments.TASK_DETAILS
+        activity!!.replaceFragmentWithTransition(
+                AddEditTaskFragment.newInstance(task!!, subject!!),
+                R.id.fragment_container
         )
-        val intent = Intent(activity, AddEditTaskActivity::class.java)
-        intent.putExtra(TASK_PARAM_BUNDLE_ID, task)
-        intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-        startActivity(intent)
     }
 }

@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez.fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
 import app.milanherke.mystudiez.Fragments.SUBJECT_DETAILS
 import app.milanherke.mystudiez.activities.*
@@ -131,10 +129,10 @@ class SubjectDetailsFragment : Fragment(),
         // If users want to add a new task to the subject
         // the application takes them to AddEditTaskActivity
         subject_details_add_new_task_btn.setOnClickListener {
-            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
-            val intent = Intent(activity, AddEditTaskActivity::class.java)
-            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-            startActivity(intent)
+            activity!!.replaceFragmentWithTransition(
+                    AddEditTaskFragment.newInstance(null, subject!!),
+                    R.id.fragment_container
+            )
         }
 
         // If users want to add a new exam to the subject

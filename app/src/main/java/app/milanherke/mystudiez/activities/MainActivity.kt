@@ -1,7 +1,6 @@
 package app.milanherke.mystudiez.activities
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -38,6 +37,7 @@ class MainActivity : AppCompatActivity(),
     ExamsFragment.ExamsInteractions,
     AddEditSubjectFragment.SubjectSaveListener,
     AddEditLessonFragment.LessonSaved,
+    AddEditTaskFragment.TaskSaveListener,
     AddEditExamFragment.ExamSaved{
 
     // The subject, whose details are displayed when SubjectDetailsFragment is called
@@ -185,6 +185,7 @@ class MainActivity : AppCompatActivity(),
                     is ExamDetailsFragment -> upBtnInExamDetailsFragment()
                     is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
                     is AddEditLessonFragment -> upBtnInAddEditLessonFragment()
+                    is AddEditTaskFragment -> upBtnInAddEditTaskFragment()
                     is AddEditExamFragment -> upBtnInAddEditExamFragment()
                     else -> throw IllegalArgumentException("Up button used by unrecognised fragment $fragment")
                 }
@@ -203,6 +204,7 @@ class MainActivity : AppCompatActivity(),
             is ExamDetailsFragment -> upBtnInExamDetailsFragment()
             is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
             is AddEditLessonFragment -> upBtnInAddEditLessonFragment()
+            is AddEditTaskFragment -> upBtnInAddEditTaskFragment()
             is AddEditExamFragment -> upBtnInAddEditExamFragment()
             is OverviewFragment, is SubjectsFragment, is TasksFragment, is ExamsFragment -> {
                 if (doubleBackToExit) {
@@ -229,15 +231,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * When the FAB button is pressed in [TasksFragment], it should launch [AddEditTaskActivity]
+     * When the FAB button is pressed in [TasksFragment], it should launch [AddEditTaskFragment]
      * Because the user wants to add a new [Task]
      */
     private fun fabBtnInTasksFragment() {
-        FragmentBackStack.getInstance(this).push(
-            Fragments.TASKS
-        )
-        val intent = Intent(this, AddEditTaskActivity::class.java)
-        startActivity(intent)
+        replaceFragmentWithTransition(AddEditTaskFragment.newInstance(), R.id.fragment_container)
     }
 
     /**
@@ -396,6 +394,38 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
+     * [AddEditTaskFragment] can return only to [TasksFragment] [SubjectDetailsFragment] and [TaskDetailsFragment].
+     * It can be called only by the following fragments:
+     *  [TasksFragment]: When pressing the FAB button and creating a new one
+     *  [SubjectDetailsFragment]: When adding a new one from [SubjectDetailsFragment]
+     *  [TaskDetailsFragment]: When editing an existing one
+     */
+    private fun upBtnInAddEditTaskFragment() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.TASKS -> {
+                replaceFragmentWithTransition(
+                        TasksFragment.newInstance(),
+                        R.id.fragment_container
+                )
+            }
+            Fragments.SUBJECT_DETAILS -> {
+                replaceFragmentWithTransition(
+                        SubjectDetailsFragment.newInstance(subject!!),
+                        R.id.fragment_container
+                )
+            }
+            Fragments.TASK_DETAILS -> replaceFragmentWithTransition(
+                    TaskDetailsFragment.newInstance(
+                            task!!, subject!!
+                    ), R.id.fragment_container
+            )
+            else -> {
+                throw IllegalStateException("AddEditTaskFragment was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
+    /**
      * [AddEditExamFragment] can return only to [ExamsFragment] [SubjectDetailsFragment] and [ExamDetailsFragment].
      * It can be called only by the following fragments:
      *  [ExamsFragment]: When pressing the FAB button and creating a new one
@@ -456,6 +486,32 @@ class MainActivity : AppCompatActivity(),
                     R.id.fragment_container
             )
             else -> throw IllegalStateException("onSaveLessonClick tries to load unrecognised fragment $fragmentCalledFrom")
+        }
+    }
+
+    override fun onTaskSaved(task: Task, subject: Subject) {
+        val reminder = task.reminder
+        if (reminder != null) {
+            val notification =
+                    createNotification(this, getString(R.string.notification_task_reminder_title), task.name)
+            val delay = reminder.time.minus(System.currentTimeMillis())
+            scheduleNotification(this, notification, delay, task, null)
+        }
+
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.TASKS -> replaceFragmentWithTransition(
+                    TasksFragment.newInstance(),
+                    R.id.fragment_container
+            )
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
+                    SubjectDetailsFragment.newInstance(subject),
+                    R.id.fragment_container
+            )
+            Fragments.TASK_DETAILS -> replaceFragmentWithTransition(
+                    TaskDetailsFragment.newInstance(task, subject),
+                    R.id.fragment_container
+            )
+            else -> throw IllegalStateException("onSaveTaskClicked tries to load unrecognised fragment $fragmentCalledFrom")
         }
     }
 
