@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(),
     SubjectsFragment.SubjectsInteractions,
     TasksFragment.TasksInteractions,
     ExamsFragment.ExamsInteractions,
+    AddEditSubjectFragment.SubjectSaveListener,
     AddEditLessonFragment.LessonSaved,
     AddEditExamFragment.ExamSaved{
 
@@ -182,8 +183,9 @@ class MainActivity : AppCompatActivity(),
                     is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
                     is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
                     is ExamDetailsFragment -> upBtnInExamDetailsFragment()
-                    is AddEditLessonFragment -> upInAddEditLessonFragment()
-                    is AddEditExamFragment -> upInAddEditExamFragment()
+                    is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
+                    is AddEditLessonFragment -> upBtnInAddEditLessonFragment()
+                    is AddEditExamFragment -> upBtnInAddEditExamFragment()
                     else -> throw IllegalArgumentException("Up button used by unrecognised fragment $fragment")
                 }
             }
@@ -199,8 +201,9 @@ class MainActivity : AppCompatActivity(),
             is LessonDetailsFragment -> upBtnInLessonDetailsFragment()
             is TaskDetailsFragment -> upBtnInTaskDetailsFragment()
             is ExamDetailsFragment -> upBtnInExamDetailsFragment()
-            is AddEditLessonFragment -> upInAddEditLessonFragment()
-            is AddEditExamFragment -> upInAddEditExamFragment()
+            is AddEditSubjectFragment -> upBtnInAddEditSubjectFragment()
+            is AddEditLessonFragment -> upBtnInAddEditLessonFragment()
+            is AddEditExamFragment -> upBtnInAddEditExamFragment()
             is OverviewFragment, is SubjectsFragment, is TasksFragment, is ExamsFragment -> {
                 if (doubleBackToExit) {
                     super.onBackPressed()
@@ -218,15 +221,11 @@ class MainActivity : AppCompatActivity(),
     // These functions are used to determine what should be done when the fab button is pressed in specific fragments
 
     /**
-     * When the FAB button is pressed in [SubjectsFragment], it should launch [AddEditSubjectActivity]
+     * When the FAB button is pressed in [SubjectsFragment], it should launch [AddEditSubjectFragment]
      * Because the user wants to add a new [Subject]
      */
     private fun fabBtnInSubjectsFragment() {
-        FragmentBackStack.getInstance(this).push(
-            Fragments.SUBJECTS
-        )
-        val intent = Intent(this, AddEditSubjectActivity::class.java)
-        startActivity(intent)
+        replaceFragmentWithTransition(AddEditSubjectFragment.newInstance(), R.id.fragment_container)
     }
 
     /**
@@ -348,10 +347,35 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
+     * [AddEditSubjectFragment] can return only to [SubjectsFragment] and [SubjectDetailsFragment].
+     * It can be called only by the following fragments: [SubjectsFragment] (when adding new) and [SubjectDetailsFragment] (when editing an existing one).
+     */
+    private fun upBtnInAddEditSubjectFragment() {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.SUBJECTS -> {
+                replaceFragmentWithTransition(
+                        SubjectsFragment.newInstance(),
+                        R.id.fragment_container
+                )
+            }
+            Fragments.SUBJECT_DETAILS -> {
+                // We can use the subject variable because the fragment was called from SubjectDetails, therefore an object has already been assigned to it.
+                replaceFragmentWithTransition(
+                        SubjectDetailsFragment.newInstance(subject!!),
+                        R.id.fragment_container
+                )
+            }
+            else -> {
+                throw IllegalStateException("AddEditSubjectFragment was called by unrecognised fragment $fragmentCalledFrom")
+            }
+        }
+    }
+
+    /**
      * [AddEditLessonFragment] can return only to [SubjectDetailsFragment] and [LessonDetailsFragment].
      * It can be called only by the following fragments: [SubjectDetailsFragment] (when adding new) and [LessonDetailsFragment] (when editing an existing one).
      */
-    private fun upInAddEditLessonFragment() {
+    private fun upBtnInAddEditLessonFragment() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.SUBJECT_DETAILS -> {
                 replaceFragmentWithTransition(
@@ -378,7 +402,7 @@ class MainActivity : AppCompatActivity(),
      *  [SubjectDetailsFragment]: When adding new
      *  [ExamDetailsFragment]: When editing an existing one
      */
-    private fun upInAddEditExamFragment() {
+    private fun upBtnInAddEditExamFragment() {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
             Fragments.EXAMS -> {
                 replaceFragmentWithTransition(
@@ -406,6 +430,20 @@ class MainActivity : AppCompatActivity(),
 
     // INTERACTION INTERFACES
     // Implementing the interfaces which are required to communicate with the fragments.
+
+    override fun onSubjectSaved(subject: Subject) {
+        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
+            Fragments.SUBJECT_DETAILS -> replaceFragmentWithTransition(
+                    SubjectDetailsFragment.newInstance(subject),
+                    R.id.fragment_container
+            )
+            Fragments.SUBJECTS -> replaceFragmentWithTransition(
+                    SubjectsFragment.newInstance(),
+                    R.id.fragment_container
+            )
+            else -> throw IllegalStateException("onSaveSubjectClicked tries to load unrecognised fragment $fragmentCalledFrom")
+        }
+    }
 
     override fun onSaveLessonClickListener(lesson: Lesson, subject: Subject) {
         when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {

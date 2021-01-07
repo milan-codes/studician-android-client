@@ -38,7 +38,7 @@ private const val ARG_SUBJECT = "subject"
  * A simple [Fragment] subclass.
  * The purpose of this fragment is to display the details of a [Subject]
  * The user can delete a subject from this fragment
- * or launch a new fragment ([AddEditSubjectActivity]) to edit it.
+ * or launch a new fragment ([AddEditSubjectFragment]) to edit it.
  * Use the [SubjectDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -103,10 +103,10 @@ class SubjectDetailsFragment : Fragment(),
         subject_details_exams_recycler.adapter = examsAdapter
 
         button.setOnClickListener {
-            FragmentBackStack.getInstance(activity!!).push(SUBJECT_DETAILS)
-            val intent = Intent(activity, AddEditSubjectActivity::class.java)
-            intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-            startActivity(intent)
+            activity!!.replaceFragmentWithTransition(
+                    AddEditSubjectFragment.newInstance(subject!!),
+                    R.id.fragment_container
+            )
         }
 
         // After deleting a subject

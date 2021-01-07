@@ -1,49 +1,81 @@
 package app.milanherke.mystudiez.activities
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import app.milanherke.mystudiez.*
-import app.milanherke.mystudiez.utils.ActivityUtils.Companion.ACTIVITY_NAME_BUNDLE_ID
-import app.milanherke.mystudiez.utils.ActivityUtils.Companion.FRAGMENT_TO_LOAD_BUNDLE_ID
-import app.milanherke.mystudiez.utils.ActivityUtils.Companion.SUBJECT_PARAM_BUNDLE_ID
 import app.milanherke.mystudiez.FragmentBackStack
-import app.milanherke.mystudiez.fragments.SubjectDetailsFragment
-import app.milanherke.mystudiez.fragments.SubjectsFragment
-import app.milanherke.mystudiez.fragments.UnsavedChangesDialogFragment
 import app.milanherke.mystudiez.models.Subject
 import app.milanherke.mystudiez.viewmodels.activities.AddEditSubjectViewModel
-import kotlinx.android.synthetic.main.activity_add_edit_subject.*
-import kotlinx.android.synthetic.main.content_add_edit_subject.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_add_edit_subject.*
+
+// Fragment initialization parameters
+private const val ARG_SUBJECT = "subject"
 
 /**
- * A simple [AppCompatActivity] subclass.
- * The purpose of this activity is to add or edit subjects.
+ * A simple [Fragment] subclass.
+ * This fragment was created to add or edit subjects.
+ * Activities that contain this fragment must implement the
+ * [AddEditSubjectFragment.SubjectSaveListener] interface
+ * to handle interaction events.
+ * Use the [AddEditSubjectFragment.newInstance] factory method to
+ * create an instance of this fragment.
  */
-class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment.DialogInteractions {
+class AddEditSubjectFragment : Fragment() {
 
     private var subject: Subject? = null
+    private var listener: SubjectSaveListener? = null
     private var selectedSubjectColor: Int = -1
     private var subjectIsBeingEdited: Boolean = false
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(AddEditSubjectViewModel::class.java)
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    interface SubjectSaveListener {
+        fun onSubjectSaved(subject: Subject)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is SubjectSaveListener) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement AddEditSubjectInteractions")
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_edit_subject)
+        subject = arguments?.getParcelable(ARG_SUBJECT)
+    }
 
-        // Getting intent and extras
-        val intent = intent
-        subject = intent.getParcelableExtra(SUBJECT_PARAM_BUNDLE_ID)
+    override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_add_edit_subject, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Creating a clone of the subject's color indicator circle
         // because we do not want to affect all of the drawable's instances
@@ -55,25 +87,34 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
 
         if (subject == null) {
             // User wants to create a new subject
-            activity_subject_toolbar.setTitle(R.string.add_new_subject_title)
-            setSupportActionBar(activity_subject_toolbar)
+            activity!!.toolbar.setTitle(R.string.add_new_subject_title)
             subjectIsBeingEdited = false
             selectedColor.visibility = View.INVISIBLE
         } else {
             // User wants to edit an existing subject
-            activity_subject_toolbar.title =
-                resources.getString(R.string.edit_subject_title, subject.name)
-            setSupportActionBar(activity_subject_toolbar)
+            activity!!.toolbar.title =
+                    resources.getString(R.string.edit_subject_title, subject.name)
             subjectIsBeingEdited = true
             new_subject_name_value.setText(subject.name)
             new_subject_teacher_value.setText(subject.teacher)
-            selectedColor.drawable.setColor(subject.colorCode, this)
+            selectedColor.drawable.setColor(subject.colorCode, activity!!)
             new_subject_color_btn.text = getColorName(subject.colorCode)
             selectedSubjectColor = subject.colorCode
 
         }
+    }
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    @SuppressLint("RestrictedApi")
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if (activity is AppCompatActivity) {
+            (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        }
+
+        // Hiding bottom navigation bar and fab button
+        activity!!.bar.visibility = View.GONE
+        activity!!.fab.visibility = View.GONE
 
         // User must select a color for the subject
         new_subject_color_btn.setOnClickListener {
@@ -84,81 +125,28 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
             saveSubject()
         }
     }
-    override fun onStop() {
-        super.onStop()
-        FragmentBackStack.getInstance(this).pop()
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                pressedUpBtn()
-            } else -> super.onOptionsItemSelected(item)
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onBackPressed() {
-        pressedUpBtn()
-    }
-
-    override fun onPositiveBtnPressed() {
-        openActivity()
-    }
-
-    override fun onNegativeBtnPressed() {
-        // Dialog automatically gets dismissed in UnsavedChangesDialogFragment
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+        FragmentBackStack.getInstance(context!!).pop()
     }
 
     companion object {
-        const val TAG = "AddEditSubject"
-    }
-
-    private fun onSavePressed() {
-        openActivity()
-    }
-
-    /**
-     * [AddEditSubjectActivity] can return only to [SubjectsFragment] and [SubjectDetailsFragment].
-     * It can be called only by the following fragments: [SubjectsFragment] (when adding new) and [SubjectDetailsFragment] (when editing an existing one).
-     */
-    private fun pressedUpBtn() {
-        val dialog = UnsavedChangesDialogFragment(this)
-
-        // If [subject] is not null, the user is editing an existing one
-        if (subject != null) {
-            if (requiredFieldsAreFilled()) {
-                val newSubject = subjectFromUi()
-                if (newSubject != subject) dialog.show(this.supportFragmentManager,
-                    TAG
-                ) else openActivity()
-            } else openActivity()
-        } else openActivity()
-    }
-
-
-    private fun openActivity() {
-        when (val fragmentCalledFrom = FragmentBackStack.getInstance(this).peek()) {
-            Fragments.SUBJECTS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
-                    TAG
-                )
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectsFragment.TAG)
-                startActivity(intent)
-            }
-            Fragments.SUBJECT_DETAILS -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra(ACTIVITY_NAME_BUNDLE_ID,
-                    TAG
-                )
-                intent.putExtra(FRAGMENT_TO_LOAD_BUNDLE_ID, SubjectDetailsFragment.TAG)
-                intent.putExtra(SUBJECT_PARAM_BUNDLE_ID, subject)
-                startActivity(intent)
-            }
-            else -> throw IllegalStateException("onSaveSubjectClicked tries to load unrecognised fragment $fragmentCalledFrom")
-        }
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param subject The subject to be edited, or null when creating a new one.
+         * @return A new instance of fragment AddEditSubjectFragment.
+         */
+        @JvmStatic
+        fun newInstance(subject: Subject? = null) =
+                AddEditSubjectFragment().apply {
+                    arguments = Bundle().apply {
+                        putParcelable(ARG_SUBJECT, subject)
+                    }
+                }
     }
 
     /**
@@ -170,17 +158,17 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
             val newSubject = subjectFromUi()
             if (newSubject != subject) {
                 subject = viewModel.saveSubject(newSubject)
-                onSavePressed()
+                listener?.onSubjectSaved(subject!!)
             } else {
                 Toast.makeText(
-                    this,
+                    context!!,
                     getString(R.string.did_not_change),
                     Toast.LENGTH_LONG
                 ).show()
             }
         } else {
             Toast.makeText(
-                this,
+                context!!,
                 getString(R.string.required_fields_are_not_filled),
                 Toast.LENGTH_LONG
             ).show()
@@ -224,7 +212,7 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
      * if a new subject is created.
      */
     private fun showColorsPopUp(view: View) {
-        val popupMenu = PopupMenu(this, view)
+        val popupMenu = PopupMenu(activity!!, view)
         val inflater = popupMenu.menuInflater
         inflater.inflate(R.menu.color_menu, popupMenu.menu)
         popupMenu.show()
@@ -233,107 +221,107 @@ class AddEditSubjectActivity : AppCompatActivity(), UnsavedChangesDialogFragment
             when (it.itemId) {
                 R.id.color_option_red -> {
                     setColor(
-                        R.color.subjectColorRed, this,
+                        R.color.subjectColorRed, activity!!,
                         R.string.colorRedTitle
                     )
                 }
                 R.id.color_option_pink -> {
                     setColor(
-                        R.color.subjectColorPink, this,
+                        R.color.subjectColorPink, activity!!,
                         R.string.colorPinkTitle
                     )
                 }
                 R.id.color_option_purple -> {
                     setColor(
-                        R.color.subjectColorPurple, this,
+                        R.color.subjectColorPurple, activity!!,
                         R.string.colorPurpleTitle
                     )
                 }
                 R.id.color_option_deep_purple -> {
                     setColor(
                         R.color.subjectColorDeepPurple,
-                        this,
+                        activity!!,
                         R.string.colorDeepPurpleTitle
                     )
                 }
                 R.id.color_option_indigo -> {
                     setColor(
-                        R.color.subjectColorIndigo, this,
+                        R.color.subjectColorIndigo, activity!!,
                         R.string.colorIndigoTitle
                     )
                 }
                 R.id.color_option_blue -> {
                     setColor(
-                        R.color.subjectColorBlue, this,
+                        R.color.subjectColorBlue, activity!!,
                         R.string.colorBlueTitle
                     )
                 }
                 R.id.color_option_light_blue -> {
                     setColor(
                         R.color.subjectColorLightBlue,
-                        this,
+                        activity!!,
                         R.string.colorLightBlueTitle
                     )
                 }
                 R.id.color_option_cyan -> {
                     setColor(
-                        R.color.subjectColorCyan, this,
+                        R.color.subjectColorCyan, activity!!,
                         R.string.colorCyanTitle
                     )
                 }
                 R.id.color_option_teal -> {
                     setColor(
-                        R.color.subjectColorTeal, this,
+                        R.color.subjectColorTeal, activity!!,
                         R.string.colorTealTitle
                     )
                 }
                 R.id.color_option_green -> {
                     setColor(
-                        R.color.subjectColorGreen, this,
+                        R.color.subjectColorGreen, activity!!,
                         R.string.colorGreenTitle
                     )
                 }
                 R.id.color_option_light_green -> {
                     setColor(
                         R.color.subjectColorLightGreen,
-                        this,
+                        activity!!,
                         R.string.colorLightGreenTitle
                     )
                 }
                 R.id.color_option_lime -> {
                     setColor(
-                        R.color.subjectColorLime, this,
+                        R.color.subjectColorLime, activity!!,
                         R.string.colorLimeTitle
                     )
                 }
                 R.id.color_option_yellow -> {
                     setColor(
-                        R.color.subjectColorYellow, this,
+                        R.color.subjectColorYellow, activity!!,
                         R.string.colorYellowTitle
                     )
                 }
                 R.id.color_option_amber -> {
                     setColor(
-                        R.color.subjectColorAmber, this,
+                        R.color.subjectColorAmber, activity!!,
                         R.string.colorAmberTitle
                     )
                 }
                 R.id.color_option_orange -> {
                     setColor(
-                        R.color.subjectColorOrange,this,
+                        R.color.subjectColorOrange,activity!!,
                         R.string.colorOrangeTitle
                     )
                 }
                 R.id.color_option_deep_orange -> {
                     setColor(
                         R.color.subjectColorDeepOrange,
-                        this,
+                        activity!!,
                         R.string.colorDeepOrangeTitle
                     )
                 }
                 R.id.color_option_blue_gray -> {
                     setColor(
-                        R.color.subjectColorBlueGray, this,
+                        R.color.subjectColorBlueGray, activity!!,
                         R.string.colorBlueGrayTitle
                     )
                 }
